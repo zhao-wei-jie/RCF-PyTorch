@@ -11,9 +11,6 @@ from dataset import BSDS_Dataset,TTPLA_Dataset
 from models import RCF
 from utils import Logger, Averagvalue, Cross_entropy_loss
 
-def get_lr(optimizer):
-    for param_group in optimizer.param_groups:
-        return param_group['lr']
 
 def train(args, model, train_loader, optimizer, epoch, logger):
     batch_time = Averagvalue()
@@ -37,13 +34,11 @@ def train(args, model, train_loader, optimizer, epoch, logger):
         # measure accuracy and record loss
         losses.update(loss.item(), image.size(0))
         batch_time.update(time.time() - end)
-        
+        if i % args.print_freq == 0:
+            logger.info('Epoch: [{0}/{1}][{2}/{3}] '.format(epoch + 1, args.max_epoch, i, len(train_loader)) + \
+                        'Time {batch_time.val:.3f} (avg: {batch_time.avg:.3f}) '.format(batch_time=batch_time) + \
+                        'Loss {loss.val:f} (avg: {loss.avg:f}) '.format(loss=losses))
         end = time.time()
-    
-    logger.info('Epoch: [{0}/{1}][{2}/{3}] '.format(epoch + 1, args.max_epoch, i, len(train_loader)) + \
-                'Time {batch_time.val:.3f} (avg: {batch_time.avg:.3f}) '.format(batch_time=batch_time) + \
-                'Loss {loss.val:f} (avg: {loss.avg:f}) '.format(loss=losses) + \
-                'lr %e'%(get_lr(optimizer)))
 
 
 def single_scale_test(model, test_loader, test_list, save_dir):
@@ -113,24 +108,22 @@ if __name__ == '__main__':
     os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
 
-    ex_time=time.strftime('%Y%m%d_%H%M',time.localtime())
-    args.save_dir+=ex_time
     if not osp.isdir(args.save_dir):
-        
         os.makedirs(args.save_dir)
-        
 
-    logger = Logger(osp.join(args.save_dir,'log.txt'))
+    logger = Logger(osp.join(args.save_dir, 'log.txt'))
     logger.info('Called with args:')
     for (key, value) in vars(args).items():
         logger.info('{0:15} | {1}'.format(key, value))
 
     # train_dataset = BSDS_Dataset(root=args.dataset, split='train')
     # test_dataset  = BSDS_Dataset(root=osp.join(args.dataset, 'HED-BSDS'), split='test')
-
-    train_dataset = TTPLA_Dataset(split='train')
-    test_dataset  = TTPLA_Dataset(split='test')
-    train_loader  = DataLoader(train_dataset, batch_size=args.batch_size, num_workers=8, drop_last=True, shuffle=True)
+    transforms=torchvision.transforms.Compose([
+        torchvision.transforms.Resize(512)        
+        ])
+    train_dataset = TTPLA_Dataset(split='train',transform=transforms)
+    test_dataset  = TTPLA_Dataset(split='test',transform=transforms)
+    train_loader  = DataLoader(train_dataset, batch_size=args.batch_size, num_workers=4, drop_last=True, shuffle=True)
     test_loader   = DataLoader(test_dataset, batch_size=1, num_workers=4, drop_last=False, shuffle=False)
     test_list = [i for i in test_dataset.file_list]
     assert len(test_list) == len(test_loader) #,print(len(test_list) ,len(test_loader),len(train_loader))
@@ -175,26 +168,18 @@ if __name__ == '__main__':
         elif pname in ['score_fuse.bias']:
             parameters['score_fuse.bias'].append(p)
 
-    # optimizer = torch.optim.SGD([
-    #         {'params': parameters['conv1-4.weight'],       'lr': args.lr*1,     'weight_decay': args.weight_decay},
-    #         {'params': parameters['conv1-4.bias'],         'lr': args.lr*2,     'weight_decay': 0.},
-    #         {'params': parameters['conv5.weight'],         'lr': args.lr*100,   'weight_decay': args.weight_decay},
-    #         {'params': parameters['conv5.bias'],           'lr': args.lr*200,   'weight_decay': 0.},
-    #         {'params': parameters['conv_down_1-5.weight'], 'lr': args.lr*0.1,   'weight_decay': args.weight_decay},
-    #         {'params': parameters['conv_down_1-5.bias'],   'lr': args.lr*0.2,   'weight_decay': 0.},
-    #         {'params': parameters['score_dsn_1-5.weight'], 'lr': args.lr*0.01,  'weight_decay': args.weight_decay},
-    #         {'params': parameters['score_dsn_1-5.bias'],   'lr': args.lr*0.02,  'weight_decay': 0.},
-    #         {'params': parameters['score_fuse.weight'],    'lr': args.lr*0.001, 'weight_decay': args.weight_decay},
-    #         {'params': parameters['score_fuse.bias'],      'lr': args.lr*0.002, 'weight_decay': 0.},
-    #     ], lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
-    # lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=args.stepsize, gamma=args.gamma)
-
-    # optimizer = torch.optim.SGD(
-    #         model.parameters()
-    #     , lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
-    optimizer = torch.optim.AdamW(
-            model.parameters()
-        , lr=args.lr)
+    optimizer = torch.optim.SGD([
+            {'params': parameters['conv1-4.weight'],       'lr': args.lr*1,     'weight_decay': args.weight_decay},
+            {'params': parameters['conv1-4.bias'],         'lr': args.lr*2,     'weight_decay': 0.},
+            {'params': parameters['conv5.weight'],         'lr': args.lr*100,   'weight_decay': args.weight_decay},
+            {'params': parameters['conv5.bias'],           'lr': args.lr*200,   'weight_decay': 0.},
+            {'params': parameters['conv_down_1-5.weight'], 'lr': args.lr*0.1,   'weight_decay': args.weight_decay},
+            {'params': parameters['conv_down_1-5.bias'],   'lr': args.lr*0.2,   'weight_decay': 0.},
+            {'params': parameters['score_dsn_1-5.weight'], 'lr': args.lr*0.01,  'weight_decay': args.weight_decay},
+            {'params': parameters['score_dsn_1-5.bias'],   'lr': args.lr*0.02,  'weight_decay': 0.},
+            {'params': parameters['score_fuse.weight'],    'lr': args.lr*0.001, 'weight_decay': args.weight_decay},
+            {'params': parameters['score_fuse.bias'],      'lr': args.lr*0.002, 'weight_decay': 0.},
+        ], lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
     lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=args.stepsize, gamma=args.gamma)
 
     if args.resume is not None:
@@ -208,14 +193,14 @@ if __name__ == '__main__':
             logger.info("=> checkpoint loaded")
         else:
             logger.info("=> no checkpoint found at '{}'".format(args.resume))
-    # else:
-    #     model.load_state_dict(torch.load('bsds500_pascal_model.pth'))
+    else:
+        model.load_state_dict(torch.load('bsds500_pascal_model.pth'))
     for epoch in range(args.start_epoch, args.max_epoch):
         logger.info('Performing initial testing...')
         train(args, model, train_loader, optimizer, epoch, logger)
         save_dir = osp.join(args.save_dir, 'epoch%d-test' % (epoch + 1))
-        # single_scale_test(model, test_loader, test_list, save_dir)
-        # multi_scale_test(model, test_loader, test_list, save_dir)
+        single_scale_test(model, test_loader, test_list, save_dir)
+        multi_scale_test(model, test_loader, test_list, save_dir)
         # Save checkpoint
         save_file = osp.join(args.save_dir, 'checkpoint_epoch{}.pth'.format(epoch + 1))
         torch.save({

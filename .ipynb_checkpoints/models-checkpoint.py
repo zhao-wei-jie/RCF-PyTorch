@@ -27,15 +27,6 @@ class RCF(nn.Module):
         self.pool4 = nn.MaxPool2d(2, stride=1, ceil_mode=True)
         self.act = nn.ReLU(inplace=True)
 
-        self.bn=nn.ModuleDict()#添加bn层,防止梯度爆炸
-        bn_layer=[1,2,3,4,5]
-        bn_time=[2,2,3,3,3]
-        bn_channel=[64,128,256,512,512]
-        for l,t,c in zip(bn_layer,bn_time,bn_channel):
-            for i in range(t):
-                self.bn[str(l)+'-'+str(i+1)]=nn.BatchNorm2d(c)
-        # print(self.bn['1-1'])
-
         self.conv1_1_down = nn.Conv2d( 64, 21, 1)
         self.conv1_2_down = nn.Conv2d( 64, 21, 1)
         self.conv2_1_down = nn.Conv2d(128, 21, 1)
@@ -84,9 +75,6 @@ class RCF(nn.Module):
                 nn.init.constant_(m.weight, 0.2)
             if m.bias is not None:
                 nn.init.constant_(m.bias, 0)
-        elif isinstance(m, nn.BatchNorm2d):
-            m.weight.data.fill_(1)
-            m.bias.data.zero_()
 
     # Based on HED implementation @ https://github.com/xwjabc/hed
     def _make_bilinear_weights(self, size, num_channels):
@@ -115,24 +103,23 @@ class RCF(nn.Module):
 
     def forward(self, x):
         img_h, img_w = x.shape[2], x.shape[3]
-
-        conv1_1 = self.act(self.bn['1-1'](self.conv1_1(x)))
-        conv1_2 = self.act(self.bn['1-2'](self.conv1_2(conv1_1)))
+        conv1_1 = self.act(self.conv1_1(x))
+        conv1_2 = self.act(self.conv1_2(conv1_1))
         pool1   = self.pool1(conv1_2)
-        conv2_1 = self.act(self.bn['2-1'](self.conv2_1(pool1)))
-        conv2_2 = self.act(self.bn['2-2'](self.conv2_2(conv2_1)))
+        conv2_1 = self.act(self.conv2_1(pool1))
+        conv2_2 = self.act(self.conv2_2(conv2_1))
         pool2   = self.pool2(conv2_2)
-        conv3_1 = self.act(self.bn['3-1'](self.conv3_1(pool2)))
-        conv3_2 = self.act(self.bn['3-2'](self.conv3_2(conv3_1)))
-        conv3_3 = self.act(self.bn['3-3'](self.conv3_3(conv3_2)))
+        conv3_1 = self.act(self.conv3_1(pool2))
+        conv3_2 = self.act(self.conv3_2(conv3_1))
+        conv3_3 = self.act(self.conv3_3(conv3_2))
         pool3   = self.pool3(conv3_3)
-        conv4_1 = self.act(self.bn['4-1'](self.conv4_1(pool3)))
-        conv4_2 = self.act(self.bn['4-2'](self.conv4_2(conv4_1)))
-        conv4_3 = self.act(self.bn['4-3'](self.conv4_3(conv4_2)))
+        conv4_1 = self.act(self.conv4_1(pool3))
+        conv4_2 = self.act(self.conv4_2(conv4_1))
+        conv4_3 = self.act(self.conv4_3(conv4_2))
         pool4   = self.pool4(conv4_3)
-        conv5_1 = self.act(self.bn['5-1'](self.conv5_1(pool4)))
-        conv5_2 = self.act(self.bn['5-2'](self.conv5_2(conv5_1)))
-        conv5_3 = self.act(self.bn['5-3'](self.conv5_3(conv5_2)))
+        conv5_1 = self.act(self.conv5_1(pool4))
+        conv5_2 = self.act(self.conv5_2(conv5_1))
+        conv5_3 = self.act(self.conv5_3(conv5_2))
 
         conv1_1_down = self.conv1_1_down(conv1_1)
         conv1_2_down = self.conv1_2_down(conv1_2)
@@ -163,7 +150,7 @@ class RCF(nn.Module):
         out3 = self._crop(out3, img_h, img_w, 2, 2)
         out4 = self._crop(out4, img_h, img_w, 4, 4)
         out5 = self._crop(out5, img_h, img_w, 0, 0)
-        # print(out3.max(),out3.min(),out4.max(),out4.min(),out5.max(),out5.min())
+
         fuse = torch.cat((out1, out2, out3, out4, out5), dim=1)
         fuse = self.score_fuse(fuse)
         results = [out1, out2, out3, out4, out5, fuse]

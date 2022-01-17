@@ -3,4 +3,5 @@ __pycache__
 *.pth
 *.mat
 data/
-results/
+results/*/*epoch*
+res/
