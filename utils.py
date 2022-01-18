@@ -4,6 +4,16 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
+class EvalMax:
+    def __init__(self) -> None:
+        self.max_eval={}
+    def __call__(self, ret,i=None):
+        for k in ret.keys():#通过键，批量对比大小
+                if 'pl'  in k and ret[k]>self.max_eval.setdefault(k,0):
+                    self.max_eval[k]=ret[k]
+                    if i:
+                        self.max_eval[k+'_epo']=i
+        return self.max_eval
 
 class Logger(object):
     def __init__(self, path='log.txt'):

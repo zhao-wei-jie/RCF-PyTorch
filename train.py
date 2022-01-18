@@ -9,8 +9,8 @@ from torch.utils.data import DataLoader
 import torchvision
 from dataset import BSDS_Dataset,TTPLA_Dataset
 from models import RCF
-from utils import Logger, Averagvalue, Cross_entropy_loss
-
+from utils import Logger, Averagvalue, Cross_entropy_loss,EvalMax
+from test import single_scale_test
 def get_lr(optimizer):
     for param_group in optimizer.param_groups:
         return param_group['lr']
@@ -44,27 +44,6 @@ def train(args, model, train_loader, optimizer, epoch, logger):
                 'Time {batch_time.val:.3f} (avg: {batch_time.avg:.3f}) '.format(batch_time=batch_time) + \
                 'Loss {loss.val:f} (avg: {loss.avg:f}) '.format(loss=losses) + \
                 'lr %e'%(get_lr(optimizer)))
-
-
-def single_scale_test(model, test_loader, test_list, save_dir):
-    model.eval()
-    if not osp.isdir(save_dir):
-        os.makedirs(save_dir)
-    for idx, image in enumerate(test_loader):
-        image = image.cuda()
-        _, _, H, W = image.shape
-        results = model(image)
-        all_res = torch.zeros((len(results), 1, H, W))
-        for i in range(len(results)):
-          all_res[i, 0, :, :] = results[i]
-        filename = osp.splitext(test_list[idx])[0]
-        torchvision.utils.save_image(1 - all_res, osp.join(save_dir, '%s.jpg' % filename))
-        fuse_res = torch.squeeze(results[-1].detach()).cpu().numpy()
-        fuse_res = ((1 - fuse_res) * 255).astype(np.uint8)
-        cv2.imwrite(osp.join(save_dir, '%s_ss.png' % filename), fuse_res)
-        #print('\rRunning single-scale test [%d/%d]' % (idx + 1, len(test_loader)), end='')
-    logger.info('Running single-scale test done')
-
 
 def multi_scale_test(model, test_loader, test_list, save_dir):
     model.eval()
@@ -114,13 +93,17 @@ if __name__ == '__main__':
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
 
     ex_time=time.strftime('%Y%m%d_%H%M',time.localtime())
-    args.save_dir+=ex_time
+    args.save_dir=args.save_dir+ex_time
+    save_dict=dict(bs=args.batch_size,lr=args.lr)
+    # print(save_dict)
+    for k,v in save_dict.items():        
+        args.save_dir+='-'+k+str(v)
     if not osp.isdir(args.save_dir):
         
         os.makedirs(args.save_dir)
         
 
-    logger = Logger(osp.join(args.save_dir,'log.txt'))
+    logger = Logger(osp.join(args.save_dir,'train.log'))
     logger.info('Called with args:')
     for (key, value) in vars(args).items():
         logger.info('{0:15} | {1}'.format(key, value))
@@ -129,7 +112,7 @@ if __name__ == '__main__':
     # test_dataset  = BSDS_Dataset(root=osp.join(args.dataset, 'HED-BSDS'), split='test')
 
     train_dataset = TTPLA_Dataset(split='train')
-    test_dataset  = TTPLA_Dataset(split='test')
+    test_dataset  = TTPLA_Dataset(split='eval')
     train_loader  = DataLoader(train_dataset, batch_size=args.batch_size, num_workers=8, drop_last=True, shuffle=True)
     test_loader   = DataLoader(test_dataset, batch_size=1, num_workers=4, drop_last=False, shuffle=False)
     test_list = [i for i in test_dataset.file_list]
@@ -210,11 +193,14 @@ if __name__ == '__main__':
             logger.info("=> no checkpoint found at '{}'".format(args.resume))
     # else:
     #     model.load_state_dict(torch.load('bsds500_pascal_model.pth'))
+    max_eval=EvalMax()
     for epoch in range(args.start_epoch, args.max_epoch):
         logger.info('Performing initial testing...')
         train(args, model, train_loader, optimizer, epoch, logger)
-        save_dir = osp.join(args.save_dir, 'epoch%d-test' % (epoch + 1))
-        # single_scale_test(model, test_loader, test_list, save_dir)
+        # save_dir = osp.join(args.save_dir, 'epoch%d-test' % (epoch + 1))
+        ret=single_scale_test(model, test_loader, test_list, None,test_dataset.evaluate,False)
+        logger.info(ret)
+        logger.info(max_eval(ret,epoch+1))
         # multi_scale_test(model, test_loader, test_list, save_dir)
         # Save checkpoint
         save_file = osp.join(args.save_dir, 'checkpoint_epoch{}.pth'.format(epoch + 1))

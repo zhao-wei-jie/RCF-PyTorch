@@ -1,0 +1,1226 @@
+2022-01-12 19:10:29,900 INFO Called with args:
+2022-01-12 19:10:29,900 INFO batch_size      | 1
+2022-01-12 19:10:29,900 INFO lr              | 0.001
+2022-01-12 19:10:29,900 INFO momentum        | 0.9
+2022-01-12 19:10:29,900 INFO weight_decay    | 0.0002
+2022-01-12 19:10:29,900 INFO stepsize        | 3
+2022-01-12 19:10:29,900 INFO gamma           | 0.9
+2022-01-12 19:10:29,900 INFO max_epoch       | 1000
+2022-01-12 19:10:29,900 INFO iter_size       | 10
+2022-01-12 19:10:29,900 INFO start_epoch     | 0
+2022-01-12 19:10:29,900 INFO print_freq      | 500
+2022-01-12 19:10:29,900 INFO gpu             | 0
+2022-01-12 19:10:29,900 INFO resume          | None
+2022-01-12 19:10:29,900 INFO save_dir        | results/RCF20220112_1910
+2022-01-12 19:10:29,900 INFO dataset         | data
+2022-01-12 19:10:35,636 INFO Performing initial testing...
+2022-01-12 19:12:35,373 INFO Epoch: [1/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 6366.830566 (avg: 4061.918019) lr 1.000000e-03
+2022-01-12 19:13:09,241 INFO Running single-scale test done
+2022-01-12 19:13:24,067 INFO Running multi-scale test done
+2022-01-12 19:13:24,241 INFO Performing initial testing...
+2022-01-12 19:15:23,769 INFO Epoch: [2/1000][1123/1124] Time 0.104 (avg: 0.106) Loss 1272.299194 (avg: 2722.374065) lr 1.000000e-03
+2022-01-12 19:15:54,568 INFO Running single-scale test done
+2022-01-12 19:16:09,883 INFO Running multi-scale test done
+2022-01-12 19:16:10,048 INFO Performing initial testing...
+2022-01-12 19:18:09,386 INFO Epoch: [3/1000][1123/1124] Time 0.106 (avg: 0.106) Loss 4082.128174 (avg: 2369.092303) lr 1.000000e-03
+2022-01-12 19:18:40,249 INFO Running single-scale test done
+2022-01-12 19:18:55,834 INFO Running multi-scale test done
+2022-01-12 19:18:56,047 INFO Performing initial testing...
+2022-01-12 19:20:55,850 INFO Epoch: [4/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 1772.822266 (avg: 2124.334850) lr 9.000000e-04
+2022-01-12 19:21:26,798 INFO Running single-scale test done
+2022-01-12 19:21:41,701 INFO Running multi-scale test done
+2022-01-12 19:21:41,876 INFO Performing initial testing...
+2022-01-12 19:23:41,458 INFO Epoch: [5/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 1750.242065 (avg: 1996.423937) lr 9.000000e-04
+2022-01-12 19:24:11,912 INFO Running single-scale test done
+2022-01-12 19:24:26,759 INFO Running multi-scale test done
+2022-01-12 19:24:26,979 INFO Performing initial testing...
+2022-01-12 19:26:26,558 INFO Epoch: [6/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 463.586273 (avg: 1931.520261) lr 9.000000e-04
+2022-01-12 19:26:57,476 INFO Running single-scale test done
+2022-01-12 19:27:12,279 INFO Running multi-scale test done
+2022-01-12 19:27:12,431 INFO Performing initial testing...
+2022-01-12 19:29:11,811 INFO Epoch: [7/1000][1123/1124] Time 0.101 (avg: 0.106) Loss 1101.566895 (avg: 1831.701063) lr 8.100000e-04
+2022-01-12 19:29:41,580 INFO Running single-scale test done
+2022-01-12 19:29:56,470 INFO Running multi-scale test done
+2022-01-12 19:29:56,641 INFO Performing initial testing...
+2022-01-12 19:31:55,958 INFO Epoch: [8/1000][1123/1124] Time 0.102 (avg: 0.106) Loss 615.751648 (avg: 1729.225299) lr 8.100000e-04
+2022-01-12 19:32:29,950 INFO Running single-scale test done
+2022-01-12 19:32:44,688 INFO Running multi-scale test done
+2022-01-12 19:32:44,906 INFO Performing initial testing...
+2022-01-12 19:34:44,207 INFO Epoch: [9/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 2358.986084 (avg: 1684.361872) lr 8.100000e-04
+2022-01-12 19:35:12,979 INFO Running single-scale test done
+2022-01-12 19:35:27,806 INFO Running multi-scale test done
+2022-01-12 19:35:27,975 INFO Performing initial testing...
+2022-01-12 19:37:27,664 INFO Epoch: [10/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 1553.853149 (avg: 1690.315952) lr 7.290000e-04
+2022-01-12 19:37:57,574 INFO Running single-scale test done
+2022-01-12 19:38:13,086 INFO Running multi-scale test done
+2022-01-12 19:38:13,260 INFO Performing initial testing...
+2022-01-12 19:40:12,949 INFO Epoch: [11/1000][1123/1124] Time 0.104 (avg: 0.106) Loss 530.162109 (avg: 1576.681296) lr 7.290000e-04
+2022-01-12 19:40:44,479 INFO Running single-scale test done
+2022-01-12 19:40:59,092 INFO Running multi-scale test done
+2022-01-12 19:40:59,265 INFO Performing initial testing...
+2022-01-12 19:42:58,483 INFO Epoch: [12/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 875.426880 (avg: 1557.119864) lr 7.290000e-04
+2022-01-12 19:43:33,485 INFO Running single-scale test done
+2022-01-12 19:43:47,825 INFO Running multi-scale test done
+2022-01-12 19:43:47,982 INFO Performing initial testing...
+2022-01-12 19:45:47,489 INFO Epoch: [13/1000][1123/1124] Time 0.106 (avg: 0.106) Loss 1125.803711 (avg: 1485.133949) lr 6.561000e-04
+2022-01-12 19:46:19,656 INFO Running single-scale test done
+2022-01-12 19:46:34,101 INFO Running multi-scale test done
+2022-01-12 19:46:34,319 INFO Performing initial testing...
+2022-01-12 19:48:33,478 INFO Epoch: [14/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 834.353821 (avg: 1514.235032) lr 6.561000e-04
+2022-01-12 19:49:02,954 INFO Running single-scale test done
+2022-01-12 19:49:17,508 INFO Running multi-scale test done
+2022-01-12 19:49:17,676 INFO Performing initial testing...
+2022-01-12 19:51:17,128 INFO Epoch: [15/1000][1123/1124] Time 0.104 (avg: 0.106) Loss 1090.157471 (avg: 1410.180247) lr 6.561000e-04
+2022-01-12 19:51:46,970 INFO Running single-scale test done
+2022-01-12 19:52:02,032 INFO Running multi-scale test done
+2022-01-12 19:52:02,241 INFO Performing initial testing...
+2022-01-12 19:54:02,432 INFO Epoch: [16/1000][1123/1124] Time 0.103 (avg: 0.107) Loss 3010.071045 (avg: 1397.501614) lr 5.904900e-04
+2022-01-12 19:54:30,054 INFO Running single-scale test done
+2022-01-12 19:54:44,880 INFO Running multi-scale test done
+2022-01-12 19:54:45,092 INFO Performing initial testing...
+2022-01-12 19:56:45,080 INFO Epoch: [17/1000][1123/1124] Time 0.106 (avg: 0.107) Loss 332.714447 (avg: 1365.492637) lr 5.904900e-04
+2022-01-12 19:57:19,885 INFO Running single-scale test done
+2022-01-12 19:57:34,484 INFO Running multi-scale test done
+2022-01-12 19:57:34,648 INFO Performing initial testing...
+2022-01-12 19:59:33,978 INFO Epoch: [18/1000][1123/1124] Time 0.109 (avg: 0.106) Loss 1060.788696 (avg: 1351.052537) lr 5.904900e-04
+2022-01-12 20:00:02,966 INFO Running single-scale test done
+2022-01-12 20:00:17,611 INFO Running multi-scale test done
+2022-01-12 20:00:17,768 INFO Performing initial testing...
+2022-01-12 20:02:17,078 INFO Epoch: [19/1000][1123/1124] Time 0.106 (avg: 0.106) Loss 560.421326 (avg: 1332.548004) lr 5.314410e-04
+2022-01-12 20:02:45,969 INFO Running single-scale test done
+2022-01-12 20:03:00,701 INFO Running multi-scale test done
+2022-01-12 20:03:00,912 INFO Performing initial testing...
+2022-01-12 20:05:01,537 INFO Epoch: [20/1000][1123/1124] Time 0.103 (avg: 0.107) Loss 1418.565796 (avg: 1280.622023) lr 5.314410e-04
+2022-01-12 20:05:31,378 INFO Running single-scale test done
+2022-01-12 20:05:46,540 INFO Running multi-scale test done
+2022-01-12 20:05:46,762 INFO Performing initial testing...
+2022-01-12 20:07:47,288 INFO Epoch: [21/1000][1123/1124] Time 0.104 (avg: 0.107) Loss 4057.486084 (avg: 1255.617912) lr 5.314410e-04
+2022-01-12 20:08:18,679 INFO Running single-scale test done
+2022-01-12 20:08:33,727 INFO Running multi-scale test done
+2022-01-12 20:08:33,949 INFO Performing initial testing...
+2022-01-12 20:10:34,915 INFO Epoch: [22/1000][1123/1124] Time 0.105 (avg: 0.107) Loss 4384.095703 (avg: 1283.568237) lr 4.782969e-04
+2022-01-12 20:11:01,888 INFO Running single-scale test done
+2022-01-12 20:11:16,782 INFO Running multi-scale test done
+2022-01-12 20:11:16,945 INFO Performing initial testing...
+2022-01-12 20:13:16,718 INFO Epoch: [23/1000][1123/1124] Time 0.102 (avg: 0.106) Loss 748.149231 (avg: 1259.368652) lr 4.782969e-04
+2022-01-12 20:13:58,239 INFO Running single-scale test done
+2022-01-12 20:14:12,811 INFO Running multi-scale test done
+2022-01-12 20:14:12,983 INFO Performing initial testing...
+2022-01-12 20:16:12,262 INFO Epoch: [24/1000][1123/1124] Time 0.105 (avg: 0.106) Loss 430.840790 (avg: 1428.489920) lr 4.782969e-04
+2022-01-12 20:16:40,163 INFO Running single-scale test done
+2022-01-12 20:16:54,979 INFO Running multi-scale test done
+2022-01-12 20:16:55,185 INFO Performing initial testing...
+2022-01-12 20:18:54,994 INFO Epoch: [25/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 2033.027588 (avg: 1308.839021) lr 4.304672e-04
+2022-01-12 20:19:21,580 INFO Running single-scale test done
+2022-01-12 20:19:36,277 INFO Running multi-scale test done
+2022-01-12 20:19:36,450 INFO Performing initial testing...
+2022-01-12 20:21:35,512 INFO Epoch: [26/1000][1123/1124] Time 0.105 (avg: 0.106) Loss 653.006165 (avg: 1220.680533) lr 4.304672e-04
+2022-01-12 20:22:05,071 INFO Running single-scale test done
+2022-01-12 20:22:19,884 INFO Running multi-scale test done
+2022-01-12 20:22:20,103 INFO Performing initial testing...
+2022-01-12 20:24:19,576 INFO Epoch: [27/1000][1123/1124] Time 0.102 (avg: 0.106) Loss 1067.517822 (avg: 1215.102457) lr 4.304672e-04
+2022-01-12 20:24:47,669 INFO Running single-scale test done
+2022-01-12 20:25:02,482 INFO Running multi-scale test done
+2022-01-12 20:25:02,694 INFO Performing initial testing...
+2022-01-12 20:27:01,976 INFO Epoch: [28/1000][1123/1124] Time 0.105 (avg: 0.106) Loss 367.915649 (avg: 1166.292336) lr 3.874205e-04
+2022-01-12 20:27:30,174 INFO Running single-scale test done
+2022-01-12 20:27:44,783 INFO Running multi-scale test done
+2022-01-12 20:27:44,957 INFO Performing initial testing...
+2022-01-12 20:29:44,203 INFO Epoch: [29/1000][1123/1124] Time 0.102 (avg: 0.106) Loss 1074.323975 (avg: 1149.061839) lr 3.874205e-04
+2022-01-12 20:30:13,342 INFO Running single-scale test done
+2022-01-12 20:30:27,756 INFO Running multi-scale test done
+2022-01-12 20:30:27,915 INFO Performing initial testing...
+2022-01-12 20:32:28,123 INFO Epoch: [30/1000][1123/1124] Time 0.106 (avg: 0.107) Loss 1918.152344 (avg: 1157.202336) lr 3.874205e-04
+2022-01-12 20:32:57,276 INFO Running single-scale test done
+2022-01-12 20:33:12,485 INFO Running multi-scale test done
+2022-01-12 20:33:12,694 INFO Performing initial testing...
+2022-01-12 20:35:13,303 INFO Epoch: [31/1000][1123/1124] Time 0.105 (avg: 0.107) Loss 1782.932007 (avg: 1124.726464) lr 3.486784e-04
+2022-01-12 20:35:39,972 INFO Running single-scale test done
+2022-01-12 20:35:54,953 INFO Running multi-scale test done
+2022-01-12 20:35:55,174 INFO Performing initial testing...
+2022-01-12 20:37:54,888 INFO Epoch: [32/1000][1123/1124] Time 0.106 (avg: 0.106) Loss 5443.007324 (avg: 1115.499450) lr 3.486784e-04
+2022-01-12 20:38:25,436 INFO Running single-scale test done
+2022-01-12 20:38:40,284 INFO Running multi-scale test done
+2022-01-12 20:38:40,443 INFO Performing initial testing...
+2022-01-12 20:40:40,270 INFO Epoch: [33/1000][1123/1124] Time 0.106 (avg: 0.106) Loss 1648.925781 (avg: 1113.586258) lr 3.486784e-04
+2022-01-12 20:41:08,961 INFO Running single-scale test done
+2022-01-12 20:41:23,852 INFO Running multi-scale test done
+2022-01-12 20:41:24,062 INFO Performing initial testing...
+2022-01-12 20:43:23,607 INFO Epoch: [34/1000][1123/1124] Time 0.106 (avg: 0.106) Loss 1454.665405 (avg: 1087.268089) lr 3.138106e-04
+2022-01-12 20:43:49,252 INFO Running single-scale test done
+2022-01-12 20:44:04,366 INFO Running multi-scale test done
+2022-01-12 20:44:04,648 INFO Performing initial testing...
+2022-01-12 20:46:04,493 INFO Epoch: [35/1000][1123/1124] Time 0.104 (avg: 0.106) Loss 1183.984619 (avg: 1080.138365) lr 3.138106e-04
+2022-01-12 20:46:30,563 INFO Running single-scale test done
+2022-01-12 20:46:45,688 INFO Running multi-scale test done
+2022-01-12 20:46:45,903 INFO Performing initial testing...
+2022-01-12 20:48:45,513 INFO Epoch: [36/1000][1123/1124] Time 0.106 (avg: 0.106) Loss 617.959595 (avg: 1079.652839) lr 3.138106e-04
+2022-01-12 20:49:11,654 INFO Running single-scale test done
+2022-01-12 20:49:26,453 INFO Running multi-scale test done
+2022-01-12 20:49:26,660 INFO Performing initial testing...
+2022-01-12 20:51:26,684 INFO Epoch: [37/1000][1123/1124] Time 0.107 (avg: 0.107) Loss 453.027252 (avg: 1064.686808) lr 2.824295e-04
+2022-01-12 20:51:51,781 INFO Running single-scale test done
+2022-01-12 20:52:06,443 INFO Running multi-scale test done
+2022-01-12 20:52:06,689 INFO Performing initial testing...
+2022-01-12 20:54:06,274 INFO Epoch: [38/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 352.945312 (avg: 1088.111780) lr 2.824295e-04
+2022-01-12 20:54:32,272 INFO Running single-scale test done
+2022-01-12 20:54:46,752 INFO Running multi-scale test done
+2022-01-12 20:54:46,959 INFO Performing initial testing...
+2022-01-12 20:56:46,624 INFO Epoch: [39/1000][1123/1124] Time 0.106 (avg: 0.106) Loss 724.166565 (avg: 1060.712222) lr 2.824295e-04
+2022-01-12 20:57:12,073 INFO Running single-scale test done
+2022-01-12 20:57:26,973 INFO Running multi-scale test done
+2022-01-12 20:57:27,154 INFO Performing initial testing...
+2022-01-12 20:59:26,205 INFO Epoch: [40/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 797.641296 (avg: 1041.918333) lr 2.541866e-04
+2022-01-12 20:59:52,355 INFO Running single-scale test done
+2022-01-12 21:00:06,671 INFO Running multi-scale test done
+2022-01-12 21:00:06,838 INFO Performing initial testing...
+2022-01-12 21:02:06,262 INFO Epoch: [41/1000][1123/1124] Time 0.104 (avg: 0.106) Loss 554.056580 (avg: 1029.470978) lr 2.541866e-04
+2022-01-12 21:02:32,359 INFO Running single-scale test done
+2022-01-12 21:02:46,716 INFO Running multi-scale test done
+2022-01-12 21:02:46,921 INFO Performing initial testing...
+2022-01-12 21:04:46,288 INFO Epoch: [42/1000][1123/1124] Time 0.120 (avg: 0.106) Loss 1300.039917 (avg: 1034.837976) lr 2.541866e-04
+2022-01-12 21:05:13,566 INFO Running single-scale test done
+2022-01-12 21:05:28,577 INFO Running multi-scale test done
+2022-01-12 21:05:28,787 INFO Performing initial testing...
+2022-01-12 21:07:28,285 INFO Epoch: [43/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 148.373322 (avg: 1018.306103) lr 2.287679e-04
+2022-01-12 21:07:54,174 INFO Running single-scale test done
+2022-01-12 21:08:08,815 INFO Running multi-scale test done
+2022-01-12 21:08:09,030 INFO Performing initial testing...
+2022-01-12 21:10:08,282 INFO Epoch: [44/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 827.742188 (avg: 1007.625227) lr 2.287679e-04
+2022-01-12 21:10:33,152 INFO Running single-scale test done
+2022-01-12 21:10:47,815 INFO Running multi-scale test done
+2022-01-12 21:10:47,975 INFO Performing initial testing...
+2022-01-12 21:12:47,481 INFO Epoch: [45/1000][1123/1124] Time 0.106 (avg: 0.106) Loss 1026.415283 (avg: 1004.295463) lr 2.287679e-04
+2022-01-12 21:13:13,040 INFO Running single-scale test done
+2022-01-12 21:13:27,730 INFO Running multi-scale test done
+2022-01-12 21:13:27,928 INFO Performing initial testing...
+2022-01-12 21:15:27,326 INFO Epoch: [46/1000][1123/1124] Time 0.105 (avg: 0.106) Loss 1375.058472 (avg: 994.893500) lr 2.058911e-04
+2022-01-12 21:15:52,330 INFO Running single-scale test done
+2022-01-12 21:16:07,109 INFO Running multi-scale test done
+2022-01-12 21:16:07,268 INFO Performing initial testing...
+2022-01-12 21:18:07,691 INFO Epoch: [47/1000][1123/1124] Time 0.106 (avg: 0.107) Loss 1102.401855 (avg: 997.905570) lr 2.058911e-04
+2022-01-12 21:18:34,367 INFO Running single-scale test done
+2022-01-12 21:18:49,165 INFO Running multi-scale test done
+2022-01-12 21:18:49,378 INFO Performing initial testing...
+2022-01-12 21:20:49,874 INFO Epoch: [48/1000][1123/1124] Time 0.103 (avg: 0.107) Loss 459.621887 (avg: 998.984114) lr 2.058911e-04
+2022-01-12 21:21:15,770 INFO Running single-scale test done
+2022-01-12 21:21:30,296 INFO Running multi-scale test done
+2022-01-12 21:21:30,458 INFO Performing initial testing...
+2022-01-12 21:23:30,880 INFO Epoch: [49/1000][1123/1124] Time 0.104 (avg: 0.107) Loss 3578.891357 (avg: 993.604034) lr 1.853020e-04
+2022-01-12 21:23:58,371 INFO Running single-scale test done
+2022-01-12 21:24:13,075 INFO Running multi-scale test done
+2022-01-12 21:24:13,284 INFO Performing initial testing...
+2022-01-12 21:26:13,780 INFO Epoch: [50/1000][1123/1124] Time 0.103 (avg: 0.107) Loss 1013.043396 (avg: 982.820062) lr 1.853020e-04
+2022-01-12 21:26:40,169 INFO Running single-scale test done
+2022-01-12 21:26:54,981 INFO Running multi-scale test done
+2022-01-12 21:26:55,139 INFO Performing initial testing...
+2022-01-12 21:28:55,751 INFO Epoch: [51/1000][1123/1124] Time 0.105 (avg: 0.107) Loss 303.057831 (avg: 979.208628) lr 1.853020e-04
+2022-01-12 21:29:21,471 INFO Running single-scale test done
+2022-01-12 21:29:36,210 INFO Running multi-scale test done
+2022-01-12 21:29:36,371 INFO Performing initial testing...
+2022-01-12 21:31:38,387 INFO Epoch: [52/1000][1123/1124] Time 0.103 (avg: 0.108) Loss 318.622314 (avg: 967.483189) lr 1.667718e-04
+2022-01-12 21:32:03,997 INFO Running single-scale test done
+2022-01-12 21:32:18,913 INFO Running multi-scale test done
+2022-01-12 21:32:19,078 INFO Performing initial testing...
+2022-01-12 21:34:19,695 INFO Epoch: [53/1000][1123/1124] Time 0.105 (avg: 0.107) Loss 916.610474 (avg: 965.371241) lr 1.667718e-04
+2022-01-12 21:34:45,261 INFO Running single-scale test done
+2022-01-12 21:34:59,967 INFO Running multi-scale test done
+2022-01-12 21:35:00,123 INFO Performing initial testing...
+2022-01-12 21:37:00,966 INFO Epoch: [54/1000][1123/1124] Time 0.103 (avg: 0.107) Loss 554.483521 (avg: 960.082035) lr 1.667718e-04
+2022-01-12 21:37:27,573 INFO Running single-scale test done
+2022-01-12 21:37:42,327 INFO Running multi-scale test done
+2022-01-12 21:37:42,495 INFO Performing initial testing...
+2022-01-12 21:39:42,276 INFO Epoch: [55/1000][1123/1124] Time 0.104 (avg: 0.106) Loss 960.458008 (avg: 955.037763) lr 1.500946e-04
+2022-01-12 21:40:07,552 INFO Running single-scale test done
+2022-01-12 21:40:22,203 INFO Running multi-scale test done
+2022-01-12 21:40:22,414 INFO Performing initial testing...
+2022-01-12 21:42:22,307 INFO Epoch: [56/1000][1123/1124] Time 0.108 (avg: 0.106) Loss 431.677979 (avg: 949.809490) lr 1.500946e-04
+2022-01-12 21:42:50,069 INFO Running single-scale test done
+2022-01-12 21:43:05,256 INFO Running multi-scale test done
+2022-01-12 21:43:05,472 INFO Performing initial testing...
+2022-01-12 21:45:05,228 INFO Epoch: [57/1000][1123/1124] Time 0.101 (avg: 0.106) Loss 1065.914185 (avg: 948.956602) lr 1.500946e-04
+2022-01-12 21:45:30,361 INFO Running single-scale test done
+2022-01-12 21:45:44,740 INFO Running multi-scale test done
+2022-01-12 21:45:44,899 INFO Performing initial testing...
+2022-01-12 21:47:44,212 INFO Epoch: [58/1000][1123/1124] Time 0.104 (avg: 0.106) Loss 1101.702515 (avg: 945.625273) lr 1.350852e-04
+2022-01-12 21:48:10,167 INFO Running single-scale test done
+2022-01-12 21:48:24,829 INFO Running multi-scale test done
+2022-01-12 21:48:24,988 INFO Performing initial testing...
+2022-01-12 21:50:24,716 INFO Epoch: [59/1000][1123/1124] Time 0.104 (avg: 0.106) Loss 1070.115723 (avg: 941.673276) lr 1.350852e-04
+2022-01-12 21:50:50,939 INFO Running single-scale test done
+2022-01-12 21:51:05,350 INFO Running multi-scale test done
+2022-01-12 21:51:05,522 INFO Performing initial testing...
+2022-01-12 21:53:04,850 INFO Epoch: [60/1000][1123/1124] Time 0.102 (avg: 0.106) Loss 531.795532 (avg: 939.240705) lr 1.350852e-04
+2022-01-12 21:53:30,353 INFO Running single-scale test done
+2022-01-12 21:53:44,742 INFO Running multi-scale test done
+2022-01-12 21:53:44,899 INFO Performing initial testing...
+2022-01-12 21:55:44,815 INFO Epoch: [61/1000][1123/1124] Time 0.106 (avg: 0.107) Loss 980.819824 (avg: 931.618267) lr 1.215767e-04
+2022-01-12 21:56:14,652 INFO Running single-scale test done
+2022-01-12 21:56:29,174 INFO Running multi-scale test done
+2022-01-12 21:56:29,334 INFO Performing initial testing...
+2022-01-12 21:58:29,659 INFO Epoch: [62/1000][1123/1124] Time 0.103 (avg: 0.107) Loss 643.850037 (avg: 927.900025) lr 1.215767e-04
+2022-01-12 21:59:01,276 INFO Running single-scale test done
+2022-01-12 21:59:16,295 INFO Running multi-scale test done
+2022-01-12 21:59:16,519 INFO Performing initial testing...
+2022-01-12 22:01:16,602 INFO Epoch: [63/1000][1123/1124] Time 0.104 (avg: 0.107) Loss 122.990257 (avg: 924.340528) lr 1.215767e-04
+2022-01-12 22:01:44,477 INFO Running single-scale test done
+2022-01-12 22:01:59,398 INFO Running multi-scale test done
+2022-01-12 22:01:59,607 INFO Performing initial testing...
+2022-01-12 22:03:59,096 INFO Epoch: [64/1000][1123/1124] Time 0.106 (avg: 0.106) Loss 359.582733 (avg: 921.665537) lr 1.094190e-04
+2022-01-12 22:04:25,469 INFO Running single-scale test done
+2022-01-12 22:04:39,768 INFO Running multi-scale test done
+2022-01-12 22:04:39,952 INFO Performing initial testing...
+2022-01-12 22:06:40,085 INFO Epoch: [65/1000][1123/1124] Time 0.102 (avg: 0.107) Loss 1380.536621 (avg: 918.541398) lr 1.094190e-04
+2022-01-12 22:07:04,868 INFO Running single-scale test done
+2022-01-12 22:07:19,737 INFO Running multi-scale test done
+2022-01-12 22:07:19,960 INFO Performing initial testing...
+2022-01-12 22:09:20,709 INFO Epoch: [66/1000][1123/1124] Time 0.106 (avg: 0.107) Loss 3029.058350 (avg: 917.508429) lr 1.094190e-04
+2022-01-12 22:09:46,467 INFO Running single-scale test done
+2022-01-12 22:10:01,181 INFO Running multi-scale test done
+2022-01-12 22:10:01,399 INFO Performing initial testing...
+2022-01-12 22:12:00,673 INFO Epoch: [67/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 480.835938 (avg: 911.010617) lr 9.847709e-05
+2022-01-12 22:12:26,748 INFO Running single-scale test done
+2022-01-12 22:12:41,123 INFO Running multi-scale test done
+2022-01-12 22:12:41,329 INFO Performing initial testing...
+2022-01-12 22:14:40,886 INFO Epoch: [68/1000][1123/1124] Time 0.105 (avg: 0.106) Loss 299.950928 (avg: 908.182775) lr 9.847709e-05
+2022-01-12 22:15:07,447 INFO Running single-scale test done
+2022-01-12 22:15:22,095 INFO Running multi-scale test done
+2022-01-12 22:15:22,307 INFO Performing initial testing...
+2022-01-12 22:17:21,828 INFO Epoch: [69/1000][1123/1124] Time 0.107 (avg: 0.106) Loss 469.472015 (avg: 908.216459) lr 9.847709e-05
+2022-01-12 22:17:51,777 INFO Running single-scale test done
+2022-01-12 22:18:06,510 INFO Running multi-scale test done
+2022-01-12 22:18:06,674 INFO Performing initial testing...
+2022-01-12 22:20:06,759 INFO Epoch: [70/1000][1123/1124] Time 0.110 (avg: 0.107) Loss 1616.835693 (avg: 904.391517) lr 8.862938e-05
+2022-01-12 22:20:32,380 INFO Running single-scale test done
+2022-01-12 22:20:47,245 INFO Running multi-scale test done
+2022-01-12 22:20:47,458 INFO Performing initial testing...
+2022-01-12 22:22:47,115 INFO Epoch: [71/1000][1123/1124] Time 0.102 (avg: 0.106) Loss 775.096741 (avg: 904.654375) lr 8.862938e-05
+2022-01-12 22:23:14,270 INFO Running single-scale test done
+2022-01-12 22:23:28,976 INFO Running multi-scale test done
+2022-01-12 22:23:29,185 INFO Performing initial testing...
+2022-01-12 22:25:29,360 INFO Epoch: [72/1000][1123/1124] Time 0.104 (avg: 0.107) Loss 248.282913 (avg: 899.045427) lr 8.862938e-05
+2022-01-12 22:25:55,970 INFO Running single-scale test done
+2022-01-12 22:26:10,531 INFO Running multi-scale test done
+2022-01-12 22:26:10,744 INFO Performing initial testing...
+2022-01-12 22:28:10,529 INFO Epoch: [73/1000][1123/1124] Time 0.106 (avg: 0.106) Loss 163.384674 (avg: 897.738167) lr 7.976644e-05
+2022-01-12 22:28:41,402 INFO Running single-scale test done
+2022-01-12 22:28:56,221 INFO Running multi-scale test done
+2022-01-12 22:28:56,400 INFO Performing initial testing...
+2022-01-12 22:30:56,446 INFO Epoch: [74/1000][1123/1124] Time 0.104 (avg: 0.107) Loss 895.363464 (avg: 896.391178) lr 7.976644e-05
+2022-01-12 22:31:28,705 INFO Running single-scale test done
+2022-01-12 22:31:43,466 INFO Running multi-scale test done
+2022-01-12 22:31:43,692 INFO Performing initial testing...
+2022-01-12 22:33:43,668 INFO Epoch: [75/1000][1123/1124] Time 0.104 (avg: 0.107) Loss 1053.939819 (avg: 893.793237) lr 7.976644e-05
+2022-01-12 22:34:17,428 INFO Running single-scale test done
+2022-01-12 22:34:31,962 INFO Running multi-scale test done
+2022-01-12 22:34:32,172 INFO Performing initial testing...
+2022-01-12 22:36:31,874 INFO Epoch: [76/1000][1123/1124] Time 0.104 (avg: 0.106) Loss 245.130722 (avg: 891.035720) lr 7.178980e-05
+2022-01-12 22:37:05,172 INFO Running single-scale test done
+2022-01-12 22:37:19,681 INFO Running multi-scale test done
+2022-01-12 22:37:19,913 INFO Performing initial testing...
+2022-01-12 22:39:19,585 INFO Epoch: [77/1000][1123/1124] Time 0.106 (avg: 0.106) Loss 90.907455 (avg: 888.710867) lr 7.178980e-05
+2022-01-12 22:39:49,779 INFO Running single-scale test done
+2022-01-12 22:40:04,644 INFO Running multi-scale test done
+2022-01-12 22:40:04,888 INFO Performing initial testing...
+2022-01-12 22:42:04,761 INFO Epoch: [78/1000][1123/1124] Time 0.104 (avg: 0.107) Loss 597.538513 (avg: 886.015369) lr 7.178980e-05
+2022-01-12 22:42:34,771 INFO Running single-scale test done
+2022-01-12 22:42:49,361 INFO Running multi-scale test done
+2022-01-12 22:42:49,517 INFO Performing initial testing...
+2022-01-12 22:44:49,069 INFO Epoch: [79/1000][1123/1124] Time 0.104 (avg: 0.106) Loss 394.728668 (avg: 884.410105) lr 6.461082e-05
+2022-01-12 22:45:19,624 INFO Running single-scale test done
+2022-01-12 22:45:34,315 INFO Running multi-scale test done
+2022-01-12 22:45:34,515 INFO Performing initial testing...
+2022-01-12 22:47:34,298 INFO Epoch: [80/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 1694.967651 (avg: 884.033018) lr 6.461082e-05
+2022-01-12 22:48:03,544 INFO Running single-scale test done
+2022-01-12 22:48:18,098 INFO Running multi-scale test done
+2022-01-12 22:48:18,268 INFO Performing initial testing...
+2022-01-12 22:50:18,030 INFO Epoch: [81/1000][1123/1124] Time 0.104 (avg: 0.106) Loss 356.606140 (avg: 904.232942) lr 6.461082e-05
+2022-01-12 22:50:50,579 INFO Running single-scale test done
+2022-01-12 22:51:05,299 INFO Running multi-scale test done
+2022-01-12 22:51:05,508 INFO Performing initial testing...
+2022-01-12 22:53:05,080 INFO Epoch: [82/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 432.296234 (avg: 978.950128) lr 5.814974e-05
+2022-01-12 22:53:30,859 INFO Running single-scale test done
+2022-01-12 22:53:45,569 INFO Running multi-scale test done
+2022-01-12 22:53:45,729 INFO Performing initial testing...
+2022-01-12 22:55:45,267 INFO Epoch: [83/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 1188.965454 (avg: 906.177736) lr 5.814974e-05
+2022-01-12 22:56:11,569 INFO Running single-scale test done
+2022-01-12 22:56:26,338 INFO Running multi-scale test done
+2022-01-12 22:56:26,549 INFO Performing initial testing...
+2022-01-12 22:58:26,437 INFO Epoch: [84/1000][1123/1124] Time 0.102 (avg: 0.106) Loss 492.129852 (avg: 892.231735) lr 5.814974e-05
+2022-01-12 22:58:53,150 INFO Running single-scale test done
+2022-01-12 22:59:08,506 INFO Running multi-scale test done
+2022-01-12 22:59:08,715 INFO Performing initial testing...
+2022-01-12 23:01:08,380 INFO Epoch: [85/1000][1123/1124] Time 0.104 (avg: 0.106) Loss 161.858856 (avg: 884.529771) lr 5.233476e-05
+2022-01-12 23:01:36,103 INFO Running single-scale test done
+2022-01-12 23:01:50,738 INFO Running multi-scale test done
+2022-01-12 23:01:50,918 INFO Performing initial testing...
+2022-01-12 23:03:50,168 INFO Epoch: [86/1000][1123/1124] Time 0.106 (avg: 0.106) Loss 440.270599 (avg: 881.705461) lr 5.233476e-05
+2022-01-12 23:04:17,050 INFO Running single-scale test done
+2022-01-12 23:04:31,841 INFO Running multi-scale test done
+2022-01-12 23:04:32,053 INFO Performing initial testing...
+2022-01-12 23:06:31,589 INFO Epoch: [87/1000][1123/1124] Time 0.105 (avg: 0.106) Loss 522.127380 (avg: 879.560432) lr 5.233476e-05
+2022-01-12 23:06:58,086 INFO Running single-scale test done
+2022-01-12 23:07:12,698 INFO Running multi-scale test done
+2022-01-12 23:07:12,910 INFO Performing initial testing...
+2022-01-12 23:09:13,330 INFO Epoch: [88/1000][1123/1124] Time 0.105 (avg: 0.107) Loss 1494.029297 (avg: 877.061296) lr 4.710129e-05
+2022-01-12 23:09:39,789 INFO Running single-scale test done
+2022-01-12 23:09:54,315 INFO Running multi-scale test done
+2022-01-12 23:09:54,532 INFO Performing initial testing...
+2022-01-12 23:11:54,423 INFO Epoch: [89/1000][1123/1124] Time 0.104 (avg: 0.107) Loss 1027.798462 (avg: 876.309239) lr 4.710129e-05
+2022-01-12 23:12:19,089 INFO Running single-scale test done
+2022-01-12 23:12:33,982 INFO Running multi-scale test done
+2022-01-12 23:12:34,196 INFO Performing initial testing...
+2022-01-12 23:14:34,372 INFO Epoch: [90/1000][1123/1124] Time 0.105 (avg: 0.107) Loss 199.113327 (avg: 874.792091) lr 4.710129e-05
+2022-01-12 23:15:01,269 INFO Running single-scale test done
+2022-01-12 23:15:16,011 INFO Running multi-scale test done
+2022-01-12 23:15:16,226 INFO Performing initial testing...
+2022-01-12 23:17:15,968 INFO Epoch: [91/1000][1123/1124] Time 0.106 (avg: 0.106) Loss 173.894104 (avg: 872.552134) lr 4.239116e-05
+2022-01-12 23:17:41,285 INFO Running single-scale test done
+2022-01-12 23:17:55,844 INFO Running multi-scale test done
+2022-01-12 23:17:56,001 INFO Performing initial testing...
+2022-01-12 23:19:55,710 INFO Epoch: [92/1000][1123/1124] Time 0.106 (avg: 0.106) Loss 496.862885 (avg: 871.600734) lr 4.239116e-05
+2022-01-12 23:20:22,891 INFO Running single-scale test done
+2022-01-12 23:20:37,633 INFO Running multi-scale test done
+2022-01-12 23:20:37,838 INFO Performing initial testing...
+2022-01-12 23:22:37,990 INFO Epoch: [93/1000][1123/1124] Time 0.105 (avg: 0.107) Loss 124.409279 (avg: 870.559986) lr 4.239116e-05
+2022-01-12 23:23:06,372 INFO Running single-scale test done
+2022-01-12 23:23:20,918 INFO Running multi-scale test done
+2022-01-12 23:23:21,126 INFO Performing initial testing...
+2022-01-12 23:25:21,091 INFO Epoch: [94/1000][1123/1124] Time 0.104 (avg: 0.107) Loss 4091.271484 (avg: 869.364690) lr 3.815204e-05
+2022-01-12 23:25:49,987 INFO Running single-scale test done
+2022-01-12 23:26:04,691 INFO Running multi-scale test done
+2022-01-12 23:26:04,872 INFO Performing initial testing...
+2022-01-12 23:28:04,645 INFO Epoch: [95/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 1041.640259 (avg: 868.400442) lr 3.815204e-05
+2022-01-12 23:28:31,754 INFO Running single-scale test done
+2022-01-12 23:28:46,756 INFO Running multi-scale test done
+2022-01-12 23:28:46,968 INFO Performing initial testing...
+2022-01-12 23:30:46,762 INFO Epoch: [96/1000][1123/1124] Time 0.106 (avg: 0.106) Loss 838.400208 (avg: 868.088605) lr 3.815204e-05
+2022-01-12 23:31:13,756 INFO Running single-scale test done
+2022-01-12 23:31:28,298 INFO Running multi-scale test done
+2022-01-12 23:31:28,460 INFO Performing initial testing...
+2022-01-12 23:33:28,322 INFO Epoch: [97/1000][1123/1124] Time 0.106 (avg: 0.107) Loss 1027.101196 (avg: 866.601660) lr 3.433684e-05
+2022-01-12 23:33:57,565 INFO Running single-scale test done
+2022-01-12 23:34:12,268 INFO Running multi-scale test done
+2022-01-12 23:34:12,495 INFO Performing initial testing...
+2022-01-12 23:36:12,305 INFO Epoch: [98/1000][1123/1124] Time 0.104 (avg: 0.106) Loss 2393.219727 (avg: 866.623665) lr 3.433684e-05
+2022-01-12 23:36:40,542 INFO Running single-scale test done
+2022-01-12 23:36:55,029 INFO Running multi-scale test done
+2022-01-12 23:36:55,243 INFO Performing initial testing...
+2022-01-12 23:38:54,955 INFO Epoch: [99/1000][1123/1124] Time 0.108 (avg: 0.106) Loss 216.331894 (avg: 865.055327) lr 3.433684e-05
+2022-01-12 23:39:23,879 INFO Running single-scale test done
+2022-01-12 23:39:38,820 INFO Running multi-scale test done
+2022-01-12 23:39:39,031 INFO Performing initial testing...
+2022-01-12 23:41:39,096 INFO Epoch: [100/1000][1123/1124] Time 0.103 (avg: 0.107) Loss 1827.727173 (avg: 864.159174) lr 3.090315e-05
+2022-01-12 23:42:05,368 INFO Running single-scale test done
+2022-01-12 23:42:19,861 INFO Running multi-scale test done
+2022-01-12 23:42:20,021 INFO Performing initial testing...
+2022-01-12 23:44:19,840 INFO Epoch: [101/1000][1123/1124] Time 0.104 (avg: 0.106) Loss 1010.458801 (avg: 863.214183) lr 3.090315e-05
+2022-01-12 23:44:46,867 INFO Running single-scale test done
+2022-01-12 23:45:01,855 INFO Running multi-scale test done
+2022-01-12 23:45:02,071 INFO Performing initial testing...
+2022-01-12 23:47:02,057 INFO Epoch: [102/1000][1123/1124] Time 0.103 (avg: 0.107) Loss 250.545822 (avg: 863.747928) lr 3.090315e-05
+2022-01-12 23:47:28,260 INFO Running single-scale test done
+2022-01-12 23:47:42,632 INFO Running multi-scale test done
+2022-01-12 23:47:42,788 INFO Performing initial testing...
+2022-01-12 23:49:42,649 INFO Epoch: [103/1000][1123/1124] Time 0.105 (avg: 0.107) Loss 1187.945435 (avg: 861.975632) lr 2.781284e-05
+2022-01-12 23:50:09,261 INFO Running single-scale test done
+2022-01-12 23:50:23,856 INFO Running multi-scale test done
+2022-01-12 23:50:24,112 INFO Performing initial testing...
+2022-01-12 23:52:23,814 INFO Epoch: [104/1000][1123/1124] Time 0.104 (avg: 0.106) Loss 363.605469 (avg: 861.317777) lr 2.781284e-05
+2022-01-12 23:52:50,282 INFO Running single-scale test done
+2022-01-12 23:53:04,810 INFO Running multi-scale test done
+2022-01-12 23:53:05,016 INFO Performing initial testing...
+2022-01-12 23:55:04,711 INFO Epoch: [105/1000][1123/1124] Time 0.106 (avg: 0.106) Loss 764.308350 (avg: 860.970238) lr 2.781284e-05
+2022-01-12 23:55:31,571 INFO Running single-scale test done
+2022-01-12 23:55:46,453 INFO Running multi-scale test done
+2022-01-12 23:55:46,667 INFO Performing initial testing...
+2022-01-12 23:57:46,634 INFO Epoch: [106/1000][1123/1124] Time 0.107 (avg: 0.107) Loss 772.017273 (avg: 860.265553) lr 2.503156e-05
+2022-01-12 23:58:13,557 INFO Running single-scale test done
+2022-01-12 23:58:28,160 INFO Running multi-scale test done
+2022-01-12 23:58:28,374 INFO Performing initial testing...
+2022-01-13 00:00:27,952 INFO Epoch: [107/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 177.441132 (avg: 859.540710) lr 2.503156e-05
+2022-01-13 00:00:55,483 INFO Running single-scale test done
+2022-01-13 00:01:10,295 INFO Running multi-scale test done
+2022-01-13 00:01:10,504 INFO Performing initial testing...
+2022-01-13 00:03:10,242 INFO Epoch: [108/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 421.939941 (avg: 859.535163) lr 2.503156e-05
+2022-01-13 00:03:36,461 INFO Running single-scale test done
+2022-01-13 00:03:51,043 INFO Running multi-scale test done
+2022-01-13 00:03:51,204 INFO Performing initial testing...
+2022-01-13 00:05:50,932 INFO Epoch: [109/1000][1123/1124] Time 0.107 (avg: 0.106) Loss 806.247986 (avg: 858.414721) lr 2.252840e-05
+2022-01-13 00:06:16,959 INFO Running single-scale test done
+2022-01-13 00:06:31,544 INFO Running multi-scale test done
+2022-01-13 00:06:31,702 INFO Performing initial testing...
+2022-01-13 00:08:31,157 INFO Epoch: [110/1000][1123/1124] Time 0.101 (avg: 0.106) Loss 736.648743 (avg: 858.027249) lr 2.252840e-05
+2022-01-13 00:08:58,871 INFO Running single-scale test done
+2022-01-13 00:09:13,837 INFO Running multi-scale test done
+2022-01-13 00:09:14,013 INFO Performing initial testing...
+2022-01-13 00:11:14,592 INFO Epoch: [111/1000][1123/1124] Time 0.108 (avg: 0.107) Loss 158.663101 (avg: 857.128317) lr 2.252840e-05
+2022-01-13 00:11:42,068 INFO Running single-scale test done
+2022-01-13 00:11:56,719 INFO Running multi-scale test done
+2022-01-13 00:11:56,887 INFO Performing initial testing...
+2022-01-13 00:13:56,673 INFO Epoch: [112/1000][1123/1124] Time 0.106 (avg: 0.106) Loss 720.557983 (avg: 856.515004) lr 2.027556e-05
+2022-01-13 00:14:27,563 INFO Running single-scale test done
+2022-01-13 00:14:42,401 INFO Running multi-scale test done
+2022-01-13 00:14:42,569 INFO Performing initial testing...
+2022-01-13 00:16:42,253 INFO Epoch: [113/1000][1123/1124] Time 0.102 (avg: 0.106) Loss 301.330475 (avg: 856.353574) lr 2.027556e-05
+2022-01-13 00:17:10,169 INFO Running single-scale test done
+2022-01-13 00:17:25,084 INFO Running multi-scale test done
+2022-01-13 00:17:25,291 INFO Performing initial testing...
+2022-01-13 00:19:25,105 INFO Epoch: [114/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 2308.323242 (avg: 855.594868) lr 2.027556e-05
+2022-01-13 00:19:51,762 INFO Running single-scale test done
+2022-01-13 00:20:06,308 INFO Running multi-scale test done
+2022-01-13 00:20:06,466 INFO Performing initial testing...
+2022-01-13 00:22:06,581 INFO Epoch: [115/1000][1123/1124] Time 0.102 (avg: 0.107) Loss 682.603943 (avg: 855.001581) lr 1.824800e-05
+2022-01-13 00:22:35,167 INFO Running single-scale test done
+2022-01-13 00:22:49,563 INFO Running multi-scale test done
+2022-01-13 00:22:49,718 INFO Performing initial testing...
+2022-01-13 00:24:49,163 INFO Epoch: [116/1000][1123/1124] Time 0.106 (avg: 0.106) Loss 1006.415161 (avg: 854.566209) lr 1.824800e-05
+2022-01-13 00:25:15,827 INFO Running single-scale test done
+2022-01-13 00:25:30,491 INFO Running multi-scale test done
+2022-01-13 00:25:30,645 INFO Performing initial testing...
+2022-01-13 00:27:30,322 INFO Epoch: [117/1000][1123/1124] Time 0.105 (avg: 0.106) Loss 417.348053 (avg: 854.186781) lr 1.824800e-05
+2022-01-13 00:27:56,345 INFO Running single-scale test done
+2022-01-13 00:28:11,420 INFO Running multi-scale test done
+2022-01-13 00:28:11,630 INFO Performing initial testing...
+2022-01-13 00:30:12,686 INFO Epoch: [118/1000][1123/1124] Time 0.104 (avg: 0.108) Loss 2630.595459 (avg: 853.481454) lr 1.642320e-05
+2022-01-13 00:30:39,467 INFO Running single-scale test done
+2022-01-13 00:30:54,551 INFO Running multi-scale test done
+2022-01-13 00:30:54,771 INFO Performing initial testing...
+2022-01-13 00:32:56,041 INFO Epoch: [119/1000][1123/1124] Time 0.105 (avg: 0.108) Loss 629.356812 (avg: 853.118257) lr 1.642320e-05
+2022-01-13 00:33:21,894 INFO Running single-scale test done
+2022-01-13 00:33:36,916 INFO Running multi-scale test done
+2022-01-13 00:33:37,122 INFO Performing initial testing...
+2022-01-13 00:35:36,922 INFO Epoch: [120/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 247.186386 (avg: 852.842855) lr 1.642320e-05
+2022-01-13 00:36:03,157 INFO Running single-scale test done
+2022-01-13 00:36:17,583 INFO Running multi-scale test done
+2022-01-13 00:36:17,754 INFO Performing initial testing...
+2022-01-13 00:38:17,593 INFO Epoch: [121/1000][1123/1124] Time 0.104 (avg: 0.106) Loss 741.917114 (avg: 852.239315) lr 1.478088e-05
+2022-01-13 00:38:43,487 INFO Running single-scale test done
+2022-01-13 00:38:58,496 INFO Running multi-scale test done
+2022-01-13 00:38:58,710 INFO Performing initial testing...
+2022-01-13 00:40:58,817 INFO Epoch: [122/1000][1123/1124] Time 0.103 (avg: 0.107) Loss 268.312622 (avg: 851.763548) lr 1.478088e-05
+2022-01-13 00:41:24,294 INFO Running single-scale test done
+2022-01-13 00:41:38,697 INFO Running multi-scale test done
+2022-01-13 00:41:38,882 INFO Performing initial testing...
+2022-01-13 00:43:39,016 INFO Epoch: [123/1000][1123/1124] Time 0.103 (avg: 0.107) Loss 520.620544 (avg: 850.892838) lr 1.478088e-05
+2022-01-13 00:44:04,288 INFO Running single-scale test done
+2022-01-13 00:44:19,523 INFO Running multi-scale test done
+2022-01-13 00:44:19,723 INFO Performing initial testing...
+2022-01-13 00:46:19,942 INFO Epoch: [124/1000][1123/1124] Time 0.106 (avg: 0.107) Loss 859.516052 (avg: 850.633240) lr 1.330279e-05
+2022-01-13 00:46:46,375 INFO Running single-scale test done
+2022-01-13 00:47:00,934 INFO Running multi-scale test done
+2022-01-13 00:47:01,091 INFO Performing initial testing...
+2022-01-13 00:49:00,920 INFO Epoch: [125/1000][1123/1124] Time 0.104 (avg: 0.107) Loss 2336.974121 (avg: 850.539736) lr 1.330279e-05
+2022-01-13 00:49:26,961 INFO Running single-scale test done
+2022-01-13 00:49:41,639 INFO Running multi-scale test done
+2022-01-13 00:49:41,808 INFO Performing initial testing...
+2022-01-13 00:51:41,775 INFO Epoch: [126/1000][1123/1124] Time 0.103 (avg: 0.107) Loss 178.230408 (avg: 850.226719) lr 1.330279e-05
+2022-01-13 00:52:09,244 INFO Running single-scale test done
+2022-01-13 00:52:23,907 INFO Running multi-scale test done
+2022-01-13 00:52:24,066 INFO Performing initial testing...
+2022-01-13 00:54:23,982 INFO Epoch: [127/1000][1123/1124] Time 0.103 (avg: 0.107) Loss 84.276749 (avg: 849.590997) lr 1.197252e-05
+2022-01-13 00:54:50,111 INFO Running single-scale test done
+2022-01-13 00:55:04,605 INFO Running multi-scale test done
+2022-01-13 00:55:04,771 INFO Performing initial testing...
+2022-01-13 00:57:04,535 INFO Epoch: [128/1000][1123/1124] Time 0.107 (avg: 0.106) Loss 917.543274 (avg: 849.370102) lr 1.197252e-05
+2022-01-13 00:57:30,668 INFO Running single-scale test done
+2022-01-13 00:57:45,014 INFO Running multi-scale test done
+2022-01-13 00:57:45,179 INFO Performing initial testing...
+2022-01-13 00:59:45,307 INFO Epoch: [129/1000][1123/1124] Time 0.105 (avg: 0.107) Loss 739.108398 (avg: 849.096748) lr 1.197252e-05
+2022-01-13 01:00:11,469 INFO Running single-scale test done
+2022-01-13 01:00:26,146 INFO Running multi-scale test done
+2022-01-13 01:00:26,367 INFO Performing initial testing...
+2022-01-13 01:02:26,327 INFO Epoch: [130/1000][1123/1124] Time 0.104 (avg: 0.107) Loss 472.672180 (avg: 848.636683) lr 1.077526e-05
+2022-01-13 01:02:52,257 INFO Running single-scale test done
+2022-01-13 01:03:06,824 INFO Running multi-scale test done
+2022-01-13 01:03:06,998 INFO Performing initial testing...
+2022-01-13 01:05:07,220 INFO Epoch: [131/1000][1123/1124] Time 0.108 (avg: 0.107) Loss 2195.245850 (avg: 848.410080) lr 1.077526e-05
+2022-01-13 01:05:32,475 INFO Running single-scale test done
+2022-01-13 01:05:47,587 INFO Running multi-scale test done
+2022-01-13 01:05:47,802 INFO Performing initial testing...
+2022-01-13 01:07:48,369 INFO Epoch: [132/1000][1123/1124] Time 0.103 (avg: 0.107) Loss 1296.580566 (avg: 847.919224) lr 1.077526e-05
+2022-01-13 01:08:13,465 INFO Running single-scale test done
+2022-01-13 01:08:28,090 INFO Running multi-scale test done
+2022-01-13 01:08:28,260 INFO Performing initial testing...
+2022-01-13 01:10:28,157 INFO Epoch: [133/1000][1123/1124] Time 0.104 (avg: 0.107) Loss 205.913239 (avg: 847.582575) lr 9.697737e-06
+2022-01-13 01:10:53,410 INFO Running single-scale test done
+2022-01-13 01:11:08,452 INFO Running multi-scale test done
+2022-01-13 01:11:08,617 INFO Performing initial testing...
+2022-01-13 01:13:09,076 INFO Epoch: [134/1000][1123/1124] Time 0.105 (avg: 0.107) Loss 1336.518555 (avg: 847.486575) lr 9.697737e-06
+2022-01-13 01:13:35,561 INFO Running single-scale test done
+2022-01-13 01:13:50,642 INFO Running multi-scale test done
+2022-01-13 01:13:50,850 INFO Performing initial testing...
+2022-01-13 01:15:51,959 INFO Epoch: [135/1000][1123/1124] Time 0.104 (avg: 0.108) Loss 1493.290405 (avg: 847.262540) lr 9.697737e-06
+2022-01-13 01:16:18,089 INFO Running single-scale test done
+2022-01-13 01:16:33,014 INFO Running multi-scale test done
+2022-01-13 01:16:33,221 INFO Performing initial testing...
+2022-01-13 01:18:33,215 INFO Epoch: [136/1000][1123/1124] Time 0.103 (avg: 0.107) Loss 459.436371 (avg: 846.710549) lr 8.727964e-06
+2022-01-13 01:18:58,866 INFO Running single-scale test done
+2022-01-13 01:19:13,570 INFO Running multi-scale test done
+2022-01-13 01:19:13,784 INFO Performing initial testing...
+2022-01-13 01:21:14,290 INFO Epoch: [137/1000][1123/1124] Time 0.105 (avg: 0.107) Loss 868.378418 (avg: 846.518529) lr 8.727964e-06
+2022-01-13 01:21:40,468 INFO Running single-scale test done
+2022-01-13 01:21:55,178 INFO Running multi-scale test done
+2022-01-13 01:21:55,388 INFO Performing initial testing...
+2022-01-13 01:23:55,437 INFO Epoch: [138/1000][1123/1124] Time 0.107 (avg: 0.107) Loss 269.754944 (avg: 846.277071) lr 8.727964e-06
+2022-01-13 01:24:21,856 INFO Running single-scale test done
+2022-01-13 01:24:36,659 INFO Running multi-scale test done
+2022-01-13 01:24:36,835 INFO Performing initial testing...
+2022-01-13 01:26:37,207 INFO Epoch: [139/1000][1123/1124] Time 0.108 (avg: 0.107) Loss 2327.925293 (avg: 845.805767) lr 7.855167e-06
+2022-01-13 01:27:02,847 INFO Running single-scale test done
+2022-01-13 01:27:17,550 INFO Running multi-scale test done
+2022-01-13 01:27:17,763 INFO Performing initial testing...
+2022-01-13 01:29:18,551 INFO Epoch: [140/1000][1123/1124] Time 0.108 (avg: 0.107) Loss 81.930580 (avg: 845.708586) lr 7.855167e-06
+2022-01-13 01:29:44,779 INFO Running single-scale test done
+2022-01-13 01:29:59,978 INFO Running multi-scale test done
+2022-01-13 01:30:00,191 INFO Performing initial testing...
+2022-01-13 01:32:00,387 INFO Epoch: [141/1000][1123/1124] Time 0.106 (avg: 0.107) Loss 337.079865 (avg: 845.481774) lr 7.855167e-06
+2022-01-13 01:32:25,182 INFO Running single-scale test done
+2022-01-13 01:32:40,156 INFO Running multi-scale test done
+2022-01-13 01:32:40,367 INFO Performing initial testing...
+2022-01-13 01:34:40,454 INFO Epoch: [142/1000][1123/1124] Time 0.102 (avg: 0.107) Loss 395.816132 (avg: 845.180251) lr 7.069650e-06
+2022-01-13 01:35:06,274 INFO Running single-scale test done
+2022-01-13 01:35:21,281 INFO Running multi-scale test done
+2022-01-13 01:35:21,496 INFO Performing initial testing...
+2022-01-13 01:37:21,578 INFO Epoch: [143/1000][1123/1124] Time 0.106 (avg: 0.107) Loss 520.819214 (avg: 845.151996) lr 7.069650e-06
+2022-01-13 01:37:46,971 INFO Running single-scale test done
+2022-01-13 01:38:02,031 INFO Running multi-scale test done
+2022-01-13 01:38:02,239 INFO Performing initial testing...
+2022-01-13 01:40:01,776 INFO Epoch: [144/1000][1123/1124] Time 0.105 (avg: 0.106) Loss 514.922913 (avg: 844.782889) lr 7.069650e-06
+2022-01-13 01:40:27,864 INFO Running single-scale test done
+2022-01-13 01:40:42,245 INFO Running multi-scale test done
+2022-01-13 01:40:42,453 INFO Performing initial testing...
+2022-01-13 01:42:42,203 INFO Epoch: [145/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 2322.776123 (avg: 844.584701) lr 6.362685e-06
+2022-01-13 01:43:07,565 INFO Running single-scale test done
+2022-01-13 01:43:22,267 INFO Running multi-scale test done
+2022-01-13 01:43:22,492 INFO Performing initial testing...
+2022-01-13 01:45:22,602 INFO Epoch: [146/1000][1123/1124] Time 0.105 (avg: 0.107) Loss 896.810059 (avg: 844.455803) lr 6.362685e-06
+2022-01-13 01:45:48,831 INFO Running single-scale test done
+2022-01-13 01:46:03,549 INFO Running multi-scale test done
+2022-01-13 01:46:03,759 INFO Performing initial testing...
+2022-01-13 01:48:05,135 INFO Epoch: [147/1000][1123/1124] Time 0.104 (avg: 0.108) Loss 992.562012 (avg: 844.232397) lr 6.362685e-06
+2022-01-13 01:48:30,865 INFO Running single-scale test done
+2022-01-13 01:48:45,367 INFO Running multi-scale test done
+2022-01-13 01:48:45,578 INFO Performing initial testing...
+2022-01-13 01:50:45,553 INFO Epoch: [148/1000][1123/1124] Time 0.104 (avg: 0.107) Loss 208.872543 (avg: 843.825435) lr 5.726417e-06
+2022-01-13 01:51:12,566 INFO Running single-scale test done
+2022-01-13 01:51:27,276 INFO Running multi-scale test done
+2022-01-13 01:51:27,512 INFO Performing initial testing...
+2022-01-13 01:53:27,264 INFO Epoch: [149/1000][1123/1124] Time 0.105 (avg: 0.106) Loss 3088.984863 (avg: 843.759315) lr 5.726417e-06
+2022-01-13 01:53:53,160 INFO Running single-scale test done
+2022-01-13 01:54:07,757 INFO Running multi-scale test done
+2022-01-13 01:54:07,935 INFO Performing initial testing...
+2022-01-13 01:56:07,526 INFO Epoch: [150/1000][1123/1124] Time 0.108 (avg: 0.106) Loss 466.918213 (avg: 843.681753) lr 5.726417e-06
+2022-01-13 01:56:33,871 INFO Running single-scale test done
+2022-01-13 01:56:48,507 INFO Running multi-scale test done
+2022-01-13 01:56:48,666 INFO Performing initial testing...
+2022-01-13 01:58:48,817 INFO Epoch: [151/1000][1123/1124] Time 0.101 (avg: 0.107) Loss 710.406616 (avg: 843.422508) lr 5.153775e-06
+2022-01-13 01:59:14,669 INFO Running single-scale test done
+2022-01-13 01:59:28,963 INFO Running multi-scale test done
+2022-01-13 01:59:29,173 INFO Performing initial testing...
+2022-01-13 02:01:29,016 INFO Epoch: [152/1000][1123/1124] Time 0.107 (avg: 0.106) Loss 1242.129395 (avg: 843.296059) lr 5.153775e-06
+2022-01-13 02:01:55,360 INFO Running single-scale test done
+2022-01-13 02:02:09,815 INFO Running multi-scale test done
+2022-01-13 02:02:09,974 INFO Performing initial testing...
+2022-01-13 02:04:09,557 INFO Epoch: [153/1000][1123/1124] Time 0.104 (avg: 0.106) Loss 2320.313477 (avg: 843.206747) lr 5.153775e-06
+2022-01-13 02:04:36,061 INFO Running single-scale test done
+2022-01-13 02:04:51,153 INFO Running multi-scale test done
+2022-01-13 02:04:51,370 INFO Performing initial testing...
+2022-01-13 02:06:51,130 INFO Epoch: [154/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 2629.448975 (avg: 842.922121) lr 4.638398e-06
+2022-01-13 02:07:17,574 INFO Running single-scale test done
+2022-01-13 02:07:32,531 INFO Running multi-scale test done
+2022-01-13 02:07:32,738 INFO Performing initial testing...
+2022-01-13 02:09:33,603 INFO Epoch: [155/1000][1123/1124] Time 0.103 (avg: 0.107) Loss 488.015594 (avg: 842.834287) lr 4.638398e-06
+2022-01-13 02:09:58,562 INFO Running single-scale test done
+2022-01-13 02:10:13,618 INFO Running multi-scale test done
+2022-01-13 02:10:13,855 INFO Performing initial testing...
+2022-01-13 02:12:14,433 INFO Epoch: [156/1000][1123/1124] Time 0.106 (avg: 0.107) Loss 424.129730 (avg: 842.631831) lr 4.638398e-06
+2022-01-13 02:12:40,368 INFO Running single-scale test done
+2022-01-13 02:12:55,449 INFO Running multi-scale test done
+2022-01-13 02:12:55,665 INFO Performing initial testing...
+2022-01-13 02:14:56,887 INFO Epoch: [157/1000][1123/1124] Time 0.104 (avg: 0.108) Loss 1830.221680 (avg: 842.530616) lr 4.174558e-06
+2022-01-13 02:15:21,265 INFO Running single-scale test done
+2022-01-13 02:15:36,510 INFO Running multi-scale test done
+2022-01-13 02:15:36,724 INFO Performing initial testing...
+2022-01-13 02:17:38,263 INFO Epoch: [158/1000][1123/1124] Time 0.104 (avg: 0.108) Loss 1708.217163 (avg: 842.427726) lr 4.174558e-06
+2022-01-13 02:18:04,563 INFO Running single-scale test done
+2022-01-13 02:18:19,195 INFO Running multi-scale test done
+2022-01-13 02:18:19,400 INFO Performing initial testing...
+2022-01-13 02:20:19,403 INFO Epoch: [159/1000][1123/1124] Time 0.103 (avg: 0.107) Loss 201.494247 (avg: 842.305519) lr 4.174558e-06
+2022-01-13 02:20:44,236 INFO Running single-scale test done
+2022-01-13 02:20:58,891 INFO Running multi-scale test done
+2022-01-13 02:20:59,056 INFO Performing initial testing...
+2022-01-13 02:22:59,226 INFO Epoch: [160/1000][1123/1124] Time 0.104 (avg: 0.107) Loss 328.521301 (avg: 842.074968) lr 3.757102e-06
+2022-01-13 02:23:24,847 INFO Running single-scale test done
+2022-01-13 02:23:39,653 INFO Running multi-scale test done
+2022-01-13 02:23:39,865 INFO Performing initial testing...
+2022-01-13 02:25:40,074 INFO Epoch: [161/1000][1123/1124] Time 0.105 (avg: 0.107) Loss 271.174133 (avg: 842.049156) lr 3.757102e-06
+2022-01-13 02:26:04,260 INFO Running single-scale test done
+2022-01-13 02:26:19,027 INFO Running multi-scale test done
+2022-01-13 02:26:19,237 INFO Performing initial testing...
+2022-01-13 02:28:19,353 INFO Epoch: [162/1000][1123/1124] Time 0.104 (avg: 0.107) Loss 1552.163452 (avg: 841.868221) lr 3.757102e-06
+2022-01-13 02:28:43,859 INFO Running single-scale test done
+2022-01-13 02:28:58,466 INFO Running multi-scale test done
+2022-01-13 02:28:58,673 INFO Performing initial testing...
+2022-01-13 02:30:58,471 INFO Epoch: [163/1000][1123/1124] Time 0.106 (avg: 0.106) Loss 291.542084 (avg: 841.767441) lr 3.381392e-06
+2022-01-13 02:31:23,760 INFO Running single-scale test done
+2022-01-13 02:31:38,751 INFO Running multi-scale test done
+2022-01-13 02:31:38,960 INFO Performing initial testing...
+2022-01-13 02:33:39,073 INFO Epoch: [164/1000][1123/1124] Time 0.102 (avg: 0.107) Loss 736.606995 (avg: 841.673012) lr 3.381392e-06
+2022-01-13 02:34:04,068 INFO Running single-scale test done
+2022-01-13 02:34:18,894 INFO Running multi-scale test done
+2022-01-13 02:34:19,051 INFO Performing initial testing...
+2022-01-13 02:36:19,028 INFO Epoch: [165/1000][1123/1124] Time 0.103 (avg: 0.107) Loss 147.077881 (avg: 841.572065) lr 3.381392e-06
+2022-01-13 02:36:44,052 INFO Running single-scale test done
+2022-01-13 02:36:58,574 INFO Running multi-scale test done
+2022-01-13 02:36:58,728 INFO Performing initial testing...
+2022-01-13 02:38:58,658 INFO Epoch: [166/1000][1123/1124] Time 0.105 (avg: 0.107) Loss 292.468353 (avg: 841.381929) lr 3.043253e-06
+2022-01-13 02:39:23,358 INFO Running single-scale test done
+2022-01-13 02:39:38,223 INFO Running multi-scale test done
+2022-01-13 02:39:38,385 INFO Performing initial testing...
+2022-01-13 02:41:38,851 INFO Epoch: [167/1000][1123/1124] Time 0.108 (avg: 0.107) Loss 881.723633 (avg: 841.363125) lr 3.043253e-06
+2022-01-13 02:42:07,520 INFO Running single-scale test done
+2022-01-13 02:42:21,825 INFO Running multi-scale test done
+2022-01-13 02:42:22,040 INFO Performing initial testing...
+2022-01-13 02:44:21,373 INFO Epoch: [168/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 1187.248291 (avg: 841.292946) lr 3.043253e-06
+2022-01-13 02:44:47,068 INFO Running single-scale test done
+2022-01-13 02:45:02,060 INFO Running multi-scale test done
+2022-01-13 02:45:02,259 INFO Performing initial testing...
+2022-01-13 02:47:02,013 INFO Epoch: [169/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 656.446533 (avg: 841.137119) lr 2.738927e-06
+2022-01-13 02:47:26,869 INFO Running single-scale test done
+2022-01-13 02:47:41,669 INFO Running multi-scale test done
+2022-01-13 02:47:41,837 INFO Performing initial testing...
+2022-01-13 02:49:41,522 INFO Epoch: [170/1000][1123/1124] Time 0.105 (avg: 0.106) Loss 192.126740 (avg: 841.072707) lr 2.738927e-06
+2022-01-13 02:50:06,072 INFO Running single-scale test done
+2022-01-13 02:50:20,858 INFO Running multi-scale test done
+2022-01-13 02:50:21,028 INFO Performing initial testing...
+2022-01-13 02:52:20,577 INFO Epoch: [171/1000][1123/1124] Time 0.102 (avg: 0.106) Loss 509.926575 (avg: 840.987791) lr 2.738927e-06
+2022-01-13 02:52:44,913 INFO Running single-scale test done
+2022-01-13 02:52:59,345 INFO Running multi-scale test done
+2022-01-13 02:52:59,525 INFO Performing initial testing...
+2022-01-13 02:54:59,174 INFO Epoch: [172/1000][1123/1124] Time 0.105 (avg: 0.106) Loss 237.343048 (avg: 840.942179) lr 2.465035e-06
+2022-01-13 02:55:25,153 INFO Running single-scale test done
+2022-01-13 02:55:40,061 INFO Running multi-scale test done
+2022-01-13 02:55:40,271 INFO Performing initial testing...
+2022-01-13 02:57:39,911 INFO Epoch: [173/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 932.084412 (avg: 840.864852) lr 2.465035e-06
+2022-01-13 02:58:06,578 INFO Running single-scale test done
+2022-01-13 02:58:21,256 INFO Running multi-scale test done
+2022-01-13 02:58:21,425 INFO Performing initial testing...
+2022-01-13 03:00:20,787 INFO Epoch: [174/1000][1123/1124] Time 0.102 (avg: 0.106) Loss 1075.902710 (avg: 840.801571) lr 2.465035e-06
+2022-01-13 03:00:46,274 INFO Running single-scale test done
+2022-01-13 03:01:00,874 INFO Running multi-scale test done
+2022-01-13 03:01:01,088 INFO Performing initial testing...
+2022-01-13 03:03:00,783 INFO Epoch: [175/1000][1123/1124] Time 0.102 (avg: 0.106) Loss 2806.608154 (avg: 840.614851) lr 2.218531e-06
+2022-01-13 03:03:26,477 INFO Running single-scale test done
+2022-01-13 03:03:40,991 INFO Running multi-scale test done
+2022-01-13 03:03:41,147 INFO Performing initial testing...
+2022-01-13 03:05:40,625 INFO Epoch: [176/1000][1123/1124] Time 0.102 (avg: 0.106) Loss 564.086609 (avg: 840.643145) lr 2.218531e-06
+2022-01-13 03:06:05,670 INFO Running single-scale test done
+2022-01-13 03:06:20,385 INFO Running multi-scale test done
+2022-01-13 03:06:20,587 INFO Performing initial testing...
+2022-01-13 03:08:20,271 INFO Epoch: [177/1000][1123/1124] Time 0.108 (avg: 0.106) Loss 227.454056 (avg: 840.513708) lr 2.218531e-06
+2022-01-13 03:08:44,656 INFO Running single-scale test done
+2022-01-13 03:08:59,626 INFO Running multi-scale test done
+2022-01-13 03:08:59,790 INFO Performing initial testing...
+2022-01-13 03:10:59,086 INFO Epoch: [178/1000][1123/1124] Time 0.105 (avg: 0.106) Loss 338.100739 (avg: 840.468723) lr 1.996678e-06
+2022-01-13 03:11:24,971 INFO Running single-scale test done
+2022-01-13 03:11:39,522 INFO Running multi-scale test done
+2022-01-13 03:11:39,711 INFO Performing initial testing...
+2022-01-13 03:13:40,209 INFO Epoch: [179/1000][1123/1124] Time 0.104 (avg: 0.107) Loss 1777.427979 (avg: 840.383285) lr 1.996678e-06
+2022-01-13 03:14:04,681 INFO Running single-scale test done
+2022-01-13 03:14:19,151 INFO Running multi-scale test done
+2022-01-13 03:14:19,309 INFO Performing initial testing...
+2022-01-13 03:16:19,385 INFO Epoch: [180/1000][1123/1124] Time 0.103 (avg: 0.107) Loss 200.352219 (avg: 840.334856) lr 1.996678e-06
+2022-01-13 03:16:43,563 INFO Running single-scale test done
+2022-01-13 03:16:58,062 INFO Running multi-scale test done
+2022-01-13 03:16:58,231 INFO Performing initial testing...
+2022-01-13 03:18:57,556 INFO Epoch: [181/1000][1123/1124] Time 0.104 (avg: 0.106) Loss 1287.098022 (avg: 840.227142) lr 1.797010e-06
+2022-01-13 03:19:21,850 INFO Running single-scale test done
+2022-01-13 03:19:36,763 INFO Running multi-scale test done
+2022-01-13 03:19:36,933 INFO Performing initial testing...
+2022-01-13 03:21:36,526 INFO Epoch: [182/1000][1123/1124] Time 0.104 (avg: 0.106) Loss 867.619812 (avg: 840.198556) lr 1.797010e-06
+2022-01-13 03:22:00,952 INFO Running single-scale test done
+2022-01-13 03:22:15,134 INFO Running multi-scale test done
+2022-01-13 03:22:15,308 INFO Performing initial testing...
+2022-01-13 03:24:15,102 INFO Epoch: [183/1000][1123/1124] Time 0.104 (avg: 0.106) Loss 520.581238 (avg: 840.121954) lr 1.797010e-06
+2022-01-13 03:24:40,264 INFO Running single-scale test done
+2022-01-13 03:24:54,842 INFO Running multi-scale test done
+2022-01-13 03:24:55,021 INFO Performing initial testing...
+2022-01-13 03:26:54,568 INFO Epoch: [184/1000][1123/1124] Time 0.105 (avg: 0.106) Loss 837.627380 (avg: 840.067390) lr 1.617309e-06
+2022-01-13 03:27:19,359 INFO Running single-scale test done
+2022-01-13 03:27:33,767 INFO Running multi-scale test done
+2022-01-13 03:27:33,946 INFO Performing initial testing...
+2022-01-13 03:29:33,803 INFO Epoch: [185/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 644.592041 (avg: 840.029623) lr 1.617309e-06
+2022-01-13 03:29:58,731 INFO Running single-scale test done
+2022-01-13 03:30:12,897 INFO Running multi-scale test done
+2022-01-13 03:30:13,112 INFO Performing initial testing...
+2022-01-13 03:32:12,395 INFO Epoch: [186/1000][1123/1124] Time 0.108 (avg: 0.106) Loss 6298.974121 (avg: 839.944173) lr 1.617309e-06
+2022-01-13 03:32:36,822 INFO Running single-scale test done
+2022-01-13 03:32:51,345 INFO Running multi-scale test done
+2022-01-13 03:32:51,554 INFO Performing initial testing...
+2022-01-13 03:34:51,143 INFO Epoch: [187/1000][1123/1124] Time 0.101 (avg: 0.106) Loss 210.263382 (avg: 839.905522) lr 1.455578e-06
+2022-01-13 03:35:16,456 INFO Running single-scale test done
+2022-01-13 03:35:31,065 INFO Running multi-scale test done
+2022-01-13 03:35:31,277 INFO Performing initial testing...
+2022-01-13 03:37:31,119 INFO Epoch: [188/1000][1123/1124] Time 0.102 (avg: 0.106) Loss 828.496521 (avg: 839.846719) lr 1.455578e-06
+2022-01-13 03:37:56,877 INFO Running single-scale test done
+2022-01-13 03:38:11,342 INFO Running multi-scale test done
+2022-01-13 03:38:11,551 INFO Performing initial testing...
+2022-01-13 03:40:11,063 INFO Epoch: [189/1000][1123/1124] Time 0.104 (avg: 0.106) Loss 323.748718 (avg: 839.843605) lr 1.455578e-06
+2022-01-13 03:40:37,103 INFO Running single-scale test done
+2022-01-13 03:40:51,893 INFO Running multi-scale test done
+2022-01-13 03:40:52,116 INFO Performing initial testing...
+2022-01-13 03:42:51,670 INFO Epoch: [190/1000][1123/1124] Time 0.104 (avg: 0.106) Loss 496.227997 (avg: 839.750753) lr 1.310021e-06
+2022-01-13 03:43:17,477 INFO Running single-scale test done
+2022-01-13 03:43:32,177 INFO Running multi-scale test done
+2022-01-13 03:43:32,341 INFO Performing initial testing...
+2022-01-13 03:45:31,859 INFO Epoch: [191/1000][1123/1124] Time 0.106 (avg: 0.106) Loss 3368.796143 (avg: 839.700814) lr 1.310021e-06
+2022-01-13 03:45:57,175 INFO Running single-scale test done
+2022-01-13 03:46:11,980 INFO Running multi-scale test done
+2022-01-13 03:46:12,146 INFO Performing initial testing...
+2022-01-13 03:48:12,065 INFO Epoch: [192/1000][1123/1124] Time 0.103 (avg: 0.107) Loss 405.504761 (avg: 839.712887) lr 1.310021e-06
+2022-01-13 03:48:38,048 INFO Running single-scale test done
+2022-01-13 03:48:52,796 INFO Running multi-scale test done
+2022-01-13 03:48:52,969 INFO Performing initial testing...
+2022-01-13 03:50:52,629 INFO Epoch: [193/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 238.499557 (avg: 839.624966) lr 1.179018e-06
+2022-01-13 03:51:19,255 INFO Running single-scale test done
+2022-01-13 03:51:33,975 INFO Running multi-scale test done
+2022-01-13 03:51:34,133 INFO Performing initial testing...
+2022-01-13 03:53:33,851 INFO Epoch: [194/1000][1123/1124] Time 0.110 (avg: 0.106) Loss 556.555298 (avg: 839.586770) lr 1.179018e-06
+2022-01-13 03:53:59,457 INFO Running single-scale test done
+2022-01-13 03:54:14,275 INFO Running multi-scale test done
+2022-01-13 03:54:14,488 INFO Performing initial testing...
+2022-01-13 03:56:13,992 INFO Epoch: [195/1000][1123/1124] Time 0.105 (avg: 0.106) Loss 1417.175659 (avg: 839.563113) lr 1.179018e-06
+2022-01-13 03:56:39,581 INFO Running single-scale test done
+2022-01-13 03:56:54,008 INFO Running multi-scale test done
+2022-01-13 03:56:54,171 INFO Performing initial testing...
+2022-01-13 03:58:53,729 INFO Epoch: [196/1000][1123/1124] Time 0.108 (avg: 0.106) Loss 641.898865 (avg: 839.505702) lr 1.061117e-06
+2022-01-13 03:59:19,575 INFO Running single-scale test done
+2022-01-13 03:59:34,169 INFO Running multi-scale test done
+2022-01-13 03:59:34,381 INFO Performing initial testing...
+2022-01-13 04:01:34,531 INFO Epoch: [197/1000][1123/1124] Time 0.105 (avg: 0.107) Loss 401.086273 (avg: 839.473762) lr 1.061117e-06
+2022-01-13 04:01:59,163 INFO Running single-scale test done
+2022-01-13 04:02:13,659 INFO Running multi-scale test done
+2022-01-13 04:02:13,872 INFO Performing initial testing...
+2022-01-13 04:04:13,459 INFO Epoch: [198/1000][1123/1124] Time 0.105 (avg: 0.106) Loss 207.217941 (avg: 839.462753) lr 1.061117e-06
+2022-01-13 04:04:37,965 INFO Running single-scale test done
+2022-01-13 04:04:52,901 INFO Running multi-scale test done
+2022-01-13 04:04:53,109 INFO Performing initial testing...
+2022-01-13 04:06:52,874 INFO Epoch: [199/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 1245.647095 (avg: 839.428447) lr 9.550050e-07
+2022-01-13 04:07:18,068 INFO Running single-scale test done
+2022-01-13 04:07:32,836 INFO Running multi-scale test done
+2022-01-13 04:07:33,000 INFO Performing initial testing...
+2022-01-13 04:09:33,297 INFO Epoch: [200/1000][1123/1124] Time 0.104 (avg: 0.107) Loss 406.065460 (avg: 839.383032) lr 9.550050e-07
+2022-01-13 04:09:59,067 INFO Running single-scale test done
+2022-01-13 04:10:14,157 INFO Running multi-scale test done
+2022-01-13 04:10:14,368 INFO Performing initial testing...
+2022-01-13 04:12:14,256 INFO Epoch: [201/1000][1123/1124] Time 0.103 (avg: 0.107) Loss 302.882294 (avg: 839.358631) lr 9.550050e-07
+2022-01-13 04:12:40,331 INFO Running single-scale test done
+2022-01-13 04:12:54,967 INFO Running multi-scale test done
+2022-01-13 04:12:55,178 INFO Performing initial testing...
+2022-01-13 04:14:54,848 INFO Epoch: [202/1000][1123/1124] Time 0.106 (avg: 0.106) Loss 323.655823 (avg: 839.314425) lr 8.595045e-07
+2022-01-13 04:15:21,370 INFO Running single-scale test done
+2022-01-13 04:15:36,136 INFO Running multi-scale test done
+2022-01-13 04:15:36,303 INFO Performing initial testing...
+2022-01-13 04:17:35,998 INFO Epoch: [203/1000][1123/1124] Time 0.110 (avg: 0.106) Loss 643.790649 (avg: 839.303771) lr 8.595045e-07
+2022-01-13 04:18:01,496 INFO Running single-scale test done
+2022-01-13 04:18:16,266 INFO Running multi-scale test done
+2022-01-13 04:18:16,429 INFO Performing initial testing...
+2022-01-13 04:20:16,119 INFO Epoch: [204/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 1125.755005 (avg: 839.274699) lr 8.595045e-07
+2022-01-13 04:20:41,218 INFO Running single-scale test done
+2022-01-13 04:20:56,014 INFO Running multi-scale test done
+2022-01-13 04:20:56,227 INFO Performing initial testing...
+2022-01-13 04:22:56,118 INFO Epoch: [205/1000][1123/1124] Time 0.106 (avg: 0.107) Loss 875.984558 (avg: 839.215104) lr 7.735540e-07
+2022-01-13 04:23:21,765 INFO Running single-scale test done
+2022-01-13 04:23:36,231 INFO Running multi-scale test done
+2022-01-13 04:23:36,393 INFO Performing initial testing...
+2022-01-13 04:25:36,162 INFO Epoch: [206/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 182.975815 (avg: 839.199799) lr 7.735540e-07
+2022-01-13 04:26:00,556 INFO Running single-scale test done
+2022-01-13 04:26:15,173 INFO Running multi-scale test done
+2022-01-13 04:26:15,337 INFO Performing initial testing...
+2022-01-13 04:28:15,024 INFO Epoch: [207/1000][1123/1124] Time 0.105 (avg: 0.106) Loss 676.503174 (avg: 839.194035) lr 7.735540e-07
+2022-01-13 04:28:40,163 INFO Running single-scale test done
+2022-01-13 04:28:54,772 INFO Running multi-scale test done
+2022-01-13 04:28:54,986 INFO Performing initial testing...
+2022-01-13 04:30:54,770 INFO Epoch: [208/1000][1123/1124] Time 0.105 (avg: 0.106) Loss 949.108704 (avg: 839.156332) lr 6.961986e-07
+2022-01-13 04:31:22,359 INFO Running single-scale test done
+2022-01-13 04:31:37,076 INFO Running multi-scale test done
+2022-01-13 04:31:37,293 INFO Performing initial testing...
+2022-01-13 04:33:36,866 INFO Epoch: [209/1000][1123/1124] Time 0.104 (avg: 0.106) Loss 320.403992 (avg: 839.138937) lr 6.961986e-07
+2022-01-13 04:34:02,258 INFO Running single-scale test done
+2022-01-13 04:34:16,778 INFO Running multi-scale test done
+2022-01-13 04:34:17,041 INFO Performing initial testing...
+2022-01-13 04:36:16,582 INFO Epoch: [210/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 2216.444580 (avg: 839.137370) lr 6.961986e-07
+2022-01-13 04:36:41,507 INFO Running single-scale test done
+2022-01-13 04:36:56,088 INFO Running multi-scale test done
+2022-01-13 04:36:56,245 INFO Performing initial testing...
+2022-01-13 04:38:55,622 INFO Epoch: [211/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 208.872726 (avg: 839.093368) lr 6.265787e-07
+2022-01-13 04:39:21,768 INFO Running single-scale test done
+2022-01-13 04:39:36,517 INFO Running multi-scale test done
+2022-01-13 04:39:36,707 INFO Performing initial testing...
+2022-01-13 04:41:36,602 INFO Epoch: [212/1000][1123/1124] Time 0.107 (avg: 0.107) Loss 543.089844 (avg: 839.074518) lr 6.265787e-07
+2022-01-13 04:42:01,762 INFO Running single-scale test done
+2022-01-13 04:42:16,301 INFO Running multi-scale test done
+2022-01-13 04:42:16,464 INFO Performing initial testing...
+2022-01-13 04:44:16,302 INFO Epoch: [213/1000][1123/1124] Time 0.109 (avg: 0.106) Loss 970.373474 (avg: 839.042913) lr 6.265787e-07
+2022-01-13 04:44:41,569 INFO Running single-scale test done
+2022-01-13 04:44:56,057 INFO Running multi-scale test done
+2022-01-13 04:44:56,214 INFO Performing initial testing...
+2022-01-13 04:46:55,684 INFO Epoch: [214/1000][1123/1124] Time 0.105 (avg: 0.106) Loss 429.272797 (avg: 839.034842) lr 5.639209e-07
+2022-01-13 04:47:20,348 INFO Running single-scale test done
+2022-01-13 04:47:34,810 INFO Running multi-scale test done
+2022-01-13 04:47:34,973 INFO Performing initial testing...
+2022-01-13 04:49:34,628 INFO Epoch: [215/1000][1123/1124] Time 0.107 (avg: 0.106) Loss 1042.956909 (avg: 839.020362) lr 5.639209e-07
+2022-01-13 04:49:59,453 INFO Running single-scale test done
+2022-01-13 04:50:14,449 INFO Running multi-scale test done
+2022-01-13 04:50:14,664 INFO Performing initial testing...
+2022-01-13 04:52:14,254 INFO Epoch: [216/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 3669.691406 (avg: 839.002981) lr 5.639209e-07
+2022-01-13 04:52:38,873 INFO Running single-scale test done
+2022-01-13 04:52:53,415 INFO Running multi-scale test done
+2022-01-13 04:52:53,582 INFO Performing initial testing...
+2022-01-13 04:54:53,104 INFO Epoch: [217/1000][1123/1124] Time 0.107 (avg: 0.106) Loss 3366.902100 (avg: 838.971423) lr 5.075288e-07
+2022-01-13 04:55:18,264 INFO Running single-scale test done
+2022-01-13 04:55:32,741 INFO Running multi-scale test done
+2022-01-13 04:55:32,906 INFO Performing initial testing...
+2022-01-13 04:57:33,444 INFO Epoch: [218/1000][1123/1124] Time 0.104 (avg: 0.107) Loss 1257.478394 (avg: 838.956716) lr 5.075288e-07
+2022-01-13 04:57:57,469 INFO Running single-scale test done
+2022-01-13 04:58:12,215 INFO Running multi-scale test done
+2022-01-13 04:58:12,421 INFO Performing initial testing...
+2022-01-13 05:00:11,978 INFO Epoch: [219/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 157.952118 (avg: 838.945411) lr 5.075288e-07
+2022-01-13 05:00:36,596 INFO Running single-scale test done
+2022-01-13 05:00:51,316 INFO Running multi-scale test done
+2022-01-13 05:00:51,523 INFO Performing initial testing...
+2022-01-13 05:02:51,290 INFO Epoch: [220/1000][1123/1124] Time 0.105 (avg: 0.106) Loss 304.181641 (avg: 838.908384) lr 4.567759e-07
+2022-01-13 05:03:17,772 INFO Running single-scale test done
+2022-01-13 05:03:32,306 INFO Running multi-scale test done
+2022-01-13 05:03:32,477 INFO Performing initial testing...
+2022-01-13 05:05:32,035 INFO Epoch: [221/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 994.660645 (avg: 838.909284) lr 4.567759e-07
+2022-01-13 05:05:56,785 INFO Running single-scale test done
+2022-01-13 05:06:11,103 INFO Running multi-scale test done
+2022-01-13 05:06:11,264 INFO Performing initial testing...
+2022-01-13 05:08:11,335 INFO Epoch: [222/1000][1123/1124] Time 0.104 (avg: 0.107) Loss 1245.283691 (avg: 838.889042) lr 4.567759e-07
+2022-01-13 05:08:36,778 INFO Running single-scale test done
+2022-01-13 05:08:51,346 INFO Running multi-scale test done
+2022-01-13 05:08:51,565 INFO Performing initial testing...
+2022-01-13 05:10:51,100 INFO Epoch: [223/1000][1123/1124] Time 0.102 (avg: 0.106) Loss 577.557800 (avg: 838.882958) lr 4.110983e-07
+2022-01-13 05:11:16,561 INFO Running single-scale test done
+2022-01-13 05:11:30,763 INFO Running multi-scale test done
+2022-01-13 05:11:30,924 INFO Performing initial testing...
+2022-01-13 05:13:30,393 INFO Epoch: [224/1000][1123/1124] Time 0.107 (avg: 0.106) Loss 1464.813965 (avg: 838.870816) lr 4.110983e-07
+2022-01-13 05:13:54,852 INFO Running single-scale test done
+2022-01-13 05:14:09,633 INFO Running multi-scale test done
+2022-01-13 05:14:09,846 INFO Performing initial testing...
+2022-01-13 05:16:09,354 INFO Epoch: [225/1000][1123/1124] Time 0.105 (avg: 0.106) Loss 700.631165 (avg: 838.857718) lr 4.110983e-07
+2022-01-13 05:16:34,661 INFO Running single-scale test done
+2022-01-13 05:16:49,168 INFO Running multi-scale test done
+2022-01-13 05:16:49,381 INFO Performing initial testing...
+2022-01-13 05:18:48,949 INFO Epoch: [226/1000][1123/1124] Time 0.104 (avg: 0.106) Loss 219.083206 (avg: 838.836263) lr 3.699885e-07
+2022-01-13 05:19:12,540 INFO Running single-scale test done
+2022-01-13 05:19:27,756 INFO Running multi-scale test done
+2022-01-13 05:19:27,973 INFO Performing initial testing...
+2022-01-13 05:21:27,675 INFO Epoch: [227/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 954.179016 (avg: 838.820965) lr 3.699885e-07
+2022-01-13 05:21:52,355 INFO Running single-scale test done
+2022-01-13 05:22:07,168 INFO Running multi-scale test done
+2022-01-13 05:22:07,331 INFO Performing initial testing...
+2022-01-13 05:24:07,082 INFO Epoch: [228/1000][1123/1124] Time 0.105 (avg: 0.106) Loss 1415.276978 (avg: 838.811297) lr 3.699885e-07
+2022-01-13 05:24:31,055 INFO Running single-scale test done
+2022-01-13 05:24:45,456 INFO Running multi-scale test done
+2022-01-13 05:24:45,627 INFO Performing initial testing...
+2022-01-13 05:26:45,175 INFO Epoch: [229/1000][1123/1124] Time 0.104 (avg: 0.106) Loss 140.675690 (avg: 838.800364) lr 3.329896e-07
+2022-01-13 05:27:10,059 INFO Running single-scale test done
+2022-01-13 05:27:24,813 INFO Running multi-scale test done
+2022-01-13 05:27:24,970 INFO Performing initial testing...
+2022-01-13 05:29:24,419 INFO Epoch: [230/1000][1123/1124] Time 0.105 (avg: 0.106) Loss 771.967773 (avg: 838.788954) lr 3.329896e-07
+2022-01-13 05:29:48,206 INFO Running single-scale test done
+2022-01-13 05:30:02,609 INFO Running multi-scale test done
+2022-01-13 05:30:02,820 INFO Performing initial testing...
+2022-01-13 05:32:02,246 INFO Epoch: [231/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 2486.503174 (avg: 838.786742) lr 3.329896e-07
+2022-01-13 05:32:27,247 INFO Running single-scale test done
+2022-01-13 05:32:41,556 INFO Running multi-scale test done
+2022-01-13 05:32:41,768 INFO Performing initial testing...
+2022-01-13 05:34:41,320 INFO Epoch: [232/1000][1123/1124] Time 0.106 (avg: 0.106) Loss 325.718506 (avg: 838.769172) lr 2.996907e-07
+2022-01-13 05:35:07,003 INFO Running single-scale test done
+2022-01-13 05:35:22,050 INFO Running multi-scale test done
+2022-01-13 05:35:22,258 INFO Performing initial testing...
+2022-01-13 05:37:21,896 INFO Epoch: [233/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 231.924927 (avg: 838.751021) lr 2.996907e-07
+2022-01-13 05:37:47,493 INFO Running single-scale test done
+2022-01-13 05:38:02,062 INFO Running multi-scale test done
+2022-01-13 05:38:02,245 INFO Performing initial testing...
+2022-01-13 05:40:01,687 INFO Epoch: [234/1000][1123/1124] Time 0.106 (avg: 0.106) Loss 338.538757 (avg: 838.760511) lr 2.996907e-07
+2022-01-13 05:40:29,340 INFO Running single-scale test done
+2022-01-13 05:40:44,225 INFO Running multi-scale test done
+2022-01-13 05:40:44,395 INFO Performing initial testing...
+2022-01-13 05:42:43,759 INFO Epoch: [235/1000][1123/1124] Time 0.104 (avg: 0.106) Loss 464.531555 (avg: 838.732882) lr 2.697216e-07
+2022-01-13 05:43:09,352 INFO Running single-scale test done
+2022-01-13 05:43:23,932 INFO Running multi-scale test done
+2022-01-13 05:43:24,141 INFO Performing initial testing...
+2022-01-13 05:45:23,583 INFO Epoch: [236/1000][1123/1124] Time 0.101 (avg: 0.106) Loss 178.816330 (avg: 838.725096) lr 2.697216e-07
+2022-01-13 05:45:49,149 INFO Running single-scale test done
+2022-01-13 05:46:03,531 INFO Running multi-scale test done
+2022-01-13 05:46:03,690 INFO Performing initial testing...
+2022-01-13 05:48:03,134 INFO Epoch: [237/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 340.992096 (avg: 838.722946) lr 2.697216e-07
+2022-01-13 05:48:28,337 INFO Running single-scale test done
+2022-01-13 05:48:42,765 INFO Running multi-scale test done
+2022-01-13 05:48:42,925 INFO Performing initial testing...
+2022-01-13 05:50:42,290 INFO Epoch: [238/1000][1123/1124] Time 0.104 (avg: 0.106) Loss 227.787750 (avg: 838.710208) lr 2.427494e-07
+2022-01-13 05:51:06,183 INFO Running single-scale test done
+2022-01-13 05:51:20,446 INFO Running multi-scale test done
+2022-01-13 05:51:20,619 INFO Performing initial testing...
+2022-01-13 05:53:20,079 INFO Epoch: [239/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 507.237305 (avg: 838.706988) lr 2.427494e-07
+2022-01-13 05:53:44,962 INFO Running single-scale test done
+2022-01-13 05:53:59,487 INFO Running multi-scale test done
+2022-01-13 05:53:59,710 INFO Performing initial testing...
+2022-01-13 05:56:00,032 INFO Epoch: [240/1000][1123/1124] Time 0.106 (avg: 0.107) Loss 176.852631 (avg: 838.692692) lr 2.427494e-07
+2022-01-13 05:56:24,289 INFO Running single-scale test done
+2022-01-13 05:56:38,896 INFO Running multi-scale test done
+2022-01-13 05:56:39,112 INFO Performing initial testing...
+2022-01-13 05:58:38,720 INFO Epoch: [241/1000][1123/1124] Time 0.107 (avg: 0.106) Loss 1466.078735 (avg: 838.686816) lr 2.184745e-07
+2022-01-13 05:59:05,463 INFO Running single-scale test done
+2022-01-13 05:59:20,399 INFO Running multi-scale test done
+2022-01-13 05:59:20,615 INFO Performing initial testing...
+2022-01-13 06:01:20,028 INFO Epoch: [242/1000][1123/1124] Time 0.105 (avg: 0.106) Loss 992.856140 (avg: 838.681061) lr 2.184745e-07
+2022-01-13 06:01:45,962 INFO Running single-scale test done
+2022-01-13 06:02:00,727 INFO Running multi-scale test done
+2022-01-13 06:02:00,969 INFO Performing initial testing...
+2022-01-13 06:04:02,278 INFO Epoch: [243/1000][1123/1124] Time 0.106 (avg: 0.108) Loss 3029.868896 (avg: 838.670936) lr 2.184745e-07
+2022-01-13 06:04:27,467 INFO Running single-scale test done
+2022-01-13 06:04:42,176 INFO Running multi-scale test done
+2022-01-13 06:04:42,337 INFO Performing initial testing...
+2022-01-13 06:06:43,219 INFO Epoch: [244/1000][1123/1124] Time 0.105 (avg: 0.107) Loss 424.715820 (avg: 838.670270) lr 1.966271e-07
+2022-01-13 06:07:08,539 INFO Running single-scale test done
+2022-01-13 06:07:23,294 INFO Running multi-scale test done
+2022-01-13 06:07:23,523 INFO Performing initial testing...
+2022-01-13 06:09:23,108 INFO Epoch: [245/1000][1123/1124] Time 0.106 (avg: 0.106) Loss 936.663269 (avg: 838.658162) lr 1.966271e-07
+2022-01-13 06:09:47,353 INFO Running single-scale test done
+2022-01-13 06:10:01,900 INFO Running multi-scale test done
+2022-01-13 06:10:02,066 INFO Performing initial testing...
+2022-01-13 06:12:01,673 INFO Epoch: [246/1000][1123/1124] Time 0.104 (avg: 0.106) Loss 1883.177002 (avg: 838.651213) lr 1.966271e-07
+2022-01-13 06:12:25,773 INFO Running single-scale test done
+2022-01-13 06:12:40,516 INFO Running multi-scale test done
+2022-01-13 06:12:40,682 INFO Performing initial testing...
+2022-01-13 06:14:40,361 INFO Epoch: [247/1000][1123/1124] Time 0.105 (avg: 0.106) Loss 267.790375 (avg: 838.637958) lr 1.769643e-07
+2022-01-13 06:15:04,467 INFO Running single-scale test done
+2022-01-13 06:15:19,140 INFO Running multi-scale test done
+2022-01-13 06:15:19,348 INFO Performing initial testing...
+2022-01-13 06:17:18,915 INFO Epoch: [248/1000][1123/1124] Time 0.106 (avg: 0.106) Loss 566.609558 (avg: 838.637728) lr 1.769643e-07
+2022-01-13 06:17:44,356 INFO Running single-scale test done
+2022-01-13 06:17:58,782 INFO Running multi-scale test done
+2022-01-13 06:17:58,991 INFO Performing initial testing...
+2022-01-13 06:19:58,538 INFO Epoch: [249/1000][1123/1124] Time 0.106 (avg: 0.106) Loss 383.415741 (avg: 838.633637) lr 1.769643e-07
+2022-01-13 06:20:23,161 INFO Running single-scale test done
+2022-01-13 06:20:37,741 INFO Running multi-scale test done
+2022-01-13 06:20:37,974 INFO Performing initial testing...
+2022-01-13 06:22:37,913 INFO Epoch: [250/1000][1123/1124] Time 0.103 (avg: 0.107) Loss 1035.864136 (avg: 838.625223) lr 1.592679e-07
+2022-01-13 06:23:02,857 INFO Running single-scale test done
+2022-01-13 06:23:17,322 INFO Running multi-scale test done
+2022-01-13 06:23:17,535 INFO Performing initial testing...
+2022-01-13 06:25:17,273 INFO Epoch: [251/1000][1123/1124] Time 0.102 (avg: 0.106) Loss 663.311768 (avg: 838.620078) lr 1.592679e-07
+2022-01-13 06:25:42,858 INFO Running single-scale test done
+2022-01-13 06:25:57,314 INFO Running multi-scale test done
+2022-01-13 06:25:57,518 INFO Performing initial testing...
+2022-01-13 06:27:56,923 INFO Epoch: [252/1000][1123/1124] Time 0.107 (avg: 0.106) Loss 645.245422 (avg: 838.618786) lr 1.592679e-07
+2022-01-13 06:28:23,849 INFO Running single-scale test done
+2022-01-13 06:28:38,646 INFO Running multi-scale test done
+2022-01-13 06:28:38,856 INFO Performing initial testing...
+2022-01-13 06:30:38,724 INFO Epoch: [253/1000][1123/1124] Time 0.105 (avg: 0.107) Loss 159.149017 (avg: 838.610340) lr 1.433411e-07
+2022-01-13 06:31:03,155 INFO Running single-scale test done
+2022-01-13 06:31:17,533 INFO Running multi-scale test done
+2022-01-13 06:31:17,743 INFO Performing initial testing...
+2022-01-13 06:33:17,293 INFO Epoch: [254/1000][1123/1124] Time 0.104 (avg: 0.106) Loss 1015.579041 (avg: 838.606771) lr 1.433411e-07
+2022-01-13 06:33:43,148 INFO Running single-scale test done
+2022-01-13 06:33:57,447 INFO Running multi-scale test done
+2022-01-13 06:33:57,608 INFO Performing initial testing...
+2022-01-13 06:35:57,133 INFO Epoch: [255/1000][1123/1124] Time 0.107 (avg: 0.106) Loss 399.070801 (avg: 838.597750) lr 1.433411e-07
+2022-01-13 06:36:23,483 INFO Running single-scale test done
+2022-01-13 06:36:38,227 INFO Running multi-scale test done
+2022-01-13 06:36:38,442 INFO Performing initial testing...
+2022-01-13 06:38:37,928 INFO Epoch: [256/1000][1123/1124] Time 0.102 (avg: 0.106) Loss 959.556824 (avg: 838.595259) lr 1.290070e-07
+2022-01-13 06:39:02,957 INFO Running single-scale test done
+2022-01-13 06:39:17,718 INFO Running multi-scale test done
+2022-01-13 06:39:17,934 INFO Performing initial testing...
+2022-01-13 06:41:17,339 INFO Epoch: [257/1000][1123/1124] Time 0.102 (avg: 0.106) Loss 311.538757 (avg: 838.592093) lr 1.290070e-07
+2022-01-13 06:41:44,051 INFO Running single-scale test done
+2022-01-13 06:41:58,217 INFO Running multi-scale test done
+2022-01-13 06:41:58,380 INFO Performing initial testing...
+2022-01-13 06:43:58,059 INFO Epoch: [258/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 1010.899841 (avg: 838.586588) lr 1.290070e-07
+2022-01-13 06:44:23,646 INFO Running single-scale test done
+2022-01-13 06:44:37,994 INFO Running multi-scale test done
+2022-01-13 06:44:38,156 INFO Performing initial testing...
+2022-01-13 06:46:37,809 INFO Epoch: [259/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 1115.882446 (avg: 838.583710) lr 1.161063e-07
+2022-01-13 06:47:03,761 INFO Running single-scale test done
+2022-01-13 06:47:18,286 INFO Running multi-scale test done
+2022-01-13 06:47:18,453 INFO Performing initial testing...
+2022-01-13 06:49:18,085 INFO Epoch: [260/1000][1123/1124] Time 0.104 (avg: 0.106) Loss 197.745850 (avg: 838.580180) lr 1.161063e-07
+2022-01-13 06:49:43,111 INFO Running single-scale test done
+2022-01-13 06:49:57,371 INFO Running multi-scale test done
+2022-01-13 06:49:57,553 INFO Performing initial testing...
+2022-01-13 06:51:56,909 INFO Epoch: [261/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 1334.967529 (avg: 838.581883) lr 1.161063e-07
+2022-01-13 06:52:21,844 INFO Running single-scale test done
+2022-01-13 06:52:36,509 INFO Running multi-scale test done
+2022-01-13 06:52:36,667 INFO Performing initial testing...
+2022-01-13 06:54:36,243 INFO Epoch: [262/1000][1123/1124] Time 0.102 (avg: 0.106) Loss 425.764374 (avg: 838.568623) lr 1.044957e-07
+2022-01-13 06:55:01,267 INFO Running single-scale test done
+2022-01-13 06:55:15,790 INFO Running multi-scale test done
+2022-01-13 06:55:15,957 INFO Performing initial testing...
+2022-01-13 06:57:15,432 INFO Epoch: [263/1000][1123/1124] Time 0.101 (avg: 0.106) Loss 1144.144165 (avg: 838.564934) lr 1.044957e-07
+2022-01-13 06:57:42,047 INFO Running single-scale test done
+2022-01-13 06:57:56,568 INFO Running multi-scale test done
+2022-01-13 06:57:56,778 INFO Performing initial testing...
+2022-01-13 06:59:56,131 INFO Epoch: [264/1000][1123/1124] Time 0.101 (avg: 0.106) Loss 990.741638 (avg: 838.560036) lr 1.044957e-07
+2022-01-13 07:00:20,535 INFO Running single-scale test done
+2022-01-13 07:00:34,996 INFO Running multi-scale test done
+2022-01-13 07:00:35,209 INFO Performing initial testing...
+2022-01-13 07:02:34,891 INFO Epoch: [265/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 2879.348389 (avg: 838.561476) lr 9.404611e-08
+2022-01-13 07:02:59,660 INFO Running single-scale test done
+2022-01-13 07:03:14,325 INFO Running multi-scale test done
+2022-01-13 07:03:14,551 INFO Performing initial testing...
+2022-01-13 07:05:14,171 INFO Epoch: [266/1000][1123/1124] Time 0.107 (avg: 0.106) Loss 1322.106812 (avg: 838.555817) lr 9.404611e-08
+2022-01-13 07:05:38,760 INFO Running single-scale test done
+2022-01-13 07:05:53,625 INFO Running multi-scale test done
+2022-01-13 07:05:53,790 INFO Performing initial testing...
+2022-01-13 07:07:53,548 INFO Epoch: [267/1000][1123/1124] Time 0.102 (avg: 0.106) Loss 928.451294 (avg: 838.553768) lr 9.404611e-08
+2022-01-13 07:08:17,799 INFO Running single-scale test done
+2022-01-13 07:08:32,346 INFO Running multi-scale test done
+2022-01-13 07:08:32,558 INFO Performing initial testing...
+2022-01-13 07:10:32,133 INFO Epoch: [268/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 156.472458 (avg: 838.548778) lr 8.464150e-08
+2022-01-13 07:10:58,132 INFO Running single-scale test done
+2022-01-13 07:11:12,678 INFO Running multi-scale test done
+2022-01-13 07:11:12,839 INFO Performing initial testing...
+2022-01-13 07:13:12,481 INFO Epoch: [269/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 625.095154 (avg: 838.547594) lr 8.464150e-08
+2022-01-13 07:13:39,058 INFO Running single-scale test done
+2022-01-13 07:13:53,660 INFO Running multi-scale test done
+2022-01-13 07:13:53,868 INFO Performing initial testing...
+2022-01-13 07:15:53,249 INFO Epoch: [270/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 676.958618 (avg: 838.544519) lr 8.464150e-08
+2022-01-13 07:16:19,094 INFO Running single-scale test done
+2022-01-13 07:16:33,654 INFO Running multi-scale test done
+2022-01-13 07:16:33,833 INFO Performing initial testing...
+2022-01-13 07:18:33,448 INFO Epoch: [271/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 574.747498 (avg: 838.541108) lr 7.617735e-08
+2022-01-13 07:18:59,952 INFO Running single-scale test done
+2022-01-13 07:19:14,507 INFO Running multi-scale test done
+2022-01-13 07:19:14,689 INFO Performing initial testing...
+2022-01-13 07:21:13,894 INFO Epoch: [272/1000][1123/1124] Time 0.106 (avg: 0.106) Loss 361.243713 (avg: 838.538881) lr 7.617735e-08
+2022-01-13 07:21:40,049 INFO Running single-scale test done
+2022-01-13 07:21:54,261 INFO Running multi-scale test done
+2022-01-13 07:21:54,470 INFO Performing initial testing...
+2022-01-13 07:23:54,162 INFO Epoch: [273/1000][1123/1124] Time 0.103 (avg: 0.106) Loss 641.070923 (avg: 838.534686) lr 7.617735e-08
+2022-01-13 07:24:19,459 INFO Running single-scale test done
+2022-01-13 07:24:34,001 INFO Running multi-scale test done
+2022-01-13 07:24:34,209 INFO Performing initial testing...
+2022-01-13 07:26:34,708 INFO Epoch: [274/1000][1123/1124] Time 0.104 (avg: 0.107) Loss 329.669373 (avg: 838.535272) lr 6.855961e-08
+2022-01-13 07:27:00,654 INFO Running single-scale test done
+2022-01-13 07:27:14,873 INFO Running multi-scale test done
+2022-01-13 07:27:15,033 INFO Performing initial testing...
+2022-01-13 07:29:14,856 INFO Epoch: [275/1000][1123/1124] Time 0.104 (avg: 0.106) Loss 217.761429 (avg: 838.532624) lr 6.855961e-08
+2022-01-13 07:29:39,653 INFO Running single-scale test done
+2022-01-13 07:29:53,751 INFO Running multi-scale test done
+2022-01-13 07:29:53,963 INFO Performing initial testing...
+2022-01-13 07:31:53,948 INFO Epoch: [276/1000][1123/1124] Time 0.107 (avg: 0.107) Loss 167.127930 (avg: 838.531810) lr 6.855961e-08
+2022-01-13 07:32:19,050 INFO Running single-scale test done
+2022-01-13 07:32:33,875 INFO Running multi-scale test done
+2022-01-13 07:32:34,087 INFO Performing initial testing...
+2022-01-13 07:34:34,137 INFO Epoch: [277/1000][1123/1124] Time 0.107 (avg: 0.107) Loss 1441.976685 (avg: 838.525642) lr 6.170365e-08
+2022-01-13 07:35:00,028 INFO Running single-scale test done
+2022-01-13 07:35:14,516 INFO Running multi-scale test done
+2022-01-13 07:35:14,732 INFO Performing initial testing...
+2022-01-13 07:37:14,716 INFO Epoch: [278/1000][1123/1124] Time 0.109 (avg: 0.107) Loss 1070.998901 (avg: 838.523466) lr 6.170365e-08
+2022-01-13 07:37:39,946 INFO Running single-scale test done
+2022-01-13 07:37:54,220 INFO Running multi-scale test done
+2022-01-13 07:37:54,397 INFO Performing initial testing...
+2022-01-13 07:39:54,944 INFO Epoch: [279/1000][1123/1124] Time 0.104 (avg: 0.107) Loss 1058.810913 (avg: 838.523115) lr 6.170365e-08
+2022-01-13 07:40:20,157 INFO Running single-scale test done
+2022-01-13 07:40:34,791 INFO Running multi-scale test done
+2022-01-13 07:40:34,963 INFO Performing initial testing...
+2022-01-13 07:42:35,352 INFO Epoch: [280/1000][1123/1124] Time 0.106 (avg: 0.107) Loss 2990.057861 (avg: 838.521509) lr 5.553329e-08
+2022-01-13 07:42:59,358 INFO Running single-scale test done
+2022-01-13 07:43:14,362 INFO Running multi-scale test done
+2022-01-13 07:43:14,525 INFO Performing initial testing...
+2022-01-13 07:45:15,237 INFO Epoch: [281/1000][1123/1124] Time 0.105 (avg: 0.107) Loss 3510.307861 (avg: 838.517778) lr 5.553329e-08
+2022-01-13 07:45:40,148 INFO Running single-scale test done
+2022-01-13 07:45:54,537 INFO Running multi-scale test done
+2022-01-13 07:45:54,752 INFO Performing initial testing...
+2022-01-13 07:47:55,033 INFO Epoch: [282/1000][1123/1124] Time 0.106 (avg: 0.107) Loss 735.769226 (avg: 838.518956) lr 5.553329e-08
+2022-01-13 07:48:20,580 INFO Running single-scale test done
+2022-01-13 07:48:35,554 INFO Running multi-scale test done
+2022-01-13 07:48:35,757 INFO Performing initial testing...
+2022-01-13 07:50:35,946 INFO Epoch: [283/1000][1123/1124] Time 0.103 (avg: 0.107) Loss 1072.282593 (avg: 838.515586) lr 4.997996e-08
+2022-01-13 07:51:00,964 INFO Running single-scale test done
+2022-01-13 07:51:15,766 INFO Running multi-scale test done
+2022-01-13 07:51:15,980 INFO Performing initial testing...
+2022-01-13 07:53:16,022 INFO Epoch: [284/1000][1123/1124] Time 0.105 (avg: 0.107) Loss 585.177673 (avg: 838.513375) lr 4.997996e-08
+2022-01-13 07:53:40,360 INFO Running single-scale test done
+2022-01-13 07:53:54,878 INFO Running multi-scale test done
+2022-01-13 07:53:55,090 INFO Performing initial testing...
+2022-01-13 07:55:55,443 INFO Epoch: [285/1000][1123/1124] Time 0.106 (avg: 0.107) Loss 615.877136 (avg: 838.512499) lr 4.997996e-08
+2022-01-13 07:56:19,819 INFO Running single-scale test done
+2022-01-13 07:56:34,549 INFO Running multi-scale test done
+2022-01-13 07:56:34,761 INFO Performing initial testing...
+2022-01-13 07:58:34,981 INFO Epoch: [286/1000][1123/1124] Time 0.103 (avg: 0.107) Loss 963.786133 (avg: 838.509336) lr 4.498196e-08
+2022-01-13 07:58:59,057 INFO Running single-scale test done
+2022-01-13 07:59:13,295 INFO Running multi-scale test done
+2022-01-13 07:59:13,459 INFO Performing initial testing...
+2022-01-13 08:01:13,753 INFO Epoch: [287/1000][1123/1124] Time 0.104 (avg: 0.107) Loss 581.135620 (avg: 838.507944) lr 4.498196e-08
+2022-01-13 08:01:38,678 INFO Running single-scale test done
+2022-01-13 08:01:53,242 INFO Running multi-scale test done
+2022-01-13 08:01:53,454 INFO Performing initial testing...
+2022-01-13 08:03:53,505 INFO Epoch: [288/1000][1123/1124] Time 0.103 (avg: 0.107) Loss 995.508789 (avg: 838.506793) lr 4.498196e-08
+2022-01-13 08:04:17,755 INFO Running single-scale test done
+2022-01-13 08:04:32,653 INFO Running multi-scale test done
+2022-01-13 08:04:32,874 INFO Performing initial testing...
+2022-01-13 08:06:33,271 INFO Epoch: [289/1000][1123/1124] Time 0.105 (avg: 0.107) Loss 1300.534180 (avg: 838.505712) lr 4.048377e-08
+2022-01-13 08:06:57,347 INFO Running single-scale test done
+2022-01-13 08:07:11,863 INFO Running multi-scale test done
+2022-01-13 08:07:12,078 INFO Performing initial testing...
+2022-01-13 08:09:11,947 INFO Epoch: [290/1000][1123/1124] Time 0.105 (avg: 0.107) Loss 239.156662 (avg: 838.503126) lr 4.048377e-08
+2022-01-13 08:09:36,958 INFO Running single-scale test done
+2022-01-13 08:09:51,532 INFO Running multi-scale test done
+2022-01-13 08:09:51,691 INFO Performing initial testing...
+2022-01-13 08:11:51,621 INFO Epoch: [291/1000][1123/1124] Time 0.107 (avg: 0.107) Loss 618.914490 (avg: 838.501993) lr 4.048377e-08
+2022-01-13 08:12:15,799 INFO Running single-scale test done
+2022-01-13 08:12:30,303 INFO Running multi-scale test done
+2022-01-13 08:12:30,460 INFO Performing initial testing...
+2022-01-13 08:14:30,921 INFO Epoch: [292/1000][1123/1124] Time 0.105 (avg: 0.107) Loss 1006.595398 (avg: 838.499962) lr 3.643539e-08
+2022-01-13 08:14:55,269 INFO Running single-scale test done
+2022-01-13 08:15:09,817 INFO Running multi-scale test done
+2022-01-13 08:15:09,988 INFO Performing initial testing...
+2022-01-13 08:17:10,186 INFO Epoch: [293/1000][1123/1124] Time 0.107 (avg: 0.107) Loss 634.851746 (avg: 838.500029) lr 3.643539e-08
+2022-01-13 08:17:35,553 INFO Running single-scale test done
+2022-01-13 08:17:50,321 INFO Running multi-scale test done
+2022-01-13 08:17:50,532 INFO Performing initial testing...
+2022-01-13 08:19:50,834 INFO Epoch: [294/1000][1123/1124] Time 0.104 (avg: 0.107) Loss 805.767273 (avg: 838.498113) lr 3.643539e-08
+2022-01-13 08:20:16,370 INFO Running single-scale test done
+2022-01-13 08:20:30,529 INFO Running multi-scale test done
+2022-01-13 08:20:30,694 INFO Performing initial testing...
+2022-01-13 08:22:31,145 INFO Epoch: [295/1000][1123/1124] Time 0.103 (avg: 0.107) Loss 534.831665 (avg: 838.497590) lr 3.279185e-08
+2022-01-13 08:22:56,471 INFO Running single-scale test done
+2022-01-13 08:23:11,197 INFO Running multi-scale test done
+2022-01-13 08:23:11,409 INFO Performing initial testing...
+2022-01-13 08:25:11,588 INFO Epoch: [296/1000][1123/1124] Time 0.108 (avg: 0.107) Loss 186.619003 (avg: 838.496092) lr 3.279185e-08
+2022-01-13 08:25:36,740 INFO Running single-scale test done
+2022-01-13 08:25:50,854 INFO Running multi-scale test done
+2022-01-13 08:25:51,011 INFO Performing initial testing...
+2022-01-13 08:27:51,200 INFO Epoch: [297/1000][1123/1124] Time 0.102 (avg: 0.107) Loss 241.840652 (avg: 838.496004) lr 3.279185e-08
+2022-01-13 08:28:15,941 INFO Running single-scale test done
+2022-01-13 08:28:30,337 INFO Running multi-scale test done
+2022-01-13 08:28:30,498 INFO Performing initial testing...
+2022-01-13 08:30:30,580 INFO Epoch: [298/1000][1123/1124] Time 0.105 (avg: 0.107) Loss 1333.143677 (avg: 838.494281) lr 2.951267e-08
+2022-01-13 08:30:54,561 INFO Running single-scale test done
+2022-01-13 08:31:09,175 INFO Running multi-scale test done
+2022-01-13 08:31:09,338 INFO Performing initial testing...
+2022-01-13 08:33:09,816 INFO Epoch: [299/1000][1123/1124] Time 0.103 (avg: 0.107) Loss 319.426239 (avg: 838.493091) lr 2.951267e-08
+2022-01-13 08:33:34,120 INFO Running single-scale test done
+2022-01-13 08:33:49,163 INFO Running multi-scale test done
+2022-01-13 08:33:49,386 INFO Performing initial testing...
+2022-01-13 08:35:49,627 INFO Epoch: [300/1000][1123/1124] Time 0.108 (avg: 0.107) Loss 461.313293 (avg: 838.492045) lr 2.951267e-08
+2022-01-13 08:36:14,258 INFO Running single-scale test done
+2022-01-13 08:36:28,591 INFO Running multi-scale test done
+2022-01-13 08:36:28,748 INFO Performing initial testing...
+2022-01-13 08:38:29,299 INFO Epoch: [301/1000][1123/1124] Time 0.109 (avg: 0.107) Loss 601.868591 (avg: 838.491849) lr 2.656140e-08
+2022-01-13 08:38:53,326 INFO Running single-scale test done
+2022-01-13 08:39:08,153 INFO Running multi-scale test done
+2022-01-13 08:39:08,315 INFO Performing initial testing...
+2022-01-13 08:41:08,757 INFO Epoch: [302/1000][1123/1124] Time 0.104 (avg: 0.107) Loss 23.144850 (avg: 838.489860) lr 2.656140e-08
+2022-01-13 08:41:33,554 INFO Running single-scale test done
+2022-01-13 08:41:47,730 INFO Running multi-scale test done
+2022-01-13 08:41:47,948 INFO Performing initial testing...
+2022-01-13 08:43:48,309 INFO Epoch: [303/1000][1123/1124] Time 0.108 (avg: 0.107) Loss 919.924988 (avg: 838.489364) lr 2.656140e-08
+2022-01-13 08:44:12,858 INFO Running single-scale test done

@@ -17,6 +17,7 @@ import logging
 from torch.utils.data import Dataset
 from torchvision import transforms
 import sys
+from utils import EvalMax
 class inferImage(Dataset):
     def __init__(self, img_dir, cnum=None, aug=False,transform=None, target_transform=None):
         self.infer_list=glob(img_dir)
@@ -42,14 +43,8 @@ def single_scale_test(model, test_loader, test_list, save_dir,eval,save_img=True
     model.eval()
     eval_res=[]
     eval_label=[]
-    mean_eval={}
-    mean_eval['preci']=0.0
-    mean_eval['acc']=0.0
-    mean_eval['iou']=0.0
-    mean_eval['recall']=0.0
 
-
-    if not osp.isdir(save_dir):
+    if save_dir and not osp.isdir(save_dir):
         os.makedirs(save_dir)
     for idx, data in enumerate(test_loader):
         image,label=data
@@ -67,20 +62,6 @@ def single_scale_test(model, test_loader, test_list, save_dir,eval,save_img=True
         temp_res=torch.zeros_like(fuse_res)        
         temp_res[fuse_res>0.5]=1
         label=label.squeeze()
-
-        inter=torch.logical_and(temp_res,label)
-        union=torch.logical_or(temp_res,label)
-        iou=inter.sum()/union.sum()
-        TP=inter.sum()#(temp_res[temp_res==label]==1).sum()
-        # print(TP,inter.sum(),(label==1).sum())
-        T_FP=(temp_res==1).sum()
-        P=(label==1).sum()
-        # print(T_FP,P)
-        mean_eval['iou']+=iou
-        # print((temp_res==label).sum(),(label.size(0)*label.size(1)))
-        mean_eval['acc']+=(temp_res==label).sum()/(label.size(0)*label.size(1))
-        mean_eval['preci']+=TP/T_FP
-        mean_eval['recall']+=TP/P
         fuse_res = fuse_res.cpu().numpy()
         label=label.cpu().numpy()
 
@@ -95,11 +76,6 @@ def single_scale_test(model, test_loader, test_list, save_dir,eval,save_img=True
         #print('\rRunning single-scale test [%d/%d]' % (idx + 1, len(test_loader)), end='')
         
     ret=eval(results=eval_res,gt_seg_maps=eval_label,metric=['mIoU', 'mFscore'])
-    ret['preci']=mean_eval['preci'].item()/(idx+1)
-    ret['acc']=mean_eval['acc'].item()/(idx+1)
-    ret['iou']=mean_eval['iou'].item()/(idx+1)
-    ret['recall']=mean_eval['recall'].item()/(idx+1)
-    ret['f1']=2/(1/ret['preci']+1/ret['recall'])
     print('Running single-scale test done')
     return ret
 
@@ -172,7 +148,7 @@ if __name__ == '__main__':
         fh.setLevel(logging.INFO)
         logger.addHandler(fh)
         
-        max_eval={}
+        
         # max_eval['acc']=0
         # max_eval['acc_epo']=''
         # max_eval['iou']=0
@@ -181,34 +157,21 @@ if __name__ == '__main__':
         # max_eval['preci_epo']=''
         # max_eval['recall']=0
         # max_eval['recall_epo']=''
-
+        max_eval=EvalMax()
         pth_list=glob(args.checkpoint+'/*.pth')
         
         print('Performing %d testing...'%(len(pth_list)))
         for i in tqdm(pth_list):
             checkpoint = torch.load(i)
-            model.load_state_dict(checkpoint['state_dict'])
-            ret=single_scale_test(model, test_loader, test_list,   args.save_dir,test_dataset.evaluate,False)
-            # if ret['IoU.pl']>max_eval['iou']:
-            #     max_eval['iou']=ret['IoU.pl']
-            #     max_eval['iou_epo']=i
-            # if ret['Acc.pl']>max_eval['acc']:
-            #     max_eval['acc']=ret['Acc.pl']
-            #     max_eval['acc_epo']=i
-            # if ret['preci']>max_eval['preci']:
-            #     max_eval['preci']=ret['preci']
-            #     max_eval['preci_epo']=i
-            # if ret['recall']>max_eval['recall']:
-            #     max_eval['recall']=ret['recall']
-            #     max_eval['recall_epo']=i 
-            for k in ret.keys():#通过键，批量对比大小
-                if ret[k]>max_eval.setdefault(k,0) and 'bg' not in k:
-                    max_eval[k]=ret[k]
-                    max_eval[k+'_epo']=i
+            try:
+                model.load_state_dict(checkpoint['state_dict'])
+            except RuntimeError as err:
+                print(i,err)
+                continue
 
-            # print()
+            ret=single_scale_test(model, test_loader, test_list,   args.save_dir,test_dataset.evaluate,False)
             logger.info(ret)
-            logger.info(max_eval)
+            logger.info(max_eval(ret,i))
     else:
         print('Performing the testing...')
         single_scale_test(model, test_loader, test_list, args.save_dir,test_dataset.evaluate)

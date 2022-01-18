@@ -3,5 +3,5 @@ __pycache__
 *.pth
 *.mat
 data/
-results/*/*epoch*
 res/
+*checkpoint*

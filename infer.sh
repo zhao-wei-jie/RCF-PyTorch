@@ -1,1 +1,1 @@
-python test.py --checkpoint results/RCF20220113_1940  --dataset=../1_00186.jpg
+python test.py --checkpoint results/RCF  --dataset=../1_00186.jpg
