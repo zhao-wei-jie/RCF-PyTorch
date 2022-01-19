@@ -1,3 +1,4 @@
+from datetime import date
 import os
 import numpy as np
 import os.path as osp
@@ -39,7 +40,7 @@ class inferImage(Dataset):
         image=torch.tensor(image)
         return image.float()
 
-def single_scale_test(model, test_loader, test_list, save_dir,eval,save_img=True):
+def single_scale_test(model, test_loader, test_list, save_dir,eval=None,save_img=True):
     model.eval()
     eval_res=[]
     eval_label=[]
@@ -47,9 +48,16 @@ def single_scale_test(model, test_loader, test_list, save_dir,eval,save_img=True
     if save_dir and not osp.isdir(save_dir):
         os.makedirs(save_dir)
     for idx, data in enumerate(test_loader):
-        image,label=data
+        if eval:
+            image,label=data
+            label=label.cuda()
+            label=label.squeeze()
+            label=label.cpu().numpy()
+            eval_label.append(label)
+        else:
+            image=data
         image = image.cuda()
-        label=label.cuda()
+        
         _, _, H, W = image.shape
         results = model(image)
         all_res = torch.zeros((len(results), 1, H, W))
@@ -61,12 +69,8 @@ def single_scale_test(model, test_loader, test_list, save_dir,eval,save_img=True
         fuse_res = torch.squeeze(results[-1].detach())
         temp_res=torch.zeros_like(fuse_res)        
         temp_res[fuse_res>0.5]=1
-        label=label.squeeze()
-        fuse_res = fuse_res.cpu().numpy()
-        label=label.cpu().numpy()
-
         
-        eval_label.append(label)
+        fuse_res = fuse_res.cpu().numpy()       
         eval_res.append(temp_res.cpu().numpy())
         # print(np.sum(eval_res==1),np.sum(eval_res==0),np.sum(label==1),np.sum(label==0))       
         # sys.exit()
@@ -74,12 +78,11 @@ def single_scale_test(model, test_loader, test_list, save_dir,eval,save_img=True
         if save_img:
             cv2.imwrite(osp.join(save_dir, '%s_ss.png' % filename), fuse_res)
         #print('\rRunning single-scale test [%d/%d]' % (idx + 1, len(test_loader)), end='')
-        
-    ret=eval(results=eval_res,gt_seg_maps=eval_label,metric=['mIoU', 'mFscore'])
     print('Running single-scale test done')
-    return ret
-
-
+    if eval:    
+        ret=eval(results=eval_res,gt_seg_maps=eval_label,metric=['mIoU', 'mFscore'])
+        return ret
+    
 def multi_scale_test(model, test_loader, test_list, save_dir):
     model.eval()
     if not osp.isdir(save_dir):
@@ -111,7 +114,7 @@ if __name__ == '__main__':
     parser.add_argument('--gpu', default='0', type=str, help='GPU ID')
     parser.add_argument('--checkpoint', default=None, type=str, help='path to latest checkpoint')
     parser.add_argument('--save-dir', help='output folder', default='results/RCF')
-    parser.add_argument('--dataset', help='root folder of dataset', default='data/HED-BSDS')
+    parser.add_argument('--dataset', help='root folder of dataset', default=None)
     args = parser.parse_args()
     
     os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'
@@ -122,11 +125,13 @@ if __name__ == '__main__':
         args.save_dir=osp.join(osp.splitext(args.checkpoint)[0])
     if not osp.isdir(args.save_dir):
         os.makedirs(args.save_dir)
-  
-    # test_dataset  = BSDS_Dataset(root=args.dataset, split='test')
-    test_dataset=TTPLA_Dataset(split='eval')
-    # test_dataset  = inferImage(img_dir=args.dataset)
-    test_loader   = DataLoader(test_dataset, batch_size=1, num_workers=2, drop_last=False, shuffle=False)
+    if args.dataset:
+    #   test_dataset  = BSDS_Dataset(root=args.dataset, split='test')
+      test_dataset  = inferImage(img_dir=args.dataset)
+    else:
+        test_dataset=TTPLA_Dataset(split='eval')
+    
+    test_loader   = DataLoader(test_dataset, batch_size=1, num_workers=1, drop_last=False, shuffle=False)
     test_list = [osp.split(i.rstrip())[1] for i in test_dataset.file_list]
     assert len(test_list) == len(test_loader)
 
@@ -174,5 +179,6 @@ if __name__ == '__main__':
             logger.info(max_eval(ret,i))
     else:
         print('Performing the testing...')
-        single_scale_test(model, test_loader, test_list, args.save_dir,test_dataset.evaluate)
+        #使用getattr获取函数，可在函数不存在时返回none       
+        single_scale_test(model, test_loader, test_list, args.save_dir,getattr(test_dataset,'evaluate',None))        
         # multi_scale_test(model, test_loader, test_list, args.save_dir)
