@@ -1,3 +1,4 @@
+import io
 from scipy.io import savemat
 from glob import glob
 import cv2,numpy as np
@@ -11,63 +12,125 @@ import os.path as osp
 #     image=cv2.imread(i,cv2.IMREAD_GRAYSCALE).astype(np.float_)/255
 #     print(image.shape)
 #     savemat(i.replace('.png','.mat'), {key: image})
-evallist=[]
-path='results/RCF20220113_1940/test.log'
-with open(path) as f:
-    
-    for idx,line in enumerate(f):
+
+def log2dict(line):
+    eval={}
+    alist=line.split(',')
+    for idx,i in enumerate(alist):
+        
+        i=i.split(':')
+        try:
+            eval[i[0].strip(' ').strip('\'')]=float(i[1])
+        except ValueError:
+            continue
+            eval[i[0].strip(' ').strip('\'')]=i[1].strip(' ').strip('\'')
+    return eval
+
+def old_log(f,evallist):
         # print(idx)
+    for idx,line in enumerate(f):
         if(idx%2==1): 
             # print(idx)
             continue
-        eval={}
+        
         line = line[:-1]
         # a=json.loads(res)
         line=line.strip('{').strip('}')
 
-        
-        # print(line)
-        
-        alist=line.split(',')
-        for idx,i in enumerate(alist):
-            
-            i=i.split(':')
-            try:
-                eval[i[0].strip(' ').strip('\'')]=float(i[1])
-            except ValueError:
-                continue
-                eval[i[0].strip(' ').strip('\'')]=i[1].strip(' ').strip('\'')
-        
+        eval=log2dict(line)
+        # print(line      
         # print(eval)
-        
         evallist.append(eval)
-        # break
-# print(evallist)
-plot_epochs=range(len(evallist))
-iou_values=[]
-f1_values=[]
-for i in evallist:
-    # tmp=[i['IoU.pl'],i['Fscore.pl']]
-    iou_values.append(i['IoU.pl'])
-    try:
-        f1_values.append(i['Fscore.pl'])
-    except:
-        f1_values.append(i['f1'])
-iou_values.sort()
-f1_values.sort()
-ax = plt.gca()
-# label = legend[i * num_metrics + j]
-# if metric in ['mIoU', 'mAcc', 'aAcc']:
-ax.set_xticks(plot_epochs)
-plt.xlabel('epoch')
-plt.plot(plot_epochs, iou_values, label='iou')
-plt.plot(plot_epochs, f1_values, label='f1')
-plt.text(plot_epochs[np.argmax(iou_values)], max(iou_values), max(iou_values))#写出最高点值
-plt.text(plot_epochs[np.argmax(f1_values)], max(f1_values), max(f1_values))#写出最高点值
-plt.legend()
-plt.xticks(rotation=45)#x坐标数字倾斜角度
-plt.grid()#画出网格
-plt.xticks((range(1,len(evallist)+1,10)))
+    # break
+def new_log(f,evallist):
+    for idx,line in enumerate(f):
+            eval=None
+            if 'aAcc' in line:
+                line=line.split('{')[-1].strip('}')
+                eval=log2dict(line)
+            if 'Epoch' in line:
+                lr=line.split('lr ')[-1].strip('\n')
+                eval={}
+                eval['lr']=float(lr)
+            if eval:
+                evallist.append(eval)
+
+def py_log(paths,mode='list'):
+    if osp.isfile(paths):
+        mode='list'
+        paths=[paths]
+    plt.figure(figsize=(10, 5),dpi=200)
+    ax = plt.gca()
+    # ax.set_xticks(plot_epochs)
+    # label = legend[i * num_metrics + j]
+    # if metric in ['mIoU', 'mAcc', 'aAcc']:
+    
+    for path in paths:
+        
+        evallist=[]
+
+        with open(path) as f:
+            if osp.basename(path)=='train.log':
+                print('new')
+                new_log(f,evallist)
+            elif osp.basename(path)=='test.log':
+                print('old')
+                old_log(f,evallist)
+        print(path)
+        iou_values,f1_values,lr_v=draw_log(evallist,path,ax)
+        label=osp.dirname(path).split('bs-8')[-1].strip('-').strip('optadamw')
+        ioulable='iou-'+label
+        lrlable='lr-'+label
+        plot_epochs=range(1,len(iou_values)+1)
+        
+        # iou_values.sort()
+        # f1_values.sort()
+        def plt_combo():
+            plt.legend()
+            plt.xticks(rotation=45)#x坐标数字倾斜角度
+            plt.grid()#画出网格
+        
+        # plt.xlabel('epoch')
+        ax1=plt.subplot(2,1,1)
+        plt.plot(plot_epochs, iou_values, label=ioulable)
+        if mode=='list':  
+            plt.plot(plot_epochs, f1_values, label='f1')
+            plt.text(plot_epochs[np.argmax(f1_values)], max(f1_values), str(max(f1_values))+'-'+str(np.argmax(f1_values)+1))#写出最高点值
+        
+        max_iou_pos=np.argmax(iou_values)+1
+        # print(max_iou_pos,iou_values)
+        plt.text(plot_epochs[max_iou_pos-1], max(iou_values),str(max(iou_values))+'-'+str(max_iou_pos))#写出最高点值
+        
+        x=[1]
+        maxi=0
+        for idx,i in enumerate(iou_values):
+            if i>maxi:
+                maxi=i
+                if idx-x[-1]>=10 and max_iou_pos-idx>=10:       
+                    x.append(idx+1)
+        x.append(max_iou_pos)
+        plt.xticks(x)
+        plt_combo()
+        plt.ylabel('score')
+        if osp.basename(path)=='train.log':
+            assert len(iou_values)==len(lr_v),(len(iou_values),len(lr_v))
+            plt.subplot(212,sharex=ax1)
+            plt.plot(plot_epochs, lr_v, label=lrlable)
+            plt.ylabel('lr')
+            plt_combo()
+        if mode=='list':            
+            out=osp.dirname(path)
+            print(f'save curve to: {out}')
+            plt.savefig(osp.join(out,'fig'))
+            plt.cla()
+    if mode == 'sum':
+        out='results'
+        print(f'save curve to: {out}')
+        plt.savefig(osp.join(out,'sum'))
+        plt.cla()
+
+
+    
 # else:
 #     plt.xlabel('iter')
 #     plt.plot(plot_iters, plot_values, label=label, linewidth=0.5)
@@ -80,8 +143,28 @@ plt.xticks((range(1,len(evallist)+1,10)))
 #     plt.grid()#画出网格
 # if args.title is not None:
 #     plt.title(args.title)
+def draw_log(evallist,path,ax):
+    iou_values=[]
+    f1_values=[]
+    lr_v=[]
+    # print(len(evallist))
+    for i in evallist:
+        # tmp=[i['IoU.pl'],i['Fscore.pl']]
+        # print(i)
+        if 'IoU.pl' in i.keys():
+            iou_values.append(i['IoU.pl'])
+        if 'Fscore.pl' in i.keys():
+            f1_values.append(i['Fscore.pl'])
+        elif 'f1' in i.keys():
+            f1_values.append(i['f1'])
+        if 'lr' in i.keys():
+            lr_v.append(i['lr'])
+    return iou_values,f1_values,lr_v
 
-out=osp.dirname(path)
-print(f'save curve to: {out}')
-plt.savefig(osp.join(out,'fig'))
-plt.cla()
+
+alist=glob('results/*_*-bs-*/*.log')
+py_log(alist[-1],mode='list')
+# py_log('results/RCF20220122_1759-bs-8-lr-0.002-iter_size-1-opt-adamw/train.log')
+# alist=glob('results/RCF20220119_2123-bs-8-lr-0.03125-iter_size-10-opt-adamw/*.pth')
+# for i in alist:
+#     print(i)

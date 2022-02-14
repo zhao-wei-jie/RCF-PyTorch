@@ -60,11 +60,13 @@ def single_scale_test(model, test_loader, test_list, save_dir,eval=None,save_img
         
         _, _, H, W = image.shape
         results = model(image)
-        all_res = torch.zeros((len(results), 1, H, W))
-        for i in range(len(results)):
-          all_res[i, 0, :, :] = results[i]
+        # print(results.shape)
+        
         filename = osp.splitext(test_list[idx])[0]
         if save_img:
+            all_res = torch.zeros((len(results), 1, H, W))
+            for i in range(len(results)):
+                all_res[i, 0, :, :] = results[i]
             torchvision.utils.save_image(1 - all_res, osp.join(save_dir, '%s.jpg' % filename))
         fuse_res = torch.squeeze(results[-1].detach())
         temp_res=torch.zeros_like(fuse_res)        

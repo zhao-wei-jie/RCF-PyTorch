@@ -8,7 +8,7 @@ import torch
 from torch.utils.data import DataLoader
 import torchvision
 from dataset import BSDS_Dataset,TTPLA_Dataset
-from models import RCF
+from models import RCF,NextRCF
 from utils import Logger, Averagvalue, Cross_entropy_loss,EvalMax
 from test import single_scale_test
 def get_lr(optimizer):
@@ -74,6 +74,8 @@ def multi_scale_test(model, test_loader, test_list, save_dir):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='PyTorch Training')
     parser.add_argument('--batch-size', default=1, type=int, help='batch size')
+    parser.add_argument('--opt', default='adamw', type=str, help='opt')
+    parser.add_argument('--model', default='rcf', type=str, help='rcf')
     parser.add_argument('--lr', default=1e-6, type=float, help='initial learning rate')
     parser.add_argument('--momentum', default=0.9, type=float, help='momentum')
     parser.add_argument('--weight-decay', default=2e-4, type=float, help='weight decay')
@@ -94,14 +96,14 @@ if __name__ == '__main__':
 
     ex_time=time.strftime('%Y%m%d_%H%M',time.localtime())
     args.save_dir=args.save_dir+ex_time
-    save_dict=dict(bs=args.batch_size,lr=args.lr)
+    #by Accurate, Large Minibatch SGD:Training ImageNet in 1 Hour,lr=base_lr*gpus*bs/256
+    # args.lr=args.lr*(args.batch_size*args.iter_size/256)
+    save_dict=dict(bs=args.batch_size,lr=args.lr,iter_size=args.iter_size,opt=args.opt)
     # print(save_dict)
     for k,v in save_dict.items():        
-        args.save_dir+='-'+k+str(v)
-    if not osp.isdir(args.save_dir):
-        
+        args.save_dir+='-'+k+'-'+str(v)
+    if not osp.isdir(args.save_dir):        
         os.makedirs(args.save_dir)
-        
 
     logger = Logger(osp.join(args.save_dir,'train.log'))
     logger.info('Called with args:')
@@ -114,49 +116,52 @@ if __name__ == '__main__':
     train_dataset = TTPLA_Dataset(split='train')
     test_dataset  = TTPLA_Dataset(split='eval')
     train_loader  = DataLoader(train_dataset, batch_size=args.batch_size, num_workers=8, drop_last=True, shuffle=True)
-    test_loader   = DataLoader(test_dataset, batch_size=1, num_workers=4, drop_last=False, shuffle=False)
+    test_loader   = DataLoader(test_dataset, batch_size=args.batch_size, num_workers=8, drop_last=False, shuffle=False)
     test_list = [i for i in test_dataset.file_list]
-    assert len(test_list) == len(test_loader) #,print(len(test_list) ,len(test_loader),len(train_loader))
+    # assert len(test_list) == len(test_loader) #,print(len(test_list) ,len(test_loader),len(train_loader))
+    if args.model=='rcf':
+        model = RCF(pretrained='vgg16convs.mat').cuda()
+    elif args.model=='convnext':
+        model = NextRCF().cuda()
 
-    model = RCF(pretrained='vgg16convs.mat').cuda()
-    parameters = {'conv1-4.weight': [], 'conv1-4.bias': [], 'conv5.weight': [], 'conv5.bias': [],
-        'conv_down_1-5.weight': [], 'conv_down_1-5.bias': [], 'score_dsn_1-5.weight': [],
-        'score_dsn_1-5.bias': [], 'score_fuse.weight': [], 'score_fuse.bias': []}
-    for pname, p in model.named_parameters():
-        if pname in ['conv1_1.weight','conv1_2.weight',
-                     'conv2_1.weight','conv2_2.weight',
-                     'conv3_1.weight','conv3_2.weight','conv3_3.weight',
-                     'conv4_1.weight','conv4_2.weight','conv4_3.weight']:
-            parameters['conv1-4.weight'].append(p)
-        elif pname in ['conv1_1.bias','conv1_2.bias',
-                       'conv2_1.bias','conv2_2.bias',
-                       'conv3_1.bias','conv3_2.bias','conv3_3.bias',
-                       'conv4_1.bias','conv4_2.bias','conv4_3.bias']:
-            parameters['conv1-4.bias'].append(p)
-        elif pname in ['conv5_1.weight','conv5_2.weight','conv5_3.weight']:
-            parameters['conv5.weight'].append(p)
-        elif pname in ['conv5_1.bias','conv5_2.bias','conv5_3.bias']:
-            parameters['conv5.bias'].append(p)
-        elif pname in ['conv1_1_down.weight','conv1_2_down.weight',
-                       'conv2_1_down.weight','conv2_2_down.weight',
-                       'conv3_1_down.weight','conv3_2_down.weight','conv3_3_down.weight',
-                       'conv4_1_down.weight','conv4_2_down.weight','conv4_3_down.weight',
-                       'conv5_1_down.weight','conv5_2_down.weight','conv5_3_down.weight']:
-            parameters['conv_down_1-5.weight'].append(p)
-        elif pname in ['conv1_1_down.bias','conv1_2_down.bias',
-                       'conv2_1_down.bias','conv2_2_down.bias',
-                       'conv3_1_down.bias','conv3_2_down.bias','conv3_3_down.bias',
-                       'conv4_1_down.bias','conv4_2_down.bias','conv4_3_down.bias',
-                       'conv5_1_down.bias','conv5_2_down.bias','conv5_3_down.bias']:
-            parameters['conv_down_1-5.bias'].append(p)
-        elif pname in ['score_dsn1.weight','score_dsn2.weight','score_dsn3.weight', 'score_dsn4.weight','score_dsn5.weight']:
-            parameters['score_dsn_1-5.weight'].append(p)
-        elif pname in ['score_dsn1.bias','score_dsn2.bias','score_dsn3.bias', 'score_dsn4.bias','score_dsn5.bias']:
-            parameters['score_dsn_1-5.bias'].append(p)
-        elif pname in ['score_fuse.weight']:
-            parameters['score_fuse.weight'].append(p)
-        elif pname in ['score_fuse.bias']:
-            parameters['score_fuse.bias'].append(p)
+    # parameters = {'conv1-4.weight': [], 'conv1-4.bias': [], 'conv5.weight': [], 'conv5.bias': [],
+    #     'conv_down_1-5.weight': [], 'conv_down_1-5.bias': [], 'score_dsn_1-5.weight': [],
+    #     'score_dsn_1-5.bias': [], 'score_fuse.weight': [], 'score_fuse.bias': []}
+    # for pname, p in model.named_parameters():
+    #     if pname in ['conv1_1.weight','conv1_2.weight',
+    #                  'conv2_1.weight','conv2_2.weight',
+    #                  'conv3_1.weight','conv3_2.weight','conv3_3.weight',
+    #                  'conv4_1.weight','conv4_2.weight','conv4_3.weight']:
+    #         parameters['conv1-4.weight'].append(p)
+    #     elif pname in ['conv1_1.bias','conv1_2.bias',
+    #                    'conv2_1.bias','conv2_2.bias',
+    #                    'conv3_1.bias','conv3_2.bias','conv3_3.bias',
+    #                    'conv4_1.bias','conv4_2.bias','conv4_3.bias']:
+    #         parameters['conv1-4.bias'].append(p)
+    #     elif pname in ['conv5_1.weight','conv5_2.weight','conv5_3.weight']:
+    #         parameters['conv5.weight'].append(p)
+    #     elif pname in ['conv5_1.bias','conv5_2.bias','conv5_3.bias']:
+    #         parameters['conv5.bias'].append(p)
+    #     elif pname in ['conv1_1_down.weight','conv1_2_down.weight',
+    #                    'conv2_1_down.weight','conv2_2_down.weight',
+    #                    'conv3_1_down.weight','conv3_2_down.weight','conv3_3_down.weight',
+    #                    'conv4_1_down.weight','conv4_2_down.weight','conv4_3_down.weight',
+    #                    'conv5_1_down.weight','conv5_2_down.weight','conv5_3_down.weight']:
+    #         parameters['conv_down_1-5.weight'].append(p)
+    #     elif pname in ['conv1_1_down.bias','conv1_2_down.bias',
+    #                    'conv2_1_down.bias','conv2_2_down.bias',
+    #                    'conv3_1_down.bias','conv3_2_down.bias','conv3_3_down.bias',
+    #                    'conv4_1_down.bias','conv4_2_down.bias','conv4_3_down.bias',
+    #                    'conv5_1_down.bias','conv5_2_down.bias','conv5_3_down.bias']:
+    #         parameters['conv_down_1-5.bias'].append(p)
+    #     elif pname in ['score_dsn1.weight','score_dsn2.weight','score_dsn3.weight', 'score_dsn4.weight','score_dsn5.weight']:
+    #         parameters['score_dsn_1-5.weight'].append(p)
+    #     elif pname in ['score_dsn1.bias','score_dsn2.bias','score_dsn3.bias', 'score_dsn4.bias','score_dsn5.bias']:
+    #         parameters['score_dsn_1-5.bias'].append(p)
+    #     elif pname in ['score_fuse.weight']:
+    #         parameters['score_fuse.weight'].append(p)
+    #     elif pname in ['score_fuse.bias']:
+    #         parameters['score_fuse.bias'].append(p)
 
     # optimizer = torch.optim.SGD([
     #         {'params': parameters['conv1-4.weight'],       'lr': args.lr*1,     'weight_decay': args.weight_decay},
@@ -171,14 +176,16 @@ if __name__ == '__main__':
     #         {'params': parameters['score_fuse.bias'],      'lr': args.lr*0.002, 'weight_decay': 0.},
     #     ], lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
     # lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=args.stepsize, gamma=args.gamma)
-
-    # optimizer = torch.optim.SGD(
-    #         model.parameters()
-    #     , lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
-    optimizer = torch.optim.AdamW(
-            model.parameters()
-        , lr=args.lr)
-    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=args.stepsize, gamma=args.gamma)
+    if args.opt=='sgd':
+        optimizer = torch.optim.SGD(
+                model.parameters()
+            , lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
+    if args.opt=='adamw':
+        optimizer = torch.optim.AdamW(
+                model.parameters()
+            , lr=args.lr)
+    # lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=args.stepsize, gamma=args.gamma)
+    lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='max',factor=args.gamma,threshold_mode='abs')
 
     if args.resume is not None:
         if osp.isfile(args.resume):
@@ -204,13 +211,17 @@ if __name__ == '__main__':
         # multi_scale_test(model, test_loader, test_list, save_dir)
         # Save checkpoint
         save_file = osp.join(args.save_dir, 'checkpoint_epoch{}.pth'.format(epoch + 1))
-        torch.save({
-                'epoch': epoch,
-                'args': args,
-                'state_dict': model.state_dict(),
-                'optimizer': optimizer.state_dict(),
-                'lr_scheduler': lr_scheduler.state_dict(),
-            }, save_file)
-        lr_scheduler.step() # will adjust learning rate
+        if max_eval.hasupdate():
+            torch.save({
+                    'epoch': epoch,
+                    'args': args,
+                    'state_dict': model.state_dict(),
+                    'optimizer': optimizer.state_dict(),
+                    'lr_scheduler': lr_scheduler.state_dict(),
+                }, save_file)
+        if isinstance(lr_scheduler,torch.optim.lr_scheduler.ReduceLROnPlateau):
+            lr_scheduler.step(ret['IoU.pl'])
+        else:
+            lr_scheduler.step() # will adjust learning rate
 
     logger.close()

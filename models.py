@@ -3,7 +3,8 @@ import torch.nn as nn
 import numpy as np
 import scipy.io as sio
 import torch.nn.functional as F
-
+from convnext import convnext_tiny
+import sys
 
 class RCF(nn.Module):
     def __init__(self, pretrained=None):
@@ -169,3 +170,129 @@ class RCF(nn.Module):
         results = [out1, out2, out3, out4, out5, fuse]
         results = [torch.sigmoid(r) for r in results]
         return results
+
+class RCFHead(nn.Module):
+    def __init__(self, pretrained=None):
+        super(RCFHead, self).__init__()
+
+        self.conv_down=nn.ModuleList()
+        self.down_channel=[96,96,192,384,768]
+        for i in range(len(self.down_channel)):
+
+            self.conv_down.append(nn.Conv2d( self.down_channel[i], 21, 1))
+        
+        self.score_dsn=nn.ModuleList()
+        for i in range(len(self.down_channel)):
+            self.score_dsn.append(nn.Conv2d(21, 1, 1))
+        self.score_fuse = nn.Conv2d(len(self.down_channel), 1, 1)
+
+        
+
+        self.weight_deconv2 = self._make_bilinear_weights(6, 1).cuda()
+        self.weight_deconv3 = self._make_bilinear_weights(10, 1).cuda()
+        self.weight_deconv4 = self._make_bilinear_weights(26, 1).cuda()
+        self.weight_deconv5 = self._make_bilinear_weights(42, 1).cuda()
+
+        # init weights
+        self.apply(self._init_weights)
+        if pretrained is not None:
+            vgg16 = sio.loadmat(pretrained)
+            torch_params = self.state_dict()
+
+            for k in vgg16.keys():
+                name_par = k.split('-')
+                size = len(name_par)
+                if size == 2:
+                    name_space = name_par[0] + '.' + name_par[1]
+                    data = np.squeeze(vgg16[k])
+                    torch_params[name_space] = torch.from_numpy(data)
+            self.load_state_dict(torch_params)
+
+    def _init_weights(self, m):
+        if isinstance(m, nn.Conv2d):
+            m.weight.data.normal_(0, 0.01)
+            if m.weight.data.shape == torch.Size([1, 5, 1, 1]):
+                nn.init.constant_(m.weight, 0.2)
+            if m.bias is not None:
+                nn.init.constant_(m.bias, 0)
+        elif isinstance(m, nn.BatchNorm2d):
+            m.weight.data.fill_(1)
+            m.bias.data.zero_()
+
+    # Based on HED implementation @ https://github.com/xwjabc/hed
+    def _make_bilinear_weights(self, size, num_channels):
+        factor = (size + 1) // 2
+        if size % 2 == 1:
+            center = factor - 1
+        else:
+            center = factor - 0.5
+        og = np.ogrid[:size, :size]
+        filt = (1 - abs(og[0] - center) / factor) * (1 - abs(og[1] - center) / factor)
+        filt = torch.from_numpy(filt)
+        w = torch.zeros(num_channels, num_channels, size, size)
+        w.requires_grad = False
+        for i in range(num_channels):
+            for j in range(num_channels):
+                if i == j:
+                    w[i, j] = filt
+        return w
+
+    # Based on BDCN implementation @ https://github.com/pkuCactus/BDCN
+    def _crop(self, data, img_h, img_w, crop_h, crop_w):
+        _, _, h, w = data.size()
+        assert(img_h <= h and img_w <= w),(img_h,h,img_w,w)
+        data = data[:, :, crop_h:crop_h + img_h, crop_w:crop_w + img_w]
+        return data
+
+    def forward(self, img_h, img_w,out):
+        
+        assert len(out)==5
+        # for o in out:   
+        #     print(o.shape)
+        out=list(out)
+        for i in range(len(self.down_channel)):
+            # i=i+1
+            out[i]=self.conv_down[i](out[i])#降维至21
+
+        for i in range(len(self.down_channel)):
+            # i=i+1
+            out[i]=self.score_dsn[i](out[i])#降维至1
+
+        # for o in out:   
+        #     print(out[o].shape)        
+        
+        out[0] = F.conv_transpose2d(out[0], self.weight_deconv2, stride=4)
+        out[1] = F.conv_transpose2d(out[1], self.weight_deconv2, stride=4)
+        out[2] = F.conv_transpose2d(out[2], self.weight_deconv3, stride=8)
+        out[3] = F.conv_transpose2d(out[3], self.weight_deconv4, stride=16)
+        out[4] = F.conv_transpose2d(out[4], self.weight_deconv5, stride=32)
+
+        # for o in out:   
+        #     print(o.shape)
+        
+        out[0] = self._crop(out[0], img_h, img_w, 1, 0)
+        out[1] = self._crop(out[1], img_h, img_w, 1, 0)
+        out[2] = self._crop(out[2], img_h, img_w, 1, 0)
+        out[3] = self._crop(out[3], img_h, img_w, 4, 0)
+        out[4] = self._crop(out[4], img_h, img_w, 4, 0)
+        # for o in out:   
+        #     print(o.shape)
+        # sys.exit(0)
+        # print(out3.max(),out3.min(),out4.max(),out4.min(),out5.max(),out5.min())
+        fuse = torch.cat((out[0], out[1], out[2], out[3],out[4]), dim=1)
+        fuse = self.score_fuse(fuse)
+        results = [out[0], out[1], out[2], out[3],out[4], fuse]
+        results = [torch.sigmoid(r) for r in results]
+        return results
+
+class NextRCF(nn.Module):
+    def __init__(self, pretrained=None):
+        super(NextRCF, self).__init__()
+        self.backbone=convnext_tiny(pretrained=True)
+        self.head=RCFHead()
+    def forward(self,x):
+        img_h, img_w = x.shape[2], x.shape[3]
+        x=self.backbone(x)
+        x=self.head(img_h,img_w,x)
+        return x
+

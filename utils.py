@@ -7,13 +7,19 @@ import torch.nn.functional as F
 class EvalMax:
     def __init__(self) -> None:
         self.max_eval={}
+        self.updated=False
     def __call__(self, ret,i=None):
         for k in ret.keys():#通过键，批量对比大小
                 if 'pl'  in k and ret[k]>self.max_eval.setdefault(k,0):
+                    self.updated=True
                     self.max_eval[k]=ret[k]
                     if i:
                         self.max_eval[k+'_epo']=i
         return self.max_eval
+    def hasupdate(self):
+        if self.updated:
+            self.updated=False
+            return True
 
 class Logger(object):
     def __init__(self, path='log.txt'):
@@ -60,5 +66,8 @@ def Cross_entropy_loss(prediction, label):
     mask[mask == 1] = 1.0 * num_negative / (num_positive + num_negative)
     mask[mask == 0] = 1.1 * num_positive / (num_positive + num_negative)
     mask[mask == 2] = 0
-    cost = F.binary_cross_entropy(prediction, label, weight=mask, reduce=False)
+    cost = F.binary_cross_entropy(prediction, label, weight=mask
+        # , reduce=False
+        # ,reduction='sum'
+        )
     return torch.sum(cost)
