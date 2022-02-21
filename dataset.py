@@ -10,6 +10,8 @@ from prettytable import PrettyTable
 from torch.utils.data import Dataset
 from collections import OrderedDict
 import torchvision
+from random import randint
+import sys
 
 from mmseg.core import eval_metrics, intersect_and_union, pre_eval_to_metrics
 
@@ -78,12 +80,21 @@ class TTPLA_Dataset(torch.utils.data.Dataset):
         return len(self.file_list)
 
     def __getitem__(self, index):
+        r=randint(96,384)
+ 
+            
         if self.split in ['train','eval']:
             img_file= self.file_list[index]
             label = Image.open(osp.join(self.root,'annpng_powerline', img_file.strip('\n')+'.png'))
-            label=self.transf(label)
-            label = np.array(label, dtype=np.float32)
+            
+            label=self.transf(label,r)#缩放至最大训练尺寸
+            
+            # print(2,label.shape)
             label = label[np.newaxis, :, :]
+            # sys.exit(0)
+            
+            
+            
             # label[label == 0] = 0
             # label[np.logical_and(label > 0, label < 127.5)] = 2
             # label[label >= 127.5] = 1
@@ -91,8 +102,9 @@ class TTPLA_Dataset(torch.utils.data.Dataset):
             img_file = self.file_list[index]
 
         img = Image.open(osp.join(self.root, img_file.strip('\n')+'.jpg'))
-        img=self.transf(img)
-        img = np.array(img, dtype=np.float32)
+        img=self.transf(img,r)
+        # img=rrisize(img)
+        # img = np.array(img, dtype=np.float32)
         img = (img - self.mean).transpose((2, 0, 1))
         
         if self.split in ['train','eval']:
@@ -100,9 +112,18 @@ class TTPLA_Dataset(torch.utils.data.Dataset):
         else:
             return img
     
-    def transf(self,img):
+    def transf(self,img , r):
         if self.transform:
             img=self.transform(img)
+            rrisize = torchvision.transforms.Compose([
+            torchvision.transforms.Resize(r)
+            ]) 
+            W,H=img.size#获取尺寸信息
+            # print(1,label.size)            
+            img=rrisize(img)#随机缩放
+            img = np.array(img, dtype=np.float32)#转numpy
+            # print(2,label.shape)
+            img=mmcv.impad(img,shape=(H,W))#填充至最大训练尺寸
         return img
     
     def evaluate(self,

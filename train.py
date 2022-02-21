@@ -1,4 +1,5 @@
 import os
+os.environ['CUDA_VISIBLE_DEVICES']='2'#指定训练gpu
 import numpy as np
 import os.path as osp
 import cv2
@@ -9,7 +10,7 @@ from torch.utils.data import DataLoader
 import torchvision
 from dataset import BSDS_Dataset,TTPLA_Dataset
 from models import RCF,NextRCF
-from utils import Logger, Averagvalue, Cross_entropy_loss,EvalMax
+from utils import Logger, Averagvalue, Cross_entropy_loss,EvalMax,select_model
 from test import single_scale_test
 def get_lr(optimizer):
     for param_group in optimizer.param_groups:
@@ -119,10 +120,11 @@ if __name__ == '__main__':
     test_loader   = DataLoader(test_dataset, batch_size=args.batch_size, num_workers=8, drop_last=False, shuffle=False)
     test_list = [i for i in test_dataset.file_list]
     # assert len(test_list) == len(test_loader) #,print(len(test_list) ,len(test_loader),len(train_loader))
-    if args.model=='rcf':
-        model = RCF(pretrained='vgg16convs.mat').cuda()
-    elif args.model=='convnext':
-        model = NextRCF().cuda()
+    model = select_model(args.model)
+    # if args.model=='rcf':
+    #     model = RCF(pretrained='vgg16convs.mat').cuda()
+    # elif args.model=='convnext':
+    #     model = NextRCF().cuda()
 
     # parameters = {'conv1-4.weight': [], 'conv1-4.bias': [], 'conv5.weight': [], 'conv5.bias': [],
     #     'conv_down_1-5.weight': [], 'conv_down_1-5.bias': [], 'score_dsn_1-5.weight': [],
@@ -202,9 +204,10 @@ if __name__ == '__main__':
     #     model.load_state_dict(torch.load('bsds500_pascal_model.pth'))
     max_eval=EvalMax()
     for epoch in range(args.start_epoch, args.max_epoch):
-        logger.info('Performing initial testing...')
+        logger.info('training...')
         train(args, model, train_loader, optimizer, epoch, logger)
         # save_dir = osp.join(args.save_dir, 'epoch%d-test' % (epoch + 1))
+        logger.info('testing...')
         ret=single_scale_test(model, test_loader, test_list, None,test_dataset.evaluate,False)
         logger.info(ret)
         logger.info(max_eval(ret,epoch+1))

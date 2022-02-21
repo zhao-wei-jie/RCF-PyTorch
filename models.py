@@ -188,10 +188,10 @@ class RCFHead(nn.Module):
 
         
 
-        self.weight_deconv2 = self._make_bilinear_weights(6, 1).cuda()
-        self.weight_deconv3 = self._make_bilinear_weights(10, 1).cuda()
-        self.weight_deconv4 = self._make_bilinear_weights(26, 1).cuda()
-        self.weight_deconv5 = self._make_bilinear_weights(42, 1).cuda()
+        self.weight_deconv2 = self._make_bilinear_weights(8, 1).cuda()
+        self.weight_deconv3 = self._make_bilinear_weights(16, 1).cuda()
+        self.weight_deconv4 = self._make_bilinear_weights(32, 1).cuda()
+        self.weight_deconv5 = self._make_bilinear_weights(48, 1).cuda()
 
         # init weights
         self.apply(self._init_weights)
@@ -241,6 +241,8 @@ class RCFHead(nn.Module):
     def _crop(self, data, img_h, img_w, crop_h, crop_w):
         _, _, h, w = data.size()
         assert(img_h <= h and img_w <= w),(img_h,h,img_w,w)
+        crop_h=(h-img_h)//2
+        crop_w=(w-img_w)//2
         data = data[:, :, crop_h:crop_h + img_h, crop_w:crop_w + img_w]
         return data
 
@@ -274,7 +276,7 @@ class RCFHead(nn.Module):
         out[1] = self._crop(out[1], img_h, img_w, 1, 0)
         out[2] = self._crop(out[2], img_h, img_w, 1, 0)
         out[3] = self._crop(out[3], img_h, img_w, 4, 0)
-        out[4] = self._crop(out[4], img_h, img_w, 4, 0)
+        out[4] = self._crop(out[4], img_h, img_w, 0, 0)
         # for o in out:   
         #     print(o.shape)
         # sys.exit(0)

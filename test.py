@@ -1,5 +1,7 @@
+
 from datetime import date
 import os
+os.environ['CUDA_VISIBLE_DEVICES']='2'#指定训练gpu
 import numpy as np
 import os.path as osp
 import cv2
@@ -18,7 +20,7 @@ import logging
 from torch.utils.data import Dataset
 from torchvision import transforms
 import sys
-from utils import EvalMax
+from utils import EvalMax,select_model
 class inferImage(Dataset):
     def __init__(self, img_dir, cnum=None, aug=False,transform=None, target_transform=None):
         self.infer_list=glob(img_dir)
@@ -117,6 +119,7 @@ if __name__ == '__main__':
     parser.add_argument('--checkpoint', default=None, type=str, help='path to latest checkpoint')
     parser.add_argument('--save-dir', help='output folder', default='results/RCF')
     parser.add_argument('--dataset', help='root folder of dataset', default=None)
+    parser.add_argument('--model', default='rcf', type=str, help='rcf')
     args = parser.parse_args()
     
     os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'
@@ -137,8 +140,8 @@ if __name__ == '__main__':
     test_list = [osp.split(i.rstrip())[1] for i in test_dataset.file_list]
     assert len(test_list) == len(test_loader)
 
-    model = RCF().cuda()
-
+    # model = RCF().cuda()
+    model = select_model(args.model)
     if osp.isfile(args.checkpoint):
         print("=> loading checkpoint from '{}'".format(args.checkpoint))
         checkpoint = torch.load(args.checkpoint)

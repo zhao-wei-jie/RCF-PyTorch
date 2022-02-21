@@ -1,8 +1,16 @@
+import imp
 import os
 import logging
 import numpy as np
 import torch
 import torch.nn.functional as F
+from models import RCF,NextRCF
+def select_model(mod):
+    if mod=='rcf':
+       return RCF(pretrained='vgg16convs.mat').cuda()
+    elif mod=='convnext':
+        return NextRCF().cuda()
+
 
 class EvalMax:
     def __init__(self) -> None:
