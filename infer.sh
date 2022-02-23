@@ -1,3 +1,4 @@
-python test.py --checkpoint results/RCF20220215_0952-bs-8-lr-0.0003-iter_size-1-opt-adamw/checkpoint_epoch529.pth \
---model=convnext
-# --dataset=/home/zhaowj/python/stereo/test_set/cam0/* \
+python test.py --checkpoint results/RCF20220222_1249-bs-4-lr-0.002-iter_size-1-opt-adamw/checkpoint_epoch482.pth \
+--model=rcf \
+--dataflag=grayscale \
+# --dataset=/home/zhaowj/python/stereo/test_set/cam0/* 

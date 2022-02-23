@@ -121,7 +121,7 @@ class RCF(nn.Module):
         assert(img_h <= h and img_w <= w)
         data = data[:, :, crop_h:crop_h + img_h, crop_w:crop_w + img_w]
         return data
-
+    # @torch.autocast('cuda')
     def forward(self, x):
         img_h, img_w = x.shape[-2], x.shape[-1]
 

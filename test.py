@@ -36,9 +36,11 @@ class inferImage(Dataset):
         # print(idx)
         img_path = self.infer_list[idx]
         # image = read_image(img_path)
-        img=self.transforms(Image.open(img_path).convert("RGB"))
+        img=Image.open(img_path)
+        # img=self.transforms(Image.open(img_path).convert("RGB"))
         image = np.asarray(img)
-        image=np.einsum('ijk->kij',image)
+        image = image[np.newaxis, :, :]
+        # image=np.einsum('ijk->kij',image)
         image=torch.tensor(image)
         return image.float()
 
@@ -63,6 +65,7 @@ def single_scale_test(model, test_loader, test_list, save_dir,eval=None,save_img
         _, _, H, W = image.shape
         with torch.cuda.amp.autocast(enabled=use_amp):
             results = model(image)
+        results = [torch.sigmoid(r) for r in results]
         # print(results.shape)
         
         filename = osp.splitext(test_list[idx])[0]
@@ -122,6 +125,7 @@ if __name__ == '__main__':
     parser.add_argument('--save-dir', help='output folder', default='results/RCF')
     parser.add_argument('--dataset', help='root folder of dataset', default=None)
     parser.add_argument('--model', default='rcf', type=str, help='rcf')
+    parser.add_argument('--dataflag', default='color',help='color or grayscale')
     args = parser.parse_args()
     
     os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'
@@ -136,14 +140,14 @@ if __name__ == '__main__':
     #   test_dataset  = BSDS_Dataset(root=args.dataset, split='test')
       test_dataset  = inferImage(img_dir=args.dataset)
     else:
-        test_dataset=TTPLA_Dataset(split='eval')
+        test_dataset=TTPLA_Dataset(split='eval',dataflag=args.dataflag)
     
     test_loader   = DataLoader(test_dataset, batch_size=1, num_workers=1, drop_last=False, shuffle=False)
     test_list = [osp.split(i.rstrip())[1] for i in test_dataset.file_list]
     assert len(test_list) == len(test_loader)
 
     # model = RCF().cuda()
-    model = select_model(args.model)
+    model = select_model(args.model,args.dataflag)
     if osp.isfile(args.checkpoint):
         print("=> loading checkpoint from '{}'".format(args.checkpoint))
         checkpoint = torch.load(args.checkpoint)
