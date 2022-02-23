@@ -7,9 +7,14 @@ from convnext import convnext_tiny
 import sys
 
 class RCF(nn.Module):
-    def __init__(self, pretrained=None):
+    def __init__(self, pretrained=None,dataflag='color'):
         super(RCF, self).__init__()
-        self.conv1_1 = nn.Conv2d(  3,  64, 3, padding=1, dilation=1)
+        if dataflag=='color':
+            datachannel=3
+        if dataflag=='grayscale':
+            datachannel=1
+        self.dataflag=dataflag
+        self.conv1_1 = nn.Conv2d(  datachannel,  64, 3, padding=1, dilation=1)
         self.conv1_2 = nn.Conv2d( 64,  64, 3, padding=1, dilation=1)
         self.conv2_1 = nn.Conv2d( 64, 128, 3, padding=1, dilation=1)
         self.conv2_2 = nn.Conv2d(128, 128, 3, padding=1, dilation=1)
@@ -76,6 +81,9 @@ class RCF(nn.Module):
                     name_space = name_par[0] + '.' + name_par[1]
                     data = np.squeeze(vgg16[k])
                     torch_params[name_space] = torch.from_numpy(data)
+                if k=='conv1_1-weight' and self.dataflag=='grayscale':
+                    data = np.squeeze(vgg16[k])
+                    torch_params['conv1_1.weight']=torch.from_numpy(data).mean(dim=1).unsqueeze(1)
             self.load_state_dict(torch_params)
 
     def _init_weights(self, m):
@@ -115,7 +123,7 @@ class RCF(nn.Module):
         return data
 
     def forward(self, x):
-        img_h, img_w = x.shape[2], x.shape[3]
+        img_h, img_w = x.shape[-2], x.shape[-1]
 
         conv1_1 = self.act(self.bn['1-1'](self.conv1_1(x)))
         conv1_2 = self.act(self.bn['1-2'](self.conv1_2(conv1_1)))
@@ -168,7 +176,7 @@ class RCF(nn.Module):
         fuse = torch.cat((out1, out2, out3, out4, out5), dim=1)
         fuse = self.score_fuse(fuse)
         results = [out1, out2, out3, out4, out5, fuse]
-        results = [torch.sigmoid(r) for r in results]
+        # results = [torch.sigmoid(r) for r in results]
         return results
 
 class RCFHead(nn.Module):

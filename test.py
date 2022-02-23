@@ -42,7 +42,7 @@ class inferImage(Dataset):
         image=torch.tensor(image)
         return image.float()
 
-def single_scale_test(model, test_loader, test_list, save_dir,eval=None,save_img=True):
+def single_scale_test(model, test_loader, test_list, save_dir,eval=None,save_img=True,use_amp=False):
     model.eval()
     eval_res=[]
     eval_label=[]
@@ -61,7 +61,8 @@ def single_scale_test(model, test_loader, test_list, save_dir,eval=None,save_img
         image = image.cuda()
         
         _, _, H, W = image.shape
-        results = model(image)
+        with torch.cuda.amp.autocast(enabled=use_amp):
+            results = model(image)
         # print(results.shape)
         
         filename = osp.splitext(test_list[idx])[0]
@@ -83,7 +84,8 @@ def single_scale_test(model, test_loader, test_list, save_dir,eval=None,save_img
             cv2.imwrite(osp.join(save_dir, '%s_ss.png' % filename), fuse_res)
         #print('\rRunning single-scale test [%d/%d]' % (idx + 1, len(test_loader)), end='')
     print('Running single-scale test done')
-    if eval:    
+    if eval: 
+        # eval_res.   
         ret=eval(results=eval_res,gt_seg_maps=eval_label,metric=['mIoU', 'mFscore'])
         return ret
     

@@ -5,9 +5,9 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 from models import RCF,NextRCF
-def select_model(mod):
+def select_model(mod,dataflag):
     if mod=='rcf':
-       return RCF(pretrained='vgg16convs.mat').cuda()
+       return RCF(pretrained='vgg16convs.mat',dataflag=dataflag).cuda()
     elif mod=='convnext':
         return NextRCF().cuda()
 
@@ -74,7 +74,7 @@ def Cross_entropy_loss(prediction, label):
     mask[mask == 1] = 1.0 * num_negative / (num_positive + num_negative)
     mask[mask == 0] = 1.1 * num_positive / (num_positive + num_negative)
     mask[mask == 2] = 0
-    cost = F.binary_cross_entropy(prediction, label, weight=mask
+    cost = F.binary_cross_entropy_with_logits(prediction, label, weight=mask
         # , reduce=False
         # ,reduction='sum'
         )

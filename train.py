@@ -1,5 +1,5 @@
 import os
-os.environ['CUDA_VISIBLE_DEVICES']='2'#指定训练gpu
+os.environ['CUDA_VISIBLE_DEVICES']='0'#指定训练gpu
 import numpy as np
 import os.path as osp
 import cv2
@@ -12,11 +12,12 @@ from dataset import BSDS_Dataset,TTPLA_Dataset
 from models import RCF,NextRCF
 from utils import Logger, Averagvalue, Cross_entropy_loss,EvalMax,select_model
 from test import single_scale_test
+from apex import amp
 def get_lr(optimizer):
     for param_group in optimizer.param_groups:
         return param_group['lr']
 
-def train(args, model, train_loader, optimizer, epoch, logger):
+def train(args, model, train_loader, optimizer, epoch, logger,scaler,use_amp):
     batch_time = Averagvalue()
     losses = Averagvalue()
     model.train()
@@ -24,15 +25,19 @@ def train(args, model, train_loader, optimizer, epoch, logger):
     counter = 0
     for i, (image, label) in enumerate(train_loader):
         image, label = image.cuda(), label.cuda()
-        outputs = model(image)
-        loss = torch.zeros(1).cuda()
-        for o in outputs:
-            loss = loss + Cross_entropy_loss(o, label)
-        counter += 1
-        loss = loss / args.iter_size
-        loss.backward()
+        with torch.cuda.amp.autocast(enabled=use_amp):
+            outputs = model(image)
+            loss = torch.zeros(1).cuda()
+            for o in outputs:
+                loss = loss + Cross_entropy_loss(o, label)
+            counter += 1
+            loss = loss / args.iter_size       
+        scaler.scale(loss).backward()
+        # loss.backward()
         if counter == args.iter_size:
-            optimizer.step()
+            scaler.step(optimizer)
+            # optimizer.step()
+            scaler.update()
             optimizer.zero_grad()
             counter = 0
         # measure accuracy and record loss
@@ -90,6 +95,8 @@ if __name__ == '__main__':
     parser.add_argument('--resume', default=None, type=str, help='path to latest checkpoint')
     parser.add_argument('--save-dir', help='output folder', default='results/RCF')
     parser.add_argument('--dataset', help='root folder of dataset', default='data')
+    parser.add_argument('--dataflag', default='color',help='color or grayscale')
+    parser.add_argument('--amp', default='O0',help='O0~O3')
     args = parser.parse_args()
 
     os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'
@@ -114,13 +121,13 @@ if __name__ == '__main__':
     # train_dataset = BSDS_Dataset(root=args.dataset, split='train')
     # test_dataset  = BSDS_Dataset(root=osp.join(args.dataset, 'HED-BSDS'), split='test')
 
-    train_dataset = TTPLA_Dataset(split='train')
-    test_dataset  = TTPLA_Dataset(split='eval')
+    train_dataset = TTPLA_Dataset(split='train',dataflag=args.dataflag)
+    test_dataset  = TTPLA_Dataset(split='eval',dataflag=args.dataflag)
     train_loader  = DataLoader(train_dataset, batch_size=args.batch_size, num_workers=8, drop_last=True, shuffle=True)
     test_loader   = DataLoader(test_dataset, batch_size=args.batch_size, num_workers=8, drop_last=False, shuffle=False)
     test_list = [i for i in test_dataset.file_list]
     # assert len(test_list) == len(test_loader) #,print(len(test_list) ,len(test_loader),len(train_loader))
-    model = select_model(args.model)
+    model = select_model(args.model,args.dataflag)
     # if args.model=='rcf':
     #     model = RCF(pretrained='vgg16convs.mat').cuda()
     # elif args.model=='convnext':
@@ -188,7 +195,11 @@ if __name__ == '__main__':
             , lr=args.lr)
     # lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=args.stepsize, gamma=args.gamma)
     lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='max',factor=args.gamma,threshold_mode='abs')
-
+    use_amp=False
+    if args.amp == 'O1':
+        logger.info('use amp')
+        use_amp=True
+    scaler = torch.cuda.amp.GradScaler(enabled=use_amp)
     if args.resume is not None:
         if osp.isfile(args.resume):
             logger.info("=> loading checkpoint from '{}'".format(args.resume))
@@ -197,18 +208,21 @@ if __name__ == '__main__':
             optimizer.load_state_dict(checkpoint['optimizer'])
             lr_scheduler.load_state_dict(checkpoint['lr_scheduler'])
             args.start_epoch = checkpoint['epoch'] + 1
+            if 'scaler' in checkpoint.keys():
+                logger.info("=>  loaded scaler")
+                scaler.load_state_dict('scaler')
             logger.info("=> checkpoint loaded")
         else:
             logger.info("=> no checkpoint found at '{}'".format(args.resume))
     # else:
     #     model.load_state_dict(torch.load('bsds500_pascal_model.pth'))
-    max_eval=EvalMax()
+    max_eval=EvalMax()    
     for epoch in range(args.start_epoch, args.max_epoch):
         logger.info('training...')
-        train(args, model, train_loader, optimizer, epoch, logger)
+        train(args, model, train_loader, optimizer, epoch, logger,scaler,use_amp)
         # save_dir = osp.join(args.save_dir, 'epoch%d-test' % (epoch + 1))
         logger.info('testing...')
-        ret=single_scale_test(model, test_loader, test_list, None,test_dataset.evaluate,False)
+        ret=single_scale_test(model, test_loader, test_list, None,test_dataset.evaluate,False,use_amp)
         logger.info(ret)
         logger.info(max_eval(ret,epoch+1))
         # multi_scale_test(model, test_loader, test_list, save_dir)
@@ -221,6 +235,7 @@ if __name__ == '__main__':
                     'state_dict': model.state_dict(),
                     'optimizer': optimizer.state_dict(),
                     'lr_scheduler': lr_scheduler.state_dict(),
+                    'scaler':scaler.state_dict()
                 }, save_file)
         if isinstance(lr_scheduler,torch.optim.lr_scheduler.ReduceLROnPlateau):
             lr_scheduler.step(ret['IoU.pl'])
