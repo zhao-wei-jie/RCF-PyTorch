@@ -13,9 +13,35 @@ from models import RCF,NextRCF
 from utils import Logger, Averagvalue, Cross_entropy_loss,EvalMax,select_model
 from test import single_scale_test
 from apex import amp
+import sys
+import mmcv
 def get_lr(optimizer):
     for param_group in optimizer.param_groups:
         return param_group['lr']
+def mosaic(img):
+    N,C,H,W=img.shape
+    mosaic_img=torch.zeros((int(N//2),C,H,int(W//2)))
+    for i in range(0,N,2):#拼接样本，缩小电线
+        cat_img=torch.cat((img[i,0],img[i+1,0]),dim=0)
+        cat_img=mmcv.imrescale(cat_img.cpu().numpy(),0.5)
+        # print(cat_img.shape)
+        mosaic_img[int(i//2),0,:,:]=torch.from_numpy(cat_img)[:,:]
+    return mosaic_img
+def data_aug(img,label):
+    
+    mosaic_img=mosaic(img).cuda()
+    mosaic_label=mosaic(label).cuda()
+    # print(mosaic_img.shape)
+    
+        # torch.
+    # print(mosaic_img.shape)
+    img=torch.cat(torch.chunk(img,2,dim=3),dim=0)#将图片分给两边，视为两个样本
+    label=torch.cat(torch.chunk(label,2,dim=3),dim=0)
+    
+    img=torch.cat((img,mosaic_img),dim=0)
+    label=torch.cat((label,mosaic_label),dim=0)
+    
+    return img,label
 
 def train(args, model, train_loader, optimizer, epoch, logger,scaler,use_amp):
     batch_time = Averagvalue()
@@ -25,6 +51,10 @@ def train(args, model, train_loader, optimizer, epoch, logger,scaler,use_amp):
     counter = 0
     for i, (image, label) in enumerate(train_loader):
         image, label = image.cuda(), label.cuda()
+        if args.aug:
+            image,label=data_aug(image,label)
+        # print(image.shape)
+        # sys.exit(0)
         with torch.cuda.amp.autocast(enabled=use_amp):
             outputs = model(image)
             loss = torch.zeros(1).cuda()
@@ -93,10 +123,12 @@ if __name__ == '__main__':
     parser.add_argument('--print-freq', default=200, type=int, help='print frequency')
     parser.add_argument('--gpu', default='0', type=str, help='GPU ID')
     parser.add_argument('--resume', default=None, type=str, help='path to latest checkpoint')
+    parser.add_argument('--pretrain', default=None, type=str, help='path to latest checkpoint')
     parser.add_argument('--save-dir', help='output folder', default='results/RCF')
     parser.add_argument('--dataset', help='root folder of dataset', default='data')
     parser.add_argument('--dataflag', default='color',help='color or grayscale')
     parser.add_argument('--amp', default='O0',help='O0~O3')
+    parser.add_argument('--aug', default=False,help='true or false')
     args = parser.parse_args()
 
     os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'
@@ -200,20 +232,25 @@ if __name__ == '__main__':
         logger.info('use amp')
         use_amp=True
     scaler = torch.cuda.amp.GradScaler(enabled=use_amp)
-    if args.resume is not None:
-        if osp.isfile(args.resume):
-            logger.info("=> loading checkpoint from '{}'".format(args.resume))
-            checkpoint = torch.load(args.resume)
+    def load_w(pth,mode):
+        if osp.isfile(pth):
+            logger.info("=> loading checkpoint from '{}'".format(pth))
+            checkpoint = torch.load(pth)
             model.load_state_dict(checkpoint['state_dict'])
-            optimizer.load_state_dict(checkpoint['optimizer'])
-            lr_scheduler.load_state_dict(checkpoint['lr_scheduler'])
-            args.start_epoch = checkpoint['epoch'] + 1
-            if 'scaler' in checkpoint.keys():
-                logger.info("=>  loaded scaler")
-                scaler.load_state_dict('scaler')
+            if mode=='resume':
+                optimizer.load_state_dict(checkpoint['optimizer'])
+                lr_scheduler.load_state_dict(checkpoint['lr_scheduler'])
+                args.start_epoch = checkpoint['epoch'] + 1
+                if 'scaler' in checkpoint.keys():
+                    logger.info("=>  loaded scaler")
+                    scaler.load_state_dict('scaler')
             logger.info("=> checkpoint loaded")
         else:
-            logger.info("=> no checkpoint found at '{}'".format(args.resume))
+            logger.info("=> no checkpoint found at '{}'".format(pth))
+    if args.resume is not None:
+        load_w(args.resume,'resume')
+    if args.pretrain:
+        load_w(args.resume,'pretrain')
     # else:
     #     model.load_state_dict(torch.load('bsds500_pascal_model.pth'))
     max_eval=EvalMax()    

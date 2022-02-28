@@ -43,6 +43,7 @@ def old_log(f,evallist):
         evallist.append(eval)
     # break
 def new_log(f,evallist):
+    start=True #是否找出第一个epoch的标志，用于继续训练时找到中断的epoch
     for idx,line in enumerate(f):
             eval=None
             if 'aAcc' in line:
@@ -52,6 +53,11 @@ def new_log(f,evallist):
                 lr=line.split('lr ')[-1].strip('\n')
                 eval={}
                 eval['lr']=float(lr)
+                if start:
+                    epoch=line.split('/')[0].split('[')[-1]
+                    start=False
+                    print('start_epoch',epoch)
+                    eval['epoch']=int(epoch)
             if eval:
                 evallist.append(eval)
 
@@ -77,11 +83,11 @@ def py_log(paths,mode='list'):
                 print('old')
                 old_log(f,evallist)
         print(path)
-        iou_values,f1_values,lr_v=draw_log(evallist,path,ax)
+        iou_values,f1_values,lr_v,star_epoch=draw_log(evallist,path,ax)
         label=osp.dirname(path).split('bs-8')[-1].strip('-').strip('optadamw')
         ioulable='iou-'+label
         lrlable='lr-'+label
-        plot_epochs=range(1,len(iou_values)+1)
+        plot_epochs=range(star_epoch,len(iou_values)+star_epoch)
         
         # iou_values.sort()
         # f1_values.sort()
@@ -95,20 +101,20 @@ def py_log(paths,mode='list'):
         plt.plot(plot_epochs, iou_values, label=ioulable)
         if mode=='list':  
             plt.plot(plot_epochs, f1_values, label='f1')
-            plt.text(plot_epochs[np.argmax(f1_values)], max(f1_values), str(max(f1_values))+'-'+str(np.argmax(f1_values)+1))#写出最高点值
+            plt.text(plot_epochs[np.argmax(f1_values)], max(f1_values), str(max(f1_values))+'-'+str(np.argmax(f1_values)+star_epoch))#写出最高点值
         
-        max_iou_pos=np.argmax(iou_values)+1
+        max_iou_pos=np.argmax(iou_values)
         # print(max_iou_pos,iou_values)
-        plt.text(plot_epochs[max_iou_pos-1], max(iou_values),str(max(iou_values))+'-'+str(max_iou_pos))#写出最高点值
+        plt.text(plot_epochs[max_iou_pos], max(iou_values),str(max(iou_values))+'-'+str(max_iou_pos+star_epoch))#写出最高点值
         
-        x=[1]
+        x=[star_epoch]
         maxi=0
         for idx,i in enumerate(iou_values):
             if i>maxi:
                 maxi=i
-                if idx-x[-1]>=10 and max_iou_pos-idx>=10:       
-                    x.append(idx+1)
-        x.append(max_iou_pos)
+                if idx+star_epoch-x[-1]>=10 and max_iou_pos-idx>=10:       
+                    x.append(idx+star_epoch)
+        x.append(max_iou_pos+star_epoch)
         plt.xticks(x)
         plt_combo()
         plt.ylabel('score')
@@ -147,6 +153,7 @@ def draw_log(evallist,path,ax):
     iou_values=[]
     f1_values=[]
     lr_v=[]
+    start_epoch=0
     # print(len(evallist))
     for i in evallist:
         # tmp=[i['IoU.pl'],i['Fscore.pl']]
@@ -159,10 +166,14 @@ def draw_log(evallist,path,ax):
             f1_values.append(i['f1'])
         if 'lr' in i.keys():
             lr_v.append(i['lr'])
-    return iou_values,f1_values,lr_v
+        if 'epoch' in i.keys():
+            start_epoch=i['epoch']
+    return iou_values,f1_values,lr_v,start_epoch
 
 
 alist=glob('results/*_*-bs-*/*.log')
+alist.sort()
+print(alist)
 py_log(alist[-1],mode='list')
 # py_log('results/RCF20220122_1759-bs-8-lr-0.002-iter_size-1-opt-adamw/train.log')
 # alist=glob('results/RCF20220119_2123-bs-8-lr-0.03125-iter_size-10-opt-adamw/*.pth')

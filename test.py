@@ -1,7 +1,7 @@
 
 from datetime import date
 import os
-os.environ['CUDA_VISIBLE_DEVICES']='2'#指定训练gpu
+os.environ['CUDA_VISIBLE_DEVICES']='0'#指定训练gpu
 import numpy as np
 import os.path as osp
 import cv2
@@ -12,7 +12,7 @@ from torch.utils.data import DataLoader
 import torchvision
 from dataset import BSDS_Dataset,TTPLA_Dataset
 from models import RCF
-
+import mmcv
 from tqdm import tqdm
 from glob import glob
 from PIL import Image
@@ -51,6 +51,8 @@ def single_scale_test(model, test_loader, test_list, save_dir,eval=None,save_img
 
     if save_dir and not osp.isdir(save_dir):
         os.makedirs(save_dir)
+    timer=mmcv.Timer()
+    per_time=0.0
     for idx, data in enumerate(test_loader):
         if eval:
             image,label=data
@@ -64,8 +66,10 @@ def single_scale_test(model, test_loader, test_list, save_dir,eval=None,save_img
         
         _, _, H, W = image.shape
         with torch.cuda.amp.autocast(enabled=use_amp):
+            timer.since_last_check()
             results = model(image)
         results = [torch.sigmoid(r) for r in results]
+        per_time+=timer.since_last_check()
         # print(results.shape)
         
         filename = osp.splitext(test_list[idx])[0]
@@ -86,6 +90,7 @@ def single_scale_test(model, test_loader, test_list, save_dir,eval=None,save_img
         if save_img:
             cv2.imwrite(osp.join(save_dir, '%s_ss.png' % filename), fuse_res)
         #print('\rRunning single-scale test [%d/%d]' % (idx + 1, len(test_loader)), end='')
+    print('fps',1/(per_time/len(test_list)))
     print('Running single-scale test done')
     if eval: 
         # eval_res.   

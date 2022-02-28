@@ -9,7 +9,8 @@ python train.py \
         --gamma=0.9 \
         --weight-decay=1e-2 \
         --iter-size=1\
-        --dataflag=grayscale \
-        --amp=O1 
-        # --model=convnext
-        # --resume=results/RCF20220123_1024-bs-8-lr-0.002-iter_size-1-opt-adamw/checkpoint_epoch220.pth
+        --amp=O1 \
+        --model=rcf \
+        # --dataflag=grayscale \
+        # --resume=results/RCF20220223_1214-bs-4-lr-0.002-iter_size-1-opt-adamw/checkpoint_epoch253.pth
+        # --pretrain=results/RCF20220223_2140-bs-4-lr-0.002-iter_size-1-opt-adamw/checkpoint_epoch594.pth
