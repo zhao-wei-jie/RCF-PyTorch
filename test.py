@@ -1,7 +1,7 @@
 
 from datetime import date
 import os
-os.environ['CUDA_VISIBLE_DEVICES']='0'#指定训练gpu
+os.environ['CUDA_VISIBLE_DEVICES']='1'#指定训练gpu
 import numpy as np
 import os.path as osp
 import cv2
@@ -22,9 +22,10 @@ from torchvision import transforms
 import sys
 from utils import EvalMax,select_model
 class inferImage(Dataset):
-    def __init__(self, img_dir, cnum=None, aug=False,transform=None, target_transform=None):
+    def __init__(self, img_dir, dataflag,cnum=None, aug=False,transform=None, target_transform=None):
         self.infer_list=glob(img_dir)
         self.file_list=self.infer_list
+        self.dataflag=dataflag
         self.transforms=torchvision.transforms.Compose([
         torchvision.transforms.Resize(512)        
         ])
@@ -36,13 +37,18 @@ class inferImage(Dataset):
         # print(idx)
         img_path = self.infer_list[idx]
         # image = read_image(img_path)
-        img=Image.open(img_path)
-        # img=self.transforms(Image.open(img_path).convert("RGB"))
-        image = np.asarray(img)
-        image = image[np.newaxis, :, :]
-        # image=np.einsum('ijk->kij',image)
-        image=torch.tensor(image)
-        return image.float()
+        img =  mmcv.imread(img_path,self.dataflag)
+        if self.dataflag=='color':
+            # img=self.transforms(Image.open(img_path).convert("RGB"))
+            # image = np.asarray(img)
+            img=np.einsum('ijk->kij',img)
+        else:
+            # img=Image.open(img_path)
+            # image = np.asarray(img)
+            img = img[np.newaxis, :, :]
+       
+        image=torch.tensor(img)
+        return image.float(),osp.basename(osp.dirname(img_path))
 
 def single_scale_test(model, test_loader, test_list, save_dir,eval=None,save_img=True,use_amp=False):
     model.eval()
@@ -61,10 +67,10 @@ def single_scale_test(model, test_loader, test_list, save_dir,eval=None,save_img
             label=label.cpu().numpy()
             eval_label.append(label)
         else:
-            image=data
+            image,name=data
         image = image.cuda()
         
-        _, _, H, W = image.shape
+        H, W = image.shape[-2:]
         with torch.cuda.amp.autocast(enabled=use_amp):
             timer.since_last_check()
             results = model(image)
@@ -77,7 +83,9 @@ def single_scale_test(model, test_loader, test_list, save_dir,eval=None,save_img
             all_res = torch.zeros((len(results), 1, H, W))
             for i in range(len(results)):
                 all_res[i, 0, :, :] = results[i]
-            torchvision.utils.save_image(1 - all_res, osp.join(save_dir, '%s.jpg' % filename))
+            if os.path.exists(osp.join(save_dir,name[0])) is not True:
+                os.mkdir(osp.join(save_dir,name[0]))
+            torchvision.utils.save_image(1 - all_res, osp.join(save_dir,name[0], '%s.jpg' % filename))
         fuse_res = torch.squeeze(results[-1].detach())
         temp_res=torch.zeros_like(fuse_res)        
         temp_res[fuse_res>0.5]=1
@@ -88,9 +96,9 @@ def single_scale_test(model, test_loader, test_list, save_dir,eval=None,save_img
         # sys.exit()
         fuse_res = ((1 - fuse_res) * 255).astype(np.uint8)
         if save_img:
-            cv2.imwrite(osp.join(save_dir, '%s_ss.png' % filename), fuse_res)
+            cv2.imwrite(osp.join(save_dir,'ss',name[0],'%s_ss.png' % filename), fuse_res)
         #print('\rRunning single-scale test [%d/%d]' % (idx + 1, len(test_loader)), end='')
-    print('fps',1/(per_time/len(test_list)))
+    print('fps',1/(per_time/len(test_list)),per_time/len(test_list),per_time,len(test_list))
     print('Running single-scale test done')
     if eval: 
         # eval_res.   
@@ -143,7 +151,7 @@ if __name__ == '__main__':
         os.makedirs(args.save_dir)
     if args.dataset:
     #   test_dataset  = BSDS_Dataset(root=args.dataset, split='test')
-      test_dataset  = inferImage(img_dir=args.dataset)
+      test_dataset  = inferImage(img_dir=args.dataset,dataflag=args.dataflag)
     else:
         test_dataset=TTPLA_Dataset(split='eval',dataflag=args.dataflag)
     
