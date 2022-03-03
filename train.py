@@ -128,7 +128,9 @@ if __name__ == '__main__':
     parser.add_argument('--dataset', help='root folder of dataset', default='data')
     parser.add_argument('--dataflag', default='color',help='color or grayscale')
     parser.add_argument('--amp', default='O0',help='O0~O3')
-    parser.add_argument('--aug', default=False,help='true or false')
+    parser.add_argument('--aug', default=False, type=bool,help='true or false')
+    parser.add_argument('--fuse_num', default=5,help='5')
+    parser.add_argument('--short_cat', default=False, type=bool)
     args = parser.parse_args()
 
     os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'
@@ -138,7 +140,7 @@ if __name__ == '__main__':
     args.save_dir=args.save_dir+ex_time
     #by Accurate, Large Minibatch SGD:Training ImageNet in 1 Hour,lr=base_lr*gpus*bs/256
     # args.lr=args.lr*(args.batch_size*args.iter_size/256)
-    save_dict=dict(bs=args.batch_size,lr=args.lr,iter_size=args.iter_size,opt=args.opt)
+    save_dict=dict(bs=args.batch_size,lr=args.lr,dataflag=args.dataflag,aug=args.aug)
     # print(save_dict)
     for k,v in save_dict.items():        
         args.save_dir+='-'+k+'-'+str(v)
@@ -159,7 +161,7 @@ if __name__ == '__main__':
     test_loader   = DataLoader(test_dataset, batch_size=args.batch_size, num_workers=8, drop_last=False, shuffle=False)
     test_list = [i for i in test_dataset.file_list]
     # assert len(test_list) == len(test_loader) #,print(len(test_list) ,len(test_loader),len(train_loader))
-    model = select_model(args.model,args.dataflag)
+    model = select_model(args)
     # if args.model=='rcf':
     #     model = RCF(pretrained='vgg16convs.mat').cuda()
     # elif args.model=='convnext':
@@ -243,7 +245,7 @@ if __name__ == '__main__':
                 args.start_epoch = checkpoint['epoch'] + 1
                 if 'scaler' in checkpoint.keys():
                     logger.info("=>  loaded scaler")
-                    scaler.load_state_dict('scaler')
+                    scaler.load_state_dict(checkpoint['scaler'])
             logger.info("=> checkpoint loaded")
         else:
             logger.info("=> no checkpoint found at '{}'".format(pth))

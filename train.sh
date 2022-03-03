@@ -11,6 +11,10 @@ python train.py \
         --iter-size=1\
         --amp=O1 \
         --model=rcf \
+        --fuse_num=5 \
+        --short_cat=True \
+        --resume=results/RCF20220303_0858-bs-4-lr-0.002-iter_size-1-opt-adamw/checkpoint_epoch72.pth
         # --dataflag=grayscale \
-        # --resume=results/RCF20220223_1214-bs-4-lr-0.002-iter_size-1-opt-adamw/checkpoint_epoch253.pth
+        # --aug=True
+        
         # --pretrain=results/RCF20220223_2140-bs-4-lr-0.002-iter_size-1-opt-adamw/checkpoint_epoch594.pth

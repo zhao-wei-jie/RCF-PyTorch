@@ -5,10 +5,11 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 from models import RCF,NextRCF
-def select_model(mod,dataflag):
-    if mod=='rcf':
-       return RCF(pretrained='vgg16convs.mat',dataflag=dataflag).cuda()
-    elif mod=='convnext':
+def select_model(args):
+    if args.model=='rcf':
+        # print(fuse)
+        return RCF(pretrained='vgg16convs.mat',dataflag=args.dataflag,fuse=args.fuse_num,short_cat=args.short_cat).cuda()
+    elif args.model=='convnext':
         return NextRCF().cuda()
 
 

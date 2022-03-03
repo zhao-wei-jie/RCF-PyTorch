@@ -1,7 +1,7 @@
 
 from datetime import date
 import os
-os.environ['CUDA_VISIBLE_DEVICES']='1'#指定训练gpu
+# os.environ['']='0'#指定训练gpu
 import numpy as np
 import os.path as osp
 import cv2
@@ -50,7 +50,8 @@ class inferImage(Dataset):
         image=torch.tensor(img)
         return image.float(),osp.basename(osp.dirname(img_path))
 
-def single_scale_test(model, test_loader, test_list, save_dir,eval=None,save_img=True,use_amp=False):
+def single_scale_test(model, test_loader, test_list, save_dir,eval=None,save_img=False,use_amp=False):
+    print(save_img)
     model.eval()
     eval_res=[]
     eval_label=[]
@@ -66,6 +67,7 @@ def single_scale_test(model, test_loader, test_list, save_dir,eval=None,save_img
             label=label.squeeze()
             label=label.cpu().numpy()
             eval_label.append(label)
+            name=['ttpla']
         else:
             image,name=data
         image = image.cuda()
@@ -79,7 +81,7 @@ def single_scale_test(model, test_loader, test_list, save_dir,eval=None,save_img
         # print(results.shape)
         
         filename = osp.splitext(test_list[idx])[0]
-        if save_img:
+        if save_img is True:
             all_res = torch.zeros((len(results), 1, H, W))
             for i in range(len(results)):
                 all_res[i, 0, :, :] = results[i]
@@ -90,13 +92,20 @@ def single_scale_test(model, test_loader, test_list, save_dir,eval=None,save_img
         temp_res=torch.zeros_like(fuse_res)        
         temp_res[fuse_res>0.5]=1
         
-        fuse_res = fuse_res.cpu().numpy()       
+               
         eval_res.append(temp_res.cpu().numpy())
         # print(np.sum(eval_res==1),np.sum(eval_res==0),np.sum(label==1),np.sum(label==0))       
         # sys.exit()
-        fuse_res = ((1 - fuse_res) * 255).astype(np.uint8)
-        if save_img:
-            cv2.imwrite(osp.join(save_dir,'ss',name[0],'%s_ss.png' % filename), fuse_res)
+        
+        if save_img is True:
+            image=image[0]
+            # print(image.shape)
+            image[:,fuse_res>0.5]/=2
+            image[2,fuse_res>0.5]+=128
+            # fuse_res = fuse_res.cpu().numpy()
+            # fuse_res = ((1 - fuse_res) * 255).astype(np.uint8)
+            
+            mmcv.imwrite(image.cpu().numpy().transpose((1, 2, 0)),osp.join(save_dir,'ss',name[0],'%s_ss.png' % filename))
         #print('\rRunning single-scale test [%d/%d]' % (idx + 1, len(test_loader)), end='')
     print('fps',1/(per_time/len(test_list)),per_time/len(test_list),per_time,len(test_list))
     print('Running single-scale test done')
@@ -139,6 +148,7 @@ if __name__ == '__main__':
     parser.add_argument('--dataset', help='root folder of dataset', default=None)
     parser.add_argument('--model', default='rcf', type=str, help='rcf')
     parser.add_argument('--dataflag', default='color',help='color or grayscale')
+    parser.add_argument('--fuse_num', default=5,help='5')
     args = parser.parse_args()
     
     os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'
@@ -160,7 +170,7 @@ if __name__ == '__main__':
     assert len(test_list) == len(test_loader)
 
     # model = RCF().cuda()
-    model = select_model(args.model,args.dataflag)
+    model = select_model(args)
     if osp.isfile(args.checkpoint):
         print("=> loading checkpoint from '{}'".format(args.checkpoint))
         checkpoint = torch.load(args.checkpoint)
@@ -190,7 +200,7 @@ if __name__ == '__main__':
         pth_list=glob(args.checkpoint+'/*.pth')
         
         print('Performing %d testing...'%(len(pth_list)))
-        for i in tqdm(pth_list):
+        for i in pth_list:
             checkpoint = torch.load(i)
             try:
                 model.load_state_dict(checkpoint['state_dict'])
@@ -198,11 +208,13 @@ if __name__ == '__main__':
                 print(i,err)
                 continue
 
-            ret=single_scale_test(model, test_loader, test_list,   args.save_dir,test_dataset.evaluate,False)
+            ret=single_scale_test(model,test_loader,test_list,args.save_dir,save_img=False,use_amp=True,eval=test_dataset.evaluate)
             logger.info(ret)
             logger.info(max_eval(ret,i))
     else:
         print('Performing the testing...')
         #使用getattr获取函数，可在函数不存在时返回none       
-        single_scale_test(model, test_loader, test_list, args.save_dir,getattr(test_dataset,'evaluate',None))        
+        single_scale_test(model, test_loader, test_list, args.save_dir
+            ,eval=getattr(test_dataset,'evaluate',None)
+            ,save_img=True,use_amp=True)        
         # multi_scale_test(model, test_loader, test_list, args.save_dir)

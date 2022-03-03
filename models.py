@@ -7,13 +7,16 @@ from convnext import convnext_tiny
 import sys
 
 class RCF(nn.Module):
-    def __init__(self, pretrained=None,dataflag='color'):
+    def __init__(self, pretrained=None,dataflag='color',fuse=5,short_cat=False):
         super(RCF, self).__init__()
         if dataflag=='color':
             datachannel=3
         if dataflag=='grayscale':
             datachannel=1
         self.dataflag=dataflag
+        print('short_cat',short_cat)
+        self.short_cat=short_cat
+        self.fuse=int(fuse)
         self.conv1_1 = nn.Conv2d(  datachannel,  64, 3, padding=1, dilation=1)
         self.conv1_2 = nn.Conv2d( 64,  64, 3, padding=1, dilation=1)
         self.conv2_1 = nn.Conv2d( 64, 128, 3, padding=1, dilation=1)
@@ -32,7 +35,11 @@ class RCF(nn.Module):
         self.pool3 = nn.MaxPool2d(2, stride=2, ceil_mode=True)
         self.pool4 = nn.MaxPool2d(2, stride=1, ceil_mode=True)
         self.act = nn.ReLU(inplace=True)
-
+        # if self.short_cat:
+        #     self.scat1=nn.Conv2d(1,64,1)
+        #     self.scat2=nn.Conv2d(1,128,1)
+        #     self.scat3=nn.Conv2d(1,256,1)
+        #     self.scat4=nn.Conv2d(1,512,1)
         self.bn=nn.ModuleDict()#添加bn层,防止梯度爆炸
         bn_layer=[1,2,3,4,5]
         bn_time=[2,2,3,3,3]
@@ -61,7 +68,7 @@ class RCF(nn.Module):
         self.score_dsn3 = nn.Conv2d(21, 1, 1)
         self.score_dsn4 = nn.Conv2d(21, 1, 1)
         self.score_dsn5 = nn.Conv2d(21, 1, 1)
-        self.score_fuse = nn.Conv2d(5, 1, 1)
+        self.score_fuse = nn.Conv2d(self.fuse, 1, 1)
 
         self.weight_deconv2 = self._make_bilinear_weights( 4, 1).cuda()
         self.weight_deconv3 = self._make_bilinear_weights( 8, 1).cuda()
@@ -126,56 +133,83 @@ class RCF(nn.Module):
         img_h, img_w = x.shape[-2], x.shape[-1]
 
         conv1_1 = self.act(self.bn['1-1'](self.conv1_1(x)))
+        
         conv1_2 = self.act(self.bn['1-2'](self.conv1_2(conv1_1)))
         pool1   = self.pool1(conv1_2)
+
+        conv1_1_down = self.conv1_1_down(conv1_1)
+        conv1_2_down = self.conv1_2_down(conv1_2)
+        out1 = self.score_dsn1(conv1_1_down + conv1_2_down)
+        if self.short_cat:            
+            pool1+=self.pool1(out1.detach())
+            pool1=self.act(pool1)
+
         conv2_1 = self.act(self.bn['2-1'](self.conv2_1(pool1)))
         conv2_2 = self.act(self.bn['2-2'](self.conv2_2(conv2_1)))
         pool2   = self.pool2(conv2_2)
+
+        conv2_1_down = self.conv2_1_down(conv2_1)
+        conv2_2_down = self.conv2_2_down(conv2_2)
+        out2 = self.score_dsn2(conv2_1_down + conv2_2_down)
+        if self.short_cat:
+            pool2+=self.pool2(out2.detach())
+            pool2=self.act(pool2)
+
         conv3_1 = self.act(self.bn['3-1'](self.conv3_1(pool2)))
         conv3_2 = self.act(self.bn['3-2'](self.conv3_2(conv3_1)))
         conv3_3 = self.act(self.bn['3-3'](self.conv3_3(conv3_2)))
         pool3   = self.pool3(conv3_3)
+
+        conv3_1_down = self.conv3_1_down(conv3_1)
+        conv3_2_down = self.conv3_2_down(conv3_2)
+        conv3_3_down = self.conv3_3_down(conv3_3)
+        out3 = self.score_dsn3(conv3_1_down + conv3_2_down + conv3_3_down)
+        if self.short_cat:
+            pool3+=self.pool3(out3.detach())
+            pool3=self.act(pool3)
+
         conv4_1 = self.act(self.bn['4-1'](self.conv4_1(pool3)))
         conv4_2 = self.act(self.bn['4-2'](self.conv4_2(conv4_1)))
         conv4_3 = self.act(self.bn['4-3'](self.conv4_3(conv4_2)))
         pool4   = self.pool4(conv4_3)
+
+        conv4_1_down = self.conv4_1_down(conv4_1)
+        conv4_2_down = self.conv4_2_down(conv4_2)
+        conv4_3_down = self.conv4_3_down(conv4_3)
+        out4 = self.score_dsn4(conv4_1_down + conv4_2_down + conv4_3_down)
+        if self.short_cat:
+            pool4+=self.pool4(out4.detach())
+            pool4=self.act(pool4)
         conv5_1 = self.act(self.bn['5-1'](self.conv5_1(pool4)))
         conv5_2 = self.act(self.bn['5-2'](self.conv5_2(conv5_1)))
         conv5_3 = self.act(self.bn['5-3'](self.conv5_3(conv5_2)))
 
-        conv1_1_down = self.conv1_1_down(conv1_1)
-        conv1_2_down = self.conv1_2_down(conv1_2)
-        conv2_1_down = self.conv2_1_down(conv2_1)
-        conv2_2_down = self.conv2_2_down(conv2_2)
-        conv3_1_down = self.conv3_1_down(conv3_1)
-        conv3_2_down = self.conv3_2_down(conv3_2)
-        conv3_3_down = self.conv3_3_down(conv3_3)
-        conv4_1_down = self.conv4_1_down(conv4_1)
-        conv4_2_down = self.conv4_2_down(conv4_2)
-        conv4_3_down = self.conv4_3_down(conv4_3)
         conv5_1_down = self.conv5_1_down(conv5_1)
         conv5_2_down = self.conv5_2_down(conv5_2)
         conv5_3_down = self.conv5_3_down(conv5_3)
-
-        out1 = self.score_dsn1(conv1_1_down + conv1_2_down)
-        out2 = self.score_dsn2(conv2_1_down + conv2_2_down)
-        out3 = self.score_dsn3(conv3_1_down + conv3_2_down + conv3_3_down)
-        out4 = self.score_dsn4(conv4_1_down + conv4_2_down + conv4_3_down)
         out5 = self.score_dsn5(conv5_1_down + conv5_2_down + conv5_3_down)
 
         out2 = F.conv_transpose2d(out2, self.weight_deconv2, stride=2)
         out3 = F.conv_transpose2d(out3, self.weight_deconv3, stride=4)
         out4 = F.conv_transpose2d(out4, self.weight_deconv4, stride=8)
+
         out5 = F.conv_transpose2d(out5, self.weight_deconv5, stride=8)
 
         out2 = self._crop(out2, img_h, img_w, 1, 1)
         out3 = self._crop(out3, img_h, img_w, 2, 2)
         out4 = self._crop(out4, img_h, img_w, 4, 4)
+
         out5 = self._crop(out5, img_h, img_w, 0, 0)
         # print(out3.max(),out3.min(),out4.max(),out4.min(),out5.max(),out5.min())
-        fuse = torch.cat((out1, out2, out3, out4, out5), dim=1)
-        fuse = self.score_fuse(fuse)
-        results = [out1, out2, out3, out4, out5, fuse]
+        if self.fuse==4:
+            fuse = torch.cat((out1, out2, out3, out4), dim=1)
+            fuse = self.score_fuse(fuse)
+            results = [out1, out2, out3, out4, fuse]
+        else:
+            fuse = torch.cat((out1, out2, out3, out4, out5), dim=1)
+            fuse = self.score_fuse(fuse)
+            results = [out1, out2, out3, out4, out5,fuse]
+        
         # results = [torch.sigmoid(r) for r in results]
         return results
 

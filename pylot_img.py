@@ -62,7 +62,7 @@ def new_log(f,evallist):
                 evallist.append(eval)
 
 def py_log(paths,mode='list'):
-    if osp.isfile(paths):
+    if isinstance(paths,str):
         mode='list'
         paths=[paths]
     plt.figure(figsize=(10, 5),dpi=200)
@@ -72,7 +72,9 @@ def py_log(paths,mode='list'):
     # if metric in ['mIoU', 'mAcc', 'aAcc']:
     
     for path in paths:
-        
+        if mode=='list':     
+            plt.figure(figsize=(10, 5),dpi=200)
+            ax = plt.gca()
         evallist=[]
 
         with open(path) as f:
@@ -169,12 +171,14 @@ def draw_log(evallist,path,ax):
         if 'epoch' in i.keys():
             start_epoch=i['epoch']
     return iou_values,f1_values,lr_v,start_epoch
-
-
+import argparse
+parser = argparse.ArgumentParser(description='PyTorch Training')
+parser.add_argument('--pos', default=-1, type=int, help='pos')
+args = parser.parse_args()
 alist=glob('results/*_*-bs-*/*.log')
 alist.sort()
 print(alist)
-py_log(alist[-1],mode='list')
+py_log(alist[args.pos:],mode='list')
 # py_log('results/RCF20220122_1759-bs-8-lr-0.002-iter_size-1-opt-adamw/train.log')
 # alist=glob('results/RCF20220119_2123-bs-8-lr-0.03125-iter_size-10-opt-adamw/*.pth')
 # for i in alist:

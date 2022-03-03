@@ -108,7 +108,10 @@ class TTPLA_Dataset(torch.utils.data.Dataset):
         # img=rrisize(img)
         # img = np.array(img, dtype=np.float32)
         if self.dataflag=='color':
-            img = (img - self.mean).transpose((2, 0, 1))
+            img = (img - self.mean)
+            # img=mmcv.rgb2gray(img)
+            # img=mmcv.gray2rgb(img)
+            img=img.transpose((2, 0, 1))
         if self.dataflag=='grayscale':
             img = img - self.mean.mean()
             img = img[np.newaxis, :, :]
