@@ -168,9 +168,8 @@ if __name__ == '__main__':
     os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
     
+    args.save_dir=osp.join(osp.splitext(args.checkpoint)[0])
     
-    if args.save_dir =='results/RCF':
-        args.save_dir=osp.join(osp.splitext(args.checkpoint)[0])
     if not osp.isdir(args.save_dir):
         os.makedirs(args.save_dir)
     if args.dataset:

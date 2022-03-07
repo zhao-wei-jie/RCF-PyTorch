@@ -113,4 +113,5 @@ def argsF():
     parser.add_argument('--aug', default=False, type=bool,help='true or false')
     parser.add_argument('--fuse_num', default=5,help='5')
     parser.add_argument('--short_cat', default=0, type=int)
+    parser.add_argument('--scale', default=False, type=bool)
     return parser

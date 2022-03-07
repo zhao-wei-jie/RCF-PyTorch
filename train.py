@@ -1,5 +1,8 @@
 import os
-os.environ['CUDA_VISIBLE_DEVICES']='0'#指定训练gpu
+from re import S
+
+from sklearn.preprocessing import scale
+# os.environ['CUDA_VISIBLE_DEVICES']='0'#指定训练gpu
 import numpy as np
 import os.path as osp
 import cv2
@@ -11,7 +14,8 @@ from dataset import BSDS_Dataset,TTPLA_Dataset
 from other_models.unet_model import UNet
 from utils import Logger, Averagvalue, Cross_entropy_loss,EvalMax,select_model,argsF
 from test import single_scale_test
-from apex import amp
+import random
+# from apex import amp
 import sys
 import mmcv
 
@@ -21,26 +25,57 @@ def get_lr(optimizer):
 def mosaic(img):
     N,C,H,W=img.shape
     mosaic_img=torch.zeros((int(N//2),C,H,int(W//2)))
-    for i in range(0,N,2):#拼接样本，缩小电线
+    for i in range(0,N,2):#拼接样本，缩小电线,只用于灰度图
         cat_img=torch.cat((img[i,0],img[i+1,0]),dim=0)
-        cat_img=mmcv.imrescale(cat_img.cpu().numpy(),0.5)
+        cat_img=mmcv.imrescale(cat_img.cpu().numpy(),0.5)#只接受前2维为h*w,故输入在前需要换维
         # print(cat_img.shape)
         mosaic_img[int(i//2),0,:,:]=torch.from_numpy(cat_img)[:,:]
     return mosaic_img
-def data_aug(img,label):
+def data_scale(img,lab,r):
+    N,C,H,W=img.shape
+    scaled_imgs=[]
+    scaled_labs=[]
+    # print(H,W)
     
-    mosaic_img=mosaic(img).cuda()
-    mosaic_label=mosaic(label).cuda()
+    # print(r/100)
+    for i,l in zip(img,lab):       
+       scaled_img=mmcv.imrescale(i.cpu().numpy().transpose((1, 2, 0)),r/100,interpolation='bilinear')
+       scaled_lab=mmcv.imrescale(l.cpu().numpy().transpose((1, 2, 0)),r/100,interpolation='nearest')
+    #    print(scaled_img.shape)
+    #    sH,sW=scaled_img.shape[:2]
+    # #    print(sH,sW)
+    #    sH=(H-sH)
+    #    sW=(W-sW)
+    #    rH=random.randrange(0,sH)
+    #    rW=random.randrange(0,sW)
+    #    scaled_img=mmcv.impad(scaled_img,padding=(rW,rH,sW-rW,sH-rH))
+       scaled_imgs.append(scaled_img[np.newaxis,:,:])
+       scaled_labs.append(scaled_lab[np.newaxis,:,:])
+    scaled_imgs=np.array(scaled_imgs)
+    scaled_labs=np.array(scaled_labs)
+    # print(torch.tensor(scaled_imgs).shape)
+    return torch.tensor(scaled_imgs).cuda(),torch.tensor(scaled_labs).cuda()
+
+    
+def data_aug(img,label,augs=['mosaic']):
+    
+    if 'mosaic' in augs:
+        mosaic_img=mosaic(img).cuda()
+        mosaic_label=mosaic(label).cuda()
+
+        img=torch.cat(torch.chunk(img,2,dim=3),dim=0)#将图片分给两边，视为两个样本
+        label=torch.cat(torch.chunk(label,2,dim=3),dim=0)
+        
+        img=torch.cat((img,mosaic_img),dim=0)
+        label=torch.cat((label,mosaic_label),dim=0)
+    if 'scale' in augs:
+        r=random.randrange(40,80)
+        img,label=data_scale(img,label,r)
     # print(mosaic_img.shape)
     
         # torch.
     # print(mosaic_img.shape)
-    img=torch.cat(torch.chunk(img,2,dim=3),dim=0)#将图片分给两边，视为两个样本
-    label=torch.cat(torch.chunk(label,2,dim=3),dim=0)
-    
-    img=torch.cat((img,mosaic_img),dim=0)
-    label=torch.cat((label,mosaic_label),dim=0)
-    
+       
     return img,label
 
 def train(args, model, train_loader, optimizer, epoch, logger,scaler,use_amp):
@@ -55,33 +90,38 @@ def train(args, model, train_loader, optimizer, epoch, logger,scaler,use_amp):
             image,label=data_aug(image,label)
         # print(image.shape)
         # sys.exit(0)
-        with torch.cuda.amp.autocast(enabled=use_amp):
-            outputs = model(image)
-            loss = torch.zeros(1).cuda()
+        train_scale=[100]
+        if args.scale:#随机添加一个尺度训练
+            train_scale.append(random.randrange(40,80))
+        for s in train_scale:#
+            image,label=data_scale(image,label,s)
+            with torch.cuda.amp.autocast(enabled=use_amp):
+                outputs = model(image)
+                loss = torch.zeros(1).cuda()
+                
+                if isinstance(model,UNet):
+                    loss+=Cross_entropy_loss(outputs, label)
+                if hasattr(model,'short_cat'):
+                    if model.short_cat==2:
+                        loss+=Cross_entropy_loss(outputs[-1], label)
+                    else:
+                        for o in outputs:
+                            loss = loss + Cross_entropy_loss(o, label)
+                counter += 1
+                loss = loss / args.iter_size       
+            scaler.scale(loss).backward()
+            # loss.backward()
+            if counter == args.iter_size:
+                scaler.step(optimizer)
+                # optimizer.step()
+                scaler.update()
+                optimizer.zero_grad()
+                counter = 0
+            # measure accuracy and record loss
+            losses.update(loss.item(), image.size(0))
+            batch_time.update(time.time() - end)
             
-            if isinstance(model,UNet):
-                loss+=Cross_entropy_loss(outputs, label)
-            if hasattr(model,'short_cat'):
-                if model.short_cat==2:
-                    loss+=Cross_entropy_loss(outputs[-1], label)
-                else:
-                    for o in outputs:
-                        loss = loss + Cross_entropy_loss(o, label)
-            counter += 1
-            loss = loss / args.iter_size       
-        scaler.scale(loss).backward()
-        # loss.backward()
-        if counter == args.iter_size:
-            scaler.step(optimizer)
-            # optimizer.step()
-            scaler.update()
-            optimizer.zero_grad()
-            counter = 0
-        # measure accuracy and record loss
-        losses.update(loss.item(), image.size(0))
-        batch_time.update(time.time() - end)
-        
-        end = time.time()
+            end = time.time()
     
     logger.info('Epoch: [{0}/{1}][{2}/{3}] '.format(epoch + 1, args.max_epoch, i, len(train_loader)) + \
                 'Time {batch_time.val:.3f} (avg: {batch_time.avg:.3f}) '.format(batch_time=batch_time) + \

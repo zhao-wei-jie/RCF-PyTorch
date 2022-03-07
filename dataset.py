@@ -106,7 +106,8 @@ class TTPLA_Dataset(torch.utils.data.Dataset):
         img =  mmcv.imread(osp.join(self.root, img_file.strip('\n')+'.jpg'),self.dataflag)
         img=self.transf(img,r)
         # img=rrisize(img)
-        # img = np.array(img, dtype=np.float32)
+        
+        # self.mean=np.zeros(1)
         if self.dataflag=='color':
             img = (img - self.mean)
             # img=mmcv.rgb2gray(img)
@@ -115,7 +116,7 @@ class TTPLA_Dataset(torch.utils.data.Dataset):
         if self.dataflag=='grayscale':
             img = img - self.mean.mean()
             img = img[np.newaxis, :, :]
-        
+        # img = np.array(img, dtype=np.float32)
         if self.split in ['train','eval']:
             return img, label
         else:
@@ -123,9 +124,10 @@ class TTPLA_Dataset(torch.utils.data.Dataset):
     
     def transf(self,img , r):
         h, w = img.shape[:2]
-        scale=h/540
+        H=540
+        scale=h/H
         # print(w//scale)        
-        img=mmcv.imresize(img,(int(w//scale),540))#保持比例将高度控制在540
+        img=mmcv.imresize(img,(int(w//scale),H))#保持比例将高度控制在540
 
         # W,H=img.size#获取尺寸信息
         # # print(1,label.size)            

@@ -1,5 +1,6 @@
 """ Full assembly of the parts to form the complete network """
 
+from torch import autocast
 from .unet_parts import *
 
 
@@ -21,7 +22,7 @@ class UNet(nn.Module):
         self.up3 = Up(256, 128 // factor, bilinear)
         self.up4 = Up(128, 64, bilinear)
         self.outc = OutConv(64, n_classes)
-
+    @autocast('cuda')
     def forward(self, x):
         x1 = self.inc(x)
         x2 = self.down1(x1)
