@@ -5,12 +5,20 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 from models import RCF,NextRCF
+from other_models.unet_model import UNet
+import argparse
 def select_model(args):
     if args.model=='rcf':
         # print(fuse)
         return RCF(pretrained='vgg16convs.mat',dataflag=args.dataflag,fuse=args.fuse_num,short_cat=args.short_cat).cuda()
     elif args.model=='convnext':
         return NextRCF().cuda()
+    elif args.model=='unet':
+        if args.dataflag =="color":
+            inc=3
+        else:
+            inc=1
+        return UNet(inc,1).cuda()
 
 
 class EvalMax:
@@ -80,3 +88,29 @@ def Cross_entropy_loss(prediction, label):
         # ,reduction='sum'
         )
     return torch.sum(cost)
+
+def argsF():
+    parser = argparse.ArgumentParser(description='PyTorch Training')
+    parser.add_argument('--batch-size', default=1, type=int, help='batch size')
+    parser.add_argument('--opt', default='adamw', type=str, help='opt')
+    parser.add_argument('--model', default='rcf', type=str, help='rcf')
+    parser.add_argument('--lr', default=1e-6, type=float, help='initial learning rate')
+    parser.add_argument('--momentum', default=0.9, type=float, help='momentum')
+    parser.add_argument('--weight-decay', default=2e-4, type=float, help='weight decay')
+    parser.add_argument('--stepsize', default=3, type=int, help='learning rate step size')
+    parser.add_argument('--gamma', default=0.1, type=float, help='learning rate decay rate')
+    parser.add_argument('--max-epoch', default=10, type=int, help='the number of training epochs')
+    parser.add_argument('--iter-size', default=10, type=int, help='iter size')
+    parser.add_argument('--start-epoch', default=0, type=int, help='manual epoch number')
+    parser.add_argument('--print-freq', default=200, type=int, help='print frequency')
+    parser.add_argument('--gpu', default='0', type=str, help='GPU ID')
+    parser.add_argument('--resume', default=None, type=str, help='path to latest checkpoint')
+    parser.add_argument('--pretrain', default=None, type=str, help='path to latest checkpoint')
+    parser.add_argument('--save-dir', help='output folder', default='results/')
+    parser.add_argument('--dataset', help='root folder of dataset', default='data')
+    parser.add_argument('--dataflag', default='color',help='color or grayscale')
+    parser.add_argument('--amp', default='O0',help='O0~O3')
+    parser.add_argument('--aug', default=False, type=bool,help='true or false')
+    parser.add_argument('--fuse_num', default=5,help='5')
+    parser.add_argument('--short_cat', default=0, type=int)
+    return parser

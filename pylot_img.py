@@ -89,7 +89,12 @@ def py_log(paths,mode='list'):
         label=osp.dirname(path).split('bs-8')[-1].strip('-').strip('optadamw')
         ioulable='iou-'+label
         lrlable='lr-'+label
-        plot_epochs=range(star_epoch,len(iou_values)+star_epoch)
+        #只记录到性能最高点后10个
+        max_iou_pos=np.argmax(iou_values)
+        iou_values=iou_values[:max_iou_pos+10]
+        f1_values=f1_values[:max_iou_pos+10]
+        lr_v=lr_v[:max_iou_pos+10]
+        plot_epochs=range(star_epoch,max_iou_pos+10+star_epoch)
         
         # iou_values.sort()
         # f1_values.sort()
@@ -103,11 +108,11 @@ def py_log(paths,mode='list'):
         plt.plot(plot_epochs, iou_values, label=ioulable)
         if mode=='list':  
             plt.plot(plot_epochs, f1_values, label='f1')
-            plt.text(plot_epochs[np.argmax(f1_values)], max(f1_values), str(max(f1_values))+'-'+str(np.argmax(f1_values)+star_epoch))#写出最高点值
+            plt.text(plot_epochs[np.argmax(f1_values)], max(f1_values), '%.4f'%(max(f1_values))+'-'+str(np.argmax(f1_values)+star_epoch))#写出最高点值
         
-        max_iou_pos=np.argmax(iou_values)
+        
         # print(max_iou_pos,iou_values)
-        plt.text(plot_epochs[max_iou_pos], max(iou_values),str(max(iou_values))+'-'+str(max_iou_pos+star_epoch))#写出最高点值
+        plt.text(plot_epochs[max_iou_pos], max(iou_values),'%.4f'%(max(iou_values))+'-'+str(max_iou_pos+star_epoch))#写出最高点值
         
         x=[star_epoch]
         maxi=0
@@ -120,6 +125,8 @@ def py_log(paths,mode='list'):
         plt.xticks(x)
         plt_combo()
         plt.ylabel('score')
+        # print(int(min(iou_values)*10),int(max(f1_values)*10)+1)
+        plt.yticks([y/10 for y in range(int(min(iou_values)*10),int(max(f1_values)*10)+1)])#按iou最小值到f1最大值动态划分
         if osp.basename(path)=='train.log':
             assert len(iou_values)==len(lr_v),(len(iou_values),len(lr_v))
             plt.subplot(212,sharex=ax1)

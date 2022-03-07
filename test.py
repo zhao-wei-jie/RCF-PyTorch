@@ -12,6 +12,7 @@ from torch.utils.data import DataLoader
 import torchvision
 from dataset import BSDS_Dataset,TTPLA_Dataset
 from models import RCF
+from other_models.unet_model import UNet
 import mmcv
 from tqdm import tqdm
 from glob import glob
@@ -20,7 +21,7 @@ import logging
 from torch.utils.data import Dataset
 from torchvision import transforms
 import sys
-from utils import EvalMax,select_model
+from utils import EvalMax,select_model, argsF
 class inferImage(Dataset):
     def __init__(self, img_dir, dataflag,cnum=None, aug=False,transform=None, target_transform=None):
         self.infer_list=glob(img_dir)
@@ -76,11 +77,22 @@ def single_scale_test(model, test_loader, test_list, save_dir,eval=None,save_img
         with torch.cuda.amp.autocast(enabled=use_amp):
             timer.since_last_check()
             results = model(image)
-        results = [torch.sigmoid(r) for r in results]
+
+        if isinstance(model,UNet):
+            results = torch.sigmoid(results)
+            fuse_res = torch.squeeze(results.detach())
+        else:
+            results = [torch.sigmoid(r) for r in results]
+            fuse_res = torch.squeeze(results[-1].detach())
         per_time+=timer.since_last_check()
+        temp_res=torch.zeros_like(fuse_res)        
+        temp_res[fuse_res>0.5]=1
+        
+        
         # print(results.shape)
         
         filename = osp.splitext(test_list[idx])[0]
+
         if save_img is True:
             all_res = torch.zeros((len(results), 1, H, W))
             for i in range(len(results)):
@@ -88,10 +100,9 @@ def single_scale_test(model, test_loader, test_list, save_dir,eval=None,save_img
             if os.path.exists(osp.join(save_dir,name[0])) is not True:
                 os.mkdir(osp.join(save_dir,name[0]))
             torchvision.utils.save_image(1 - all_res, osp.join(save_dir,name[0], '%s.jpg' % filename))
-        fuse_res = torch.squeeze(results[-1].detach())
-        temp_res=torch.zeros_like(fuse_res)        
-        temp_res[fuse_res>0.5]=1
         
+
+        # print(temp_res.shape,label.shape)
                
         eval_res.append(temp_res.cpu().numpy())
         # print(np.sum(eval_res==1),np.sum(eval_res==0),np.sum(label==1),np.sum(label==0))       
@@ -99,6 +110,8 @@ def single_scale_test(model, test_loader, test_list, save_dir,eval=None,save_img
         
         if save_img is True:
             image=image[0]
+            if image.shape[0]==1:
+                image=torch.cat([image]*3,dim=0)
             # print(image.shape)
             image[:,fuse_res>0.5]/=2
             image[2,fuse_res>0.5]+=128
@@ -141,14 +154,15 @@ def multi_scale_test(model, test_loader, test_list, save_dir):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='PyTorch Testing')
-    parser.add_argument('--gpu', default='0', type=str, help='GPU ID')
+    # parser = argparse.ArgumentParser(description='PyTorch Testing')
+    # parser.add_argument('--gpu', default='0', type=str, help='GPU ID')    
+    # parser.add_argument('--save-dir', help='output folder', default='results/RCF')
+    # parser.add_argument('--dataset', help='root folder of dataset', default=None)
+    # parser.add_argument('--model', default='rcf', type=str, help='rcf')
+    # parser.add_argument('--dataflag', default='color',help='color or grayscale')
+    # parser.add_argument('--fuse_num', default=5,help='5')
+    parser=argsF()
     parser.add_argument('--checkpoint', default=None, type=str, help='path to latest checkpoint')
-    parser.add_argument('--save-dir', help='output folder', default='results/RCF')
-    parser.add_argument('--dataset', help='root folder of dataset', default=None)
-    parser.add_argument('--model', default='rcf', type=str, help='rcf')
-    parser.add_argument('--dataflag', default='color',help='color or grayscale')
-    parser.add_argument('--fuse_num', default=5,help='5')
     args = parser.parse_args()
     
     os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'

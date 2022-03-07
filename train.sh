@@ -4,16 +4,16 @@ python train.py \
         --max-epoch=1000\
         --gpu=0\
         --print-freq=500\
-        --lr=2e-3 \
+        --lr=2e-4 \
         --stepsize=50 \
         --gamma=0.9 \
         --weight-decay=1e-2 \
         --iter-size=1\
         --amp=O1 \
-        --model=rcf \
+        --model=unet \
         --fuse_num=5 \
-        --short_cat=True \
-        --resume=results/RCF20220303_0858-bs-4-lr-0.002-iter_size-1-opt-adamw/checkpoint_epoch72.pth
+        --short_cat=2 \
+        # --resume=results/RCF20220302_2140-bs-4-lr-0.002-iter_size-1-opt-adamw/checkpoint_epoch11.pth
         # --dataflag=grayscale \
         # --aug=True
         

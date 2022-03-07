@@ -3,18 +3,18 @@ os.environ['CUDA_VISIBLE_DEVICES']='0'#指定训练gpu
 import numpy as np
 import os.path as osp
 import cv2
-import argparse
 import time
 import torch
 from torch.utils.data import DataLoader
 import torchvision
 from dataset import BSDS_Dataset,TTPLA_Dataset
-from models import RCF,NextRCF
-from utils import Logger, Averagvalue, Cross_entropy_loss,EvalMax,select_model
+from other_models.unet_model import UNet
+from utils import Logger, Averagvalue, Cross_entropy_loss,EvalMax,select_model,argsF
 from test import single_scale_test
 from apex import amp
 import sys
 import mmcv
+
 def get_lr(optimizer):
     for param_group in optimizer.param_groups:
         return param_group['lr']
@@ -58,8 +58,15 @@ def train(args, model, train_loader, optimizer, epoch, logger,scaler,use_amp):
         with torch.cuda.amp.autocast(enabled=use_amp):
             outputs = model(image)
             loss = torch.zeros(1).cuda()
-            for o in outputs:
-                loss = loss + Cross_entropy_loss(o, label)
+            
+            if isinstance(model,UNet):
+                loss+=Cross_entropy_loss(outputs, label)
+            if hasattr(model,'short_cat'):
+                if model.short_cat==2:
+                    loss+=Cross_entropy_loss(outputs[-1], label)
+                else:
+                    for o in outputs:
+                        loss = loss + Cross_entropy_loss(o, label)
             counter += 1
             loss = loss / args.iter_size       
         scaler.scale(loss).backward()
@@ -108,36 +115,17 @@ def multi_scale_test(model, test_loader, test_list, save_dir):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='PyTorch Training')
-    parser.add_argument('--batch-size', default=1, type=int, help='batch size')
-    parser.add_argument('--opt', default='adamw', type=str, help='opt')
-    parser.add_argument('--model', default='rcf', type=str, help='rcf')
-    parser.add_argument('--lr', default=1e-6, type=float, help='initial learning rate')
-    parser.add_argument('--momentum', default=0.9, type=float, help='momentum')
-    parser.add_argument('--weight-decay', default=2e-4, type=float, help='weight decay')
-    parser.add_argument('--stepsize', default=3, type=int, help='learning rate step size')
-    parser.add_argument('--gamma', default=0.1, type=float, help='learning rate decay rate')
-    parser.add_argument('--max-epoch', default=10, type=int, help='the number of training epochs')
-    parser.add_argument('--iter-size', default=10, type=int, help='iter size')
-    parser.add_argument('--start-epoch', default=0, type=int, help='manual epoch number')
-    parser.add_argument('--print-freq', default=200, type=int, help='print frequency')
-    parser.add_argument('--gpu', default='0', type=str, help='GPU ID')
-    parser.add_argument('--resume', default=None, type=str, help='path to latest checkpoint')
-    parser.add_argument('--pretrain', default=None, type=str, help='path to latest checkpoint')
-    parser.add_argument('--save-dir', help='output folder', default='results/RCF')
-    parser.add_argument('--dataset', help='root folder of dataset', default='data')
-    parser.add_argument('--dataflag', default='color',help='color or grayscale')
-    parser.add_argument('--amp', default='O0',help='O0~O3')
-    parser.add_argument('--aug', default=False, type=bool,help='true or false')
-    parser.add_argument('--fuse_num', default=5,help='5')
-    parser.add_argument('--short_cat', default=False, type=bool)
-    args = parser.parse_args()
 
+    parser = argsF()
+    args=parser.parse_args()
+    if args.model=='unet':
+        args.short_cat=None
+        args.fuse_num=None
     os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'
-    os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
+    # os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
 
     ex_time=time.strftime('%Y%m%d_%H%M',time.localtime())
-    args.save_dir=args.save_dir+ex_time
+    args.save_dir=args.save_dir+str.upper(args.model)+ex_time
     #by Accurate, Large Minibatch SGD:Training ImageNet in 1 Hour,lr=base_lr*gpus*bs/256
     # args.lr=args.lr*(args.batch_size*args.iter_size/256)
     save_dict=dict(bs=args.batch_size,lr=args.lr,dataflag=args.dataflag,aug=args.aug)
@@ -148,9 +136,7 @@ if __name__ == '__main__':
         os.makedirs(args.save_dir)
 
     logger = Logger(osp.join(args.save_dir,'train.log'))
-    logger.info('Called with args:')
-    for (key, value) in vars(args).items():
-        logger.info('{0:15} | {1}'.format(key, value))
+
 
     # train_dataset = BSDS_Dataset(root=args.dataset, split='train')
     # test_dataset  = BSDS_Dataset(root=osp.join(args.dataset, 'HED-BSDS'), split='test')
@@ -255,6 +241,9 @@ if __name__ == '__main__':
         load_w(args.resume,'pretrain')
     # else:
     #     model.load_state_dict(torch.load('bsds500_pascal_model.pth'))
+    logger.info('Called with args:')
+    for (key, value) in vars(args).items():
+        logger.info('{0:15} | {1}'.format(key, value))
     max_eval=EvalMax()    
     for epoch in range(args.start_epoch, args.max_epoch):
         logger.info('training...')

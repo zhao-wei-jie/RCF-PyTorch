@@ -3,7 +3,7 @@ import torch.nn as nn
 import numpy as np
 import scipy.io as sio
 import torch.nn.functional as F
-from convnext import convnext_tiny
+from other_models.convnext import convnext_tiny
 import sys
 
 class RCF(nn.Module):
@@ -35,11 +35,11 @@ class RCF(nn.Module):
         self.pool3 = nn.MaxPool2d(2, stride=2, ceil_mode=True)
         self.pool4 = nn.MaxPool2d(2, stride=1, ceil_mode=True)
         self.act = nn.ReLU(inplace=True)
-        # if self.short_cat:
-        #     self.scat1=nn.Conv2d(1,64,1)
-        #     self.scat2=nn.Conv2d(1,128,1)
-        #     self.scat3=nn.Conv2d(1,256,1)
-        #     self.scat4=nn.Conv2d(1,512,1)
+        if self.short_cat==2:
+            self.scat1=nn.Conv2d(3,64,1)
+            self.scat2=nn.Conv2d(64,128,1)
+            self.scat3=nn.Conv2d(128,256,1)
+            self.scat4=nn.Conv2d(256,512,1)
         self.bn=nn.ModuleDict()#添加bn层,防止梯度爆炸
         bn_layer=[1,2,3,4,5]
         bn_time=[2,2,3,3,3]
@@ -133,16 +133,21 @@ class RCF(nn.Module):
         img_h, img_w = x.shape[-2], x.shape[-1]
 
         conv1_1 = self.act(self.bn['1-1'](self.conv1_1(x)))
-        
+
         conv1_2 = self.act(self.bn['1-2'](self.conv1_2(conv1_1)))
         pool1   = self.pool1(conv1_2)
 
         conv1_1_down = self.conv1_1_down(conv1_1)
         conv1_2_down = self.conv1_2_down(conv1_2)
         out1 = self.score_dsn1(conv1_1_down + conv1_2_down)
-        if self.short_cat:            
+        
+        if self.short_cat==1:            
             pool1+=self.pool1(out1.detach())
             pool1=self.act(pool1)
+        if self.short_cat==2:
+            pool1+=self.pool1(conv1_1)
+            pool1=self.act(pool1)
+       
 
         conv2_1 = self.act(self.bn['2-1'](self.conv2_1(pool1)))
         conv2_2 = self.act(self.bn['2-2'](self.conv2_2(conv2_1)))
@@ -151,8 +156,12 @@ class RCF(nn.Module):
         conv2_1_down = self.conv2_1_down(conv2_1)
         conv2_2_down = self.conv2_2_down(conv2_2)
         out2 = self.score_dsn2(conv2_1_down + conv2_2_down)
-        if self.short_cat:
+        if self.short_cat==1:
             pool2+=self.pool2(out2.detach())
+            pool2=self.act(pool2)
+        
+        if self.short_cat==2:
+            pool2+=self.pool2(self.scat2(pool1))
             pool2=self.act(pool2)
 
         conv3_1 = self.act(self.bn['3-1'](self.conv3_1(pool2)))
@@ -164,8 +173,11 @@ class RCF(nn.Module):
         conv3_2_down = self.conv3_2_down(conv3_2)
         conv3_3_down = self.conv3_3_down(conv3_3)
         out3 = self.score_dsn3(conv3_1_down + conv3_2_down + conv3_3_down)
-        if self.short_cat:
+        if self.short_cat==1:
             pool3+=self.pool3(out3.detach())
+            pool3=self.act(pool3)
+        if self.short_cat==2:
+            pool3+=self.pool3(self.scat3(pool2))
             pool3=self.act(pool3)
 
         conv4_1 = self.act(self.bn['4-1'](self.conv4_1(pool3)))
@@ -177,8 +189,11 @@ class RCF(nn.Module):
         conv4_2_down = self.conv4_2_down(conv4_2)
         conv4_3_down = self.conv4_3_down(conv4_3)
         out4 = self.score_dsn4(conv4_1_down + conv4_2_down + conv4_3_down)
-        if self.short_cat:
+        if self.short_cat==1:
             pool4+=self.pool4(out4.detach())
+            pool4=self.act(pool4)
+        if self.short_cat==2:
+            pool4+=self.pool4(self.scat4(pool3))
             pool4=self.act(pool4)
         conv5_1 = self.act(self.bn['5-1'](self.conv5_1(pool4)))
         conv5_2 = self.act(self.bn['5-2'](self.conv5_2(conv5_1)))
