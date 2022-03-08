@@ -6,3 +6,4 @@ data/
 res/
 *checkpoint*
 *epoch*
+*.ipynb

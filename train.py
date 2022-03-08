@@ -16,9 +16,11 @@ from utils import Logger, Averagvalue, Cross_entropy_loss,EvalMax,select_model,a
 from test import single_scale_test
 import random
 # from apex import amp
+import torch.nn.functional as F
 import sys
 import mmcv
-
+def tensor2numpy(img):
+    return img.cpu().numpy().transpose((1, 2, 0))
 def get_lr(optimizer):
     for param_group in optimizer.param_groups:
         return param_group['lr']
@@ -32,31 +34,38 @@ def mosaic(img):
         mosaic_img[int(i//2),0,:,:]=torch.from_numpy(cat_img)[:,:]
     return mosaic_img
 def data_scale(img,lab,r):
+    if r==100:
+        return img,lab
     N,C,H,W=img.shape
     scaled_imgs=[]
-    scaled_labs=[]
+    scaled_labs=lab
     # print(H,W)
     
     # print(r/100)
     for i,l in zip(img,lab):       
-       scaled_img=mmcv.imrescale(i.cpu().numpy().transpose((1, 2, 0)),r/100,interpolation='bilinear')
-       scaled_lab=mmcv.imrescale(l.cpu().numpy().transpose((1, 2, 0)),r/100,interpolation='nearest')
-    #    print(scaled_img.shape)
-    #    sH,sW=scaled_img.shape[:2]
-    # #    print(sH,sW)
-    #    sH=(H-sH)
-    #    sW=(W-sW)
-    #    rH=random.randrange(0,sH)
-    #    rW=random.randrange(0,sW)
-    #    scaled_img=mmcv.impad(scaled_img,padding=(rW,rH,sW-rW,sH-rH))
+       scaled_img=mmcv.imrescale(tensor2numpy(i),r/100,interpolation='bilinear')
+    #    scaled_lab=mmcv.imrescale(l.cpu().numpy().transpose((1, 2, 0)),r/100,interpolation='nearest')
        scaled_imgs.append(scaled_img[np.newaxis,:,:])
-       scaled_labs.append(scaled_lab[np.newaxis,:,:])
+    #    scaled_labs.append(scaled_lab[np.newaxis,:,:])
     scaled_imgs=np.array(scaled_imgs)
-    scaled_labs=np.array(scaled_labs)
+    # print(scaled_imgs.shape)
+    if r<50:#如果下采样比例过小，则分两次下采样
+        scaled_labs=F.fractional_max_pool2d(scaled_labs,output_ratio=0.5,kernel_size=2)
+    scaled_labs=F.fractional_max_pool2d(scaled_labs,output_size=(scaled_imgs.shape[-2:]),kernel_size=2)
+    # print(scaled_labs.shape)
+    # scaled_labs=np.array(scaled_labs)
     # print(torch.tensor(scaled_imgs).shape)
-    return torch.tensor(scaled_imgs).cuda(),torch.tensor(scaled_labs).cuda()
+    if not isinstance(scaled_labs,torch.Tensor):
+        scaled_labs=torch.tensor(scaled_labs)
+    return torch.tensor(scaled_imgs),scaled_labs
 
-    
+def data_flip(img):
+    imgs=[]
+    for i in img:
+        imgs.append(mmcv.imflip(tensor2numpy(i)))
+    imgs=np.array(imgs)
+    return torch.tensor(imgs)
+
 def data_aug(img,label,augs=['mosaic']):
     
     if 'mosaic' in augs:
@@ -85,28 +94,20 @@ def train(args, model, train_loader, optimizer, epoch, logger,scaler,use_amp):
     end = time.time()
     counter = 0
     for i, (image, label) in enumerate(train_loader):
-        image, label = image.cuda(), label.cuda()
-        if args.aug:
-            image,label=data_aug(image,label)
-        # print(image.shape)
-        # sys.exit(0)
-        train_scale=[100]
-        if args.scale:#随机添加一个尺度训练
-            train_scale.append(random.randrange(40,80))
-        for s in train_scale:#
-            image,label=data_scale(image,label,s)
+        # image, label = image.cuda(), label.cuda()
+        def training(image_,label_,end,counter):
             with torch.cuda.amp.autocast(enabled=use_amp):
-                outputs = model(image)
+                outputs = model(image_)
                 loss = torch.zeros(1).cuda()
                 
                 if isinstance(model,UNet):
-                    loss+=Cross_entropy_loss(outputs, label)
+                    loss+=Cross_entropy_loss(outputs, label_)
                 if hasattr(model,'short_cat'):
                     if model.short_cat==2:
-                        loss+=Cross_entropy_loss(outputs[-1], label)
+                        loss+=Cross_entropy_loss(outputs[-1], label_)
                     else:
                         for o in outputs:
-                            loss = loss + Cross_entropy_loss(o, label)
+                            loss = loss + Cross_entropy_loss(o, label_)
                 counter += 1
                 loss = loss / args.iter_size       
             scaler.scale(loss).backward()
@@ -120,8 +121,27 @@ def train(args, model, train_loader, optimizer, epoch, logger,scaler,use_amp):
             # measure accuracy and record loss
             losses.update(loss.item(), image.size(0))
             batch_time.update(time.time() - end)
-            
             end = time.time()
+        
+        if args.aug:
+            image,label=data_aug(image,label)
+        # print(image.shape)
+        # sys.exit(0)
+        train_scale=[100]
+        if 'scale' in args.scale:#添加两个尺度
+            train_scale.append(50)
+            train_scale.append(25)
+        for s in train_scale:
+            image_,label_=data_scale(image,label,s)
+            image_, label_ = image_.cuda(), label_.cuda()
+            training(image_,label_,end,counter)
+            for aug in args.augs:
+                if aug == 'flip':
+                    image__=data_flip(image_)
+                    label__=data_flip(label_)
+                    training(image__,label__,end,counter)
+            
+
     
     logger.info('Epoch: [{0}/{1}][{2}/{3}] '.format(epoch + 1, args.max_epoch, i, len(train_loader)) + \
                 'Time {batch_time.val:.3f} (avg: {batch_time.avg:.3f}) '.format(batch_time=batch_time) + \

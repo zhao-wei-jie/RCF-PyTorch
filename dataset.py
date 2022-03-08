@@ -11,6 +11,7 @@ from torch.utils.data import Dataset
 from collections import OrderedDict
 import torchvision
 from random import randint
+import torch.nn.functional as F
 import sys
 
 from mmseg.core import eval_metrics, intersect_and_union, pre_eval_to_metrics
@@ -82,29 +83,27 @@ class TTPLA_Dataset(torch.utils.data.Dataset):
 
     def __getitem__(self, index):
         r=randint(96,384)
- 
+        img_file = self.file_list[index]
+        img =  mmcv.imread(osp.join(self.root, img_file.strip('\n')+'.jpg'),self.dataflag)
+        img=self.transf(img,r)
             
         if self.split in ['train','eval']:
-            img_file= self.file_list[index]
+            
             label = mmcv.imread(osp.join(self.root,'annpng_powerline', img_file.strip('\n')+'.png'),backend='pillow',flag='unchanged')
             # print(label.size,(label==1).sum(),(label==0).sum())
             label=self.transf(label,r)#缩放至最大训练尺寸
             
             # print(2,label.shape)
-            label = label[np.newaxis, :, :]
+            label = label[np.newaxis, :, :].astype(np.float32)
+            # label = torch.from_numpy(label)
+            # label = F.fractional_max_pool2d(label,output_size=(img.shape[:2]),kernel_size=2)
             
                         
             # label[label == 0] = 0
             # label[np.logical_and(label > 0, label < 127.5)] = 2
             # label[label >= 127.5] = 1
             # print(label.shape,label.dtype)
-            # sys.exit(0)
-            label = np.array(label, dtype=np.float32)
-        else:
-            img_file = self.file_list[index]
-
-        img =  mmcv.imread(osp.join(self.root, img_file.strip('\n')+'.jpg'),self.dataflag)
-        img=self.transf(img,r)
+            # sys.exit(0)    
         # img=rrisize(img)
         
         # self.mean=np.zeros(1)
