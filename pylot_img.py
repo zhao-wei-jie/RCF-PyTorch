@@ -1,4 +1,6 @@
 import io
+
+from cv2 import isContourConvex
 from scipy.io import savemat
 from glob import glob
 import cv2,numpy as np
@@ -94,7 +96,8 @@ def py_log(paths,mode='list'):
         iou_values=iou_values[:max_iou_pos+10]
         f1_values=f1_values[:max_iou_pos+10]
         lr_v=lr_v[:max_iou_pos+10]
-        plot_epochs=range(star_epoch,max_iou_pos+10+star_epoch)
+        plot_epochs=range(star_epoch,min(max_iou_pos+10+star_epoch,len(iou_values)+star_epoch))
+        # print(len(plot_epochs),len(iou_values))
         
         # iou_values.sort()
         # f1_values.sort()

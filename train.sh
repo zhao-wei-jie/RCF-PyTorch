@@ -1,4 +1,4 @@
-CUDA_VISIBLE_DEVICES=1 python train.py \
+CUDA_VISIBLE_DEVICES=0 python train.py \
         --batch-size=4\
         --opt=adamw \
         --max-epoch=1000\
@@ -14,9 +14,11 @@ CUDA_VISIBLE_DEVICES=1 python train.py \
         --fuse_num=5 \
         --short_cat=2 \
         --dataflag=grayscale \
-        --scale=True
+        --scale=True\
+        --augs=flip\
+        --resume=results/UNET20220308_2121-bs-4-lr-0.0002-dataflag-grayscale-aug-False/checkpoint_epoch70.pth
         # --aug=True
-        # --resume=results/RCF20220302_2140-bs-4-lr-0.002-iter_size-1-opt-adamw/checkpoint_epoch11.pth
+        
         
         
         # --pretrain=results/RCF20220223_2140-bs-4-lr-0.002-iter_size-1-opt-adamw/checkpoint_epoch594.pth

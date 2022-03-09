@@ -114,4 +114,6 @@ def argsF():
     parser.add_argument('--fuse_num', default=5,help='5')
     parser.add_argument('--short_cat', default=0, type=int)
     parser.add_argument('--scale', default=False, type=bool)
+    parser.add_argument('--augs', default=[], type=str,nargs='*')
+    parser.add_argument('--LRLP', default=False, type=bool,help='low resolution lable processor')
     return parser

@@ -1,7 +1,4 @@
 import os
-from re import S
-
-from sklearn.preprocessing import scale
 # os.environ['CUDA_VISIBLE_DEVICES']='0'#指定训练gpu
 import numpy as np
 import os.path as osp
@@ -33,29 +30,36 @@ def mosaic(img):
         # print(cat_img.shape)
         mosaic_img[int(i//2),0,:,:]=torch.from_numpy(cat_img)[:,:]
     return mosaic_img
-def data_scale(img,lab,r):
+def data_scale(img,lab,r,LRLP=False):
     if r==100:
         return img,lab
     N,C,H,W=img.shape
     scaled_imgs=[]
-    scaled_labs=lab
-    # print(H,W)
     
+    # print(H,W)
+    if LRLP:
+        scaled_labs=lab
+        if r<50:#如果下采样比例过小，则分两次下采样
+            scaled_labs=F.fractional_max_pool2d(scaled_labs,output_ratio=0.5,kernel_size=2)
+        scaled_labs=F.fractional_max_pool2d(scaled_labs,output_size=(scaled_imgs.shape[-2:]),kernel_size=2)
+    else:
+        scaled_labs=[]
     # print(r/100)
     for i,l in zip(img,lab):       
-       scaled_img=mmcv.imrescale(tensor2numpy(i),r/100,interpolation='bilinear')
-    #    scaled_lab=mmcv.imrescale(l.cpu().numpy().transpose((1, 2, 0)),r/100,interpolation='nearest')
-       scaled_imgs.append(scaled_img[np.newaxis,:,:])
-    #    scaled_labs.append(scaled_lab[np.newaxis,:,:])
+        scaled_img=mmcv.imrescale(tensor2numpy(i),r/100,interpolation='bilinear')
+       
+        scaled_imgs.append(scaled_img[np.newaxis,:,:])
+        if not LRLP:
+            scaled_lab=mmcv.imrescale(l.cpu().numpy().transpose((1, 2, 0)),r/100,interpolation='nearest')
+            scaled_labs.append(scaled_lab[np.newaxis,:,:])
     scaled_imgs=np.array(scaled_imgs)
     # print(scaled_imgs.shape)
-    if r<50:#如果下采样比例过小，则分两次下采样
-        scaled_labs=F.fractional_max_pool2d(scaled_labs,output_ratio=0.5,kernel_size=2)
-    scaled_labs=F.fractional_max_pool2d(scaled_labs,output_size=(scaled_imgs.shape[-2:]),kernel_size=2)
+    
     # print(scaled_labs.shape)
     # scaled_labs=np.array(scaled_labs)
     # print(torch.tensor(scaled_imgs).shape)
     if not isinstance(scaled_labs,torch.Tensor):
+        scaled_labs=np.array(scaled_labs)
         scaled_labs=torch.tensor(scaled_labs)
     return torch.tensor(scaled_imgs),scaled_labs
 
@@ -63,7 +67,8 @@ def data_flip(img):
     imgs=[]
     for i in img:
         imgs.append(mmcv.imflip(tensor2numpy(i)))
-    imgs=np.array(imgs)
+        # print(imgs[0].shape)
+    imgs=np.array(imgs).transpose((0,3,1,2))
     return torch.tensor(imgs)
 
 def data_aug(img,label,augs=['mosaic']):
@@ -128,17 +133,19 @@ def train(args, model, train_loader, optimizer, epoch, logger,scaler,use_amp):
         # print(image.shape)
         # sys.exit(0)
         train_scale=[100]
-        if 'scale' in args.scale:#添加两个尺度
+        if args.scale:#添加两个尺度
             train_scale.append(50)
             train_scale.append(25)
         for s in train_scale:
-            image_,label_=data_scale(image,label,s)
+            # logger.info('training scale %d'%(s))
+            image_,label_=data_scale(image,label,s,args.LRLP)
             image_, label_ = image_.cuda(), label_.cuda()
             training(image_,label_,end,counter)
             for aug in args.augs:
                 if aug == 'flip':
-                    image__=data_flip(image_)
-                    label__=data_flip(label_)
+                    # logger.info('training flip')
+                    image__=data_flip(image_).cuda()
+                    label__=data_flip(label_).cuda()
                     training(image__,label__,end,counter)
             
 
