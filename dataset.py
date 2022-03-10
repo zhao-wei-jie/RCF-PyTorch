@@ -16,6 +16,7 @@ import sys
 
 from mmseg.core import eval_metrics, intersect_and_union, pre_eval_to_metrics
 
+
 class BSDS_Dataset(torch.utils.data.Dataset):
     def __init__(self, root='data/HED-BSDS', split='test', transform=False):
         super(BSDS_Dataset, self).__init__()
@@ -30,7 +31,8 @@ class BSDS_Dataset(torch.utils.data.Dataset):
             raise ValueError('Invalid split type!')
         with open(self.file_list, 'r') as f:
             self.file_list = f.readlines()
-        self.mean = np.array([104.00698793, 116.66876762, 122.67891434], dtype=np.float32)
+        self.mean = np.array(
+            [104.00698793, 116.66876762, 122.67891434], dtype=np.float32)
 
     def __len__(self):
         return len(self.file_list)
@@ -56,86 +58,95 @@ class BSDS_Dataset(torch.utils.data.Dataset):
         else:
             return img
 
+
 class TTPLA_Dataset(torch.utils.data.Dataset):
-    def __init__(self, root='../ttpla/', split='test',dataflag='color'):
+    def __init__(self, root='../ttpla/', split='test', dataflag='color',norm=False):
         super(TTPLA_Dataset, self).__init__()
         self.root = root
         self.split = split
-        self.dataflag=dataflag
-        self.transform =torchvision.transforms.Compose([
-            torchvision.transforms.Resize(384)        
-            ])
-        self.CLASSES=['bg','pl']
+        self.dataflag = dataflag
+        self.norm = norm
+        self.transform = torchvision.transforms.Compose([
+            torchvision.transforms.Resize(384)
+        ])
+        self.CLASSES = ['bg', 'pl']
         if self.split == 'train':
             self.file_list = osp.join(self.root, 'ttpla_train.txt')
-        elif self.split in ['test','eval']:
+        elif self.split in ['test', 'eval']:
             self.file_list = osp.join(self.root, 'ttpla_val.txt')
-            
+
         else:
             raise ValueError('Invalid split type!')
         with open(self.file_list, 'r') as f:
             self.file_list = f.readlines()
-            print(self.split,len(self.file_list))
-        self.mean = np.array([62.364 ,61.025 ,56.462], dtype=np.float32)
+            print(self.split, len(self.file_list))
+        self.mean = np.array([62.364, 61.025, 56.462], dtype=np.float32)
+        if self.norm:
+            self.std = np.array([25.631, 25.461, 25.943], dtype=np.float32)
+        else:
+            self.std = np.ones(1, dtype=np.float32)
 
     def __len__(self):
         return len(self.file_list)
 
     def __getitem__(self, index):
-        r=randint(96,384)
+        r = randint(96, 384)
         img_file = self.file_list[index]
-        img =  mmcv.imread(osp.join(self.root, img_file.strip('\n')+'.jpg'),self.dataflag)
-        img=self.transf(img,r)
-            
-        if self.split in ['train','eval']:
-            
-            label = mmcv.imread(osp.join(self.root,'annpng_powerline', img_file.strip('\n')+'.png'),backend='pillow',flag='unchanged')
+        img = mmcv.imread(
+            osp.join(self.root, img_file.strip('\n')+'.jpg'), self.dataflag)
+        img = self.transf(img, r)
+
+        if self.split in ['train', 'eval']:
+
+            label = mmcv.imread(osp.join(self.root, 'annpng_powerline', img_file.strip(
+                '\n')+'.png'), backend='pillow', flag='unchanged')
             # print(label.size,(label==1).sum(),(label==0).sum())
-            label=self.transf(label,r)#缩放至最大训练尺寸
-            
+            label = self.transf(label, r)  # 缩放至最大训练尺寸
+
             # print(2,label.shape)
             label = label[np.newaxis, :, :].astype(np.float32)
             # label = torch.from_numpy(label)
             # label = F.fractional_max_pool2d(label,output_size=(img.shape[:2]),kernel_size=2)
-            
-                        
+
             # label[label == 0] = 0
             # label[np.logical_and(label > 0, label < 127.5)] = 2
             # label[label >= 127.5] = 1
             # print(label.shape,label.dtype)
-            # sys.exit(0)    
+            # sys.exit(0)
         # img=rrisize(img)
-        
-        # self.mean=np.zeros(1)
-        if self.dataflag=='color':
-            img = (img - self.mean)
+
+        # self.mean = np.zeros(1,dtype=np.float32)
+        if self.dataflag == 'color':
+            img = mmcv.imnormalize(img, self.mean, self.std)
+            # img = (img - self.mean)
             # img=mmcv.rgb2gray(img)
             # img=mmcv.gray2rgb(img)
-            img=img.transpose((2, 0, 1))
-        if self.dataflag=='grayscale':
-            img = img - self.mean.mean()
+            img = img.transpose((2, 0, 1))
+        if self.dataflag == 'grayscale':
+            gray_weight = np.array([0.299, 0.587, 0.114], dtype=np.float32)
+            img = mmcv.imnormalize(img, (self.mean*gray_weight).sum(), (self.std*gray_weight).sum())
             img = img[np.newaxis, :, :]
         # img = np.array(img, dtype=np.float32)
-        if self.split in ['train','eval']:
+        if self.split in ['train', 'eval']:
             return img, label
         else:
             return img
-    
-    def transf(self,img , r):
+
+    def transf(self, img, r):
         h, w = img.shape[:2]
-        H=540
-        scale=h/H
-        # print(w//scale)        
-        img=mmcv.imresize(img,(int(w//scale),H))#保持比例将高度控制在540
+        H = 540
+        scale = h/H
+        # print(w//scale)
+        img = mmcv.imresize(img, (int(w//scale), H))  # 保持比例将高度控制在540
 
         # W,H=img.size#获取尺寸信息
-        # # print(1,label.size)            
+        # # print(1,label.size)
         # img=rrisize(img)#随机缩放
         # img = np.array(img, dtype=np.float32)#转numpy
         # # print(2,label.shape)
         # img=mmcv.impad(img,shape=(H,W))#填充至最大训练尺寸
         return img
-    
+
     def evaluate(self,
                  results,
                  metric='mIoU',
@@ -165,7 +176,7 @@ class TTPLA_Dataset(torch.utils.data.Dataset):
             raise KeyError('metric {} is not supported'.format(metric))
 
         eval_results = {}
-        self.ignore_index=255
+        self.ignore_index = 255
         # test a list of files
         if mmcv.is_list_of(results, np.ndarray) or mmcv.is_list_of(
                 results, str) or mmcv.is_list_of(results, torch.Tensor):
@@ -180,7 +191,7 @@ class TTPLA_Dataset(torch.utils.data.Dataset):
                 metric,
                 # label_map=self.label_map,
                 # reduce_zero_label=self.reduce_zero_label
-                )
+            )
         # test a list of pre_eval_results
         else:
             ret_metrics = pre_eval_to_metrics(results, metric)

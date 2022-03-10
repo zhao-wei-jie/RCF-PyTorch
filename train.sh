@@ -1,4 +1,4 @@
-CUDA_VISIBLE_DEVICES=0 python train.py \
+CUDA_VISIBLE_DEVICES=2 python train.py \
         --batch-size=4\
         --opt=adamw \
         --max-epoch=1000\
@@ -10,13 +10,13 @@ CUDA_VISIBLE_DEVICES=0 python train.py \
         --weight-decay=1e-2 \
         --iter-size=1\
         --amp=O1 \
-        --model=unet \
+        --model=hrnet_ocr \
         --fuse_num=5 \
         --short_cat=2 \
-        --dataflag=grayscale \
+        --dataflag=color \
         --scale=True\
-        --augs=flip\
-        --resume=results/UNET20220308_2121-bs-4-lr-0.0002-dataflag-grayscale-aug-False/checkpoint_epoch70.pth
+        # --augs=flip\
+        # --resume=results/UNET20220308_2121-bs-4-lr-0.0002-dataflag-grayscale-aug-False/checkpoint_epoch70.pth
         # --aug=True
         
         
