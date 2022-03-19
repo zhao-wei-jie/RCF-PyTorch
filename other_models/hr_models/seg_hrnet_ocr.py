@@ -581,6 +581,7 @@ class HighResolutionNet(nn.Module):
         return nn.Sequential(*modules), num_inchannels
     @torch.autocast('cuda')
     def forward(self, x):
+        o_h, o_w=x.shape[-2:]
         x = self.conv1(x)
         x = self.bn1(x)
         x = self.relu(x)
@@ -642,8 +643,12 @@ class HighResolutionNet(nn.Module):
 
         out = self.cls_head(feats)
 
-        out_aux_seg.append(out_aux)
-        out_aux_seg.append(out)
+        out_aux_seg.append(
+            F.interpolate(input=out_aux, size=(
+                o_h, o_w), mode='bilinear', align_corners=ALIGN_CORNERS))
+        out_aux_seg.append(
+            F.interpolate(input=out, size=(
+                o_h, o_w), mode='bilinear', align_corners=ALIGN_CORNERS))
 
         return out_aux_seg
 

@@ -137,7 +137,7 @@ def argsF():
                         help='path to latest checkpoint')
     parser.add_argument('--save-dir', help='output folder', default='results/')
     parser.add_argument(
-        '--dataset', help='root folder of dataset', default='data')
+        '--dataset', help='root folder of dataset', default=None)
     parser.add_argument('--dataflag', default='color',
                         help='color or grayscale')
     parser.add_argument('--amp', default='O0', help='O0~O3')

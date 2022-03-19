@@ -8,3 +8,6 @@ res/
 *epoch*
 *.ipynb
 Untitled.ipynb
+infer.sh
+train.sh
+results

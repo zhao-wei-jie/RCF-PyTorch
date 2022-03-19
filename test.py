@@ -22,6 +22,8 @@ from torch.utils.data import Dataset
 from torchvision import transforms
 import sys
 from utils import EvalMax, select_model, argsF
+from other_models.hr_models.seg_hrnet_ocr import HighResolutionNet
+import torch.nn.functional as F
 
 
 class inferImage(Dataset):
@@ -68,9 +70,6 @@ def single_scale_test(model, test_loader, test_list, save_dir, eval=None, save_i
         if eval:
             image, label = data
             label = label.cuda()
-            label = label.squeeze()
-            label = label.cpu().numpy()
-            eval_label.append(label)
             name = ['ttpla']
         else:
             image, name = data
@@ -107,20 +106,29 @@ def single_scale_test(model, test_loader, test_list, save_dir, eval=None, save_i
         # print(temp_res.shape,label.shape)
 
         eval_res.append(temp_res.cpu().numpy())
+        label = label.squeeze()
+        label = label.cpu().numpy()
+        eval_label.append(label)
         # print(np.sum(eval_res==1),np.sum(eval_res==0),np.sum(label==1),np.sum(label==0))
         # sys.exit()
 
         if save_img is True:
             image = image[0]
+            # print(image.shape[0])
             if image.shape[0] == 1:
                 image = torch.cat([image]*3, dim=0)
             # print(image.shape)
-            image[:, fuse_res > 0.5] /= 2
-            image[2, fuse_res > 0.5] += 128
+            
+            image = image.cpu().numpy().transpose((1, 2, 0))
+            # print(1 / np.float64(test_dataset.std.reshape(1, -1)))
+            # image = image+test_dataset.mean
+            image = mmcv.imdenormalize(image,test_dataset.mean,test_dataset.std,False)
+            # image[fuse_res.cpu() > 0.5, :] = 255
+            # image[fuse_res.cpu() > 0.5, 2] += 128
             # fuse_res = fuse_res.cpu().numpy()
             # fuse_res = ((1 - fuse_res) * 255).astype(np.uint8)
 
-            mmcv.imwrite(image.cpu().numpy().transpose((1, 2, 0)), osp.join(
+            mmcv.imwrite(image, osp.join(
                 save_dir, 'ss', name[0], '%s_ss.png' % filename))
         #print('\rRunning single-scale test [%d/%d]' % (idx + 1, len(test_loader)), end='')
     print('fps', 1/(per_time/len(test_list)), per_time /
