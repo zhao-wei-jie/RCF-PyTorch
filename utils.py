@@ -9,7 +9,102 @@ from other_models.unet_model import UNet
 import argparse
 from other_models.config import config,update_config
 import other_models.hr_models
+import mmcv
 
+def argsF():
+    parser = argparse.ArgumentParser(description='PyTorch Training')
+    parser.add_argument('--batch-size', default=1, type=int, help='batch size')
+    parser.add_argument('--opt', default='adamw', type=str, help='opt')
+    parser.add_argument('--model', default='rcf', type=str, help='rcf')
+    parser.add_argument('--lr', default=1e-6, type=float,
+                        help='initial learning rate')
+    parser.add_argument('--momentum', default=0.9, type=float, help='momentum')
+    parser.add_argument('--weight-decay', default=2e-4,
+                        type=float, help='weight decay')
+    parser.add_argument('--stepsize', default=3, type=int,
+                        help='learning rate step size')
+    parser.add_argument('--gamma', default=0.1, type=float,
+                        help='learning rate decay rate')
+    parser.add_argument('--max-epoch', default=10, type=int,
+                        help='the number of training epochs')
+    parser.add_argument('--iter-size', default=10, type=int, help='iter size')
+    parser.add_argument('--start-epoch', default=0,
+                        type=int, help='manual epoch number')
+    parser.add_argument('--print-freq', default=200,
+                        type=int, help='print frequency')
+    parser.add_argument('--gpu', default='0', type=str, help='GPU ID')
+    parser.add_argument('--resume', default=None, type=str,
+                        help='path to latest checkpoint')
+    parser.add_argument('--pretrain', default=None, type=str,
+                        help='path to latest checkpoint')
+    parser.add_argument('--save-dir', help='output folder', default='results/')
+    parser.add_argument(
+        '--dataset', help='root folder of dataset', default=None)
+    parser.add_argument('--dataflag', default='color',
+                        help='color or grayscale')
+    parser.add_argument('--amp', default='O0', help='O0~O3')
+    parser.add_argument('--aug', default=False,
+                        type=bool, help='true or false')
+    parser.add_argument('--fuse_num', default=5, help='5')
+    parser.add_argument('--short_cat', default=0, type=int)
+    parser.add_argument('--scale', default=False, type=bool)
+    parser.add_argument('--augs', default=[], type=str, nargs='*')
+    parser.add_argument('--LRLP', default=False, type=bool,
+                        help='low resolution lable processor')
+    parser.add_argument('--msg', default=None, type=str,
+                        help='a training msg')
+    parser.add_argument('--norm', default=False, type=bool,
+                        help='data norm')
+    parser.add_argument('--is_photo_distor', default=False, type=bool,
+                        help='photo_distor')
+    parser.add_argument('--norm_mode', default=1, type=int)
+    return parser
+
+
+def tensor2numpy(img):
+    return img.cpu().numpy().transpose((1, 2, 0))
+
+
+def data_scale(img, lab, r, LRLP=False):
+    if r == 100:
+        return img, lab
+    N, C, H, W = img.shape
+    scaled_imgs = []
+
+    # print(H,W)
+    if LRLP:
+        scaled_labs = lab
+    else:
+        scaled_labs = []
+    # print(r/100)
+    for i, l in zip(img, lab):
+        scaled_img = mmcv.imrescale(tensor2numpy(
+            i), r/100, interpolation='bilinear')
+        if C == 1:
+            scaled_img = scaled_img[np.newaxis, :, :]
+        if C == 3:
+            scaled_img = scaled_img.transpose((2, 0, 1))
+        scaled_imgs.append(scaled_img)
+        if not LRLP:
+            scaled_lab = mmcv.imrescale(l.cpu().numpy().transpose(
+                (1, 2, 0)), r/100, interpolation='nearest')
+            scaled_labs.append(scaled_lab[np.newaxis, :, :])
+    scaled_imgs = np.array(scaled_imgs)
+    if LRLP:
+        if r < 50:  # 如果下采样比例过小，则分两次下采样
+            scaled_labs = F.fractional_max_pool2d(
+                scaled_labs, output_ratio=0.5, kernel_size=2)
+        scaled_labs = F.fractional_max_pool2d(
+            scaled_labs, output_size=(scaled_imgs.shape[-2:]), kernel_size=2)
+    # print(scaled_imgs.shape)
+
+    # print(scaled_labs.shape)
+    # scaled_labs=np.array(scaled_labs)
+    # print(torch.tensor(scaled_imgs).shape)
+    if not isinstance(scaled_labs, torch.Tensor):
+        scaled_labs = np.array(scaled_labs)
+        scaled_labs = torch.tensor(scaled_labs)
+    return torch.tensor(scaled_imgs), scaled_labs
 
 def select_model(args):
     if args.model == 'rcf':
@@ -109,44 +204,4 @@ def Cross_entropy_loss(prediction, label):
     return torch.sum(cost)
 
 
-def argsF():
-    parser = argparse.ArgumentParser(description='PyTorch Training')
-    parser.add_argument('--batch-size', default=1, type=int, help='batch size')
-    parser.add_argument('--opt', default='adamw', type=str, help='opt')
-    parser.add_argument('--model', default='rcf', type=str, help='rcf')
-    parser.add_argument('--lr', default=1e-6, type=float,
-                        help='initial learning rate')
-    parser.add_argument('--momentum', default=0.9, type=float, help='momentum')
-    parser.add_argument('--weight-decay', default=2e-4,
-                        type=float, help='weight decay')
-    parser.add_argument('--stepsize', default=3, type=int,
-                        help='learning rate step size')
-    parser.add_argument('--gamma', default=0.1, type=float,
-                        help='learning rate decay rate')
-    parser.add_argument('--max-epoch', default=10, type=int,
-                        help='the number of training epochs')
-    parser.add_argument('--iter-size', default=10, type=int, help='iter size')
-    parser.add_argument('--start-epoch', default=0,
-                        type=int, help='manual epoch number')
-    parser.add_argument('--print-freq', default=200,
-                        type=int, help='print frequency')
-    parser.add_argument('--gpu', default='0', type=str, help='GPU ID')
-    parser.add_argument('--resume', default=None, type=str,
-                        help='path to latest checkpoint')
-    parser.add_argument('--pretrain', default=None, type=str,
-                        help='path to latest checkpoint')
-    parser.add_argument('--save-dir', help='output folder', default='results/')
-    parser.add_argument(
-        '--dataset', help='root folder of dataset', default='data')
-    parser.add_argument('--dataflag', default='color',
-                        help='color or grayscale')
-    parser.add_argument('--amp', default='O0', help='O0~O3')
-    parser.add_argument('--aug', default=False,
-                        type=bool, help='true or false')
-    parser.add_argument('--fuse_num', default=5, help='5')
-    parser.add_argument('--short_cat', default=0, type=int)
-    parser.add_argument('--scale', default=False, type=bool)
-    parser.add_argument('--augs', default=[], type=str, nargs='*')
-    parser.add_argument('--LRLP', default=False, type=bool,
-                        help='low resolution lable processor')
-    return parser
+

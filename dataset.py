@@ -13,6 +13,7 @@ import torchvision
 from random import randint
 import torch.nn.functional as F
 import sys
+from transforms import PhotoMetricDistortion
 
 from mmseg.core import eval_metrics, intersect_and_union, pre_eval_to_metrics
 
@@ -60,12 +61,14 @@ class BSDS_Dataset(torch.utils.data.Dataset):
 
 
 class TTPLA_Dataset(torch.utils.data.Dataset):
-    def __init__(self, root='../ttpla/', split='test', dataflag='color',norm=False):
+    def __init__(self, args, root='../ttpla/', split='test',):
         super(TTPLA_Dataset, self).__init__()
         self.root = root
         self.split = split
-        self.dataflag = dataflag
-        self.norm = norm
+        self.dataflag = args.dataflag
+        self.norm = args.norm if hasattr(args,'norm') else False
+        self.norm_mode = args.norm_mode
+        self.is_photo_distor = args.is_photo_distor if hasattr(args,'is_photo_distor') else False
         self.transform = torchvision.transforms.Compose([
             torchvision.transforms.Resize(384)
         ])
@@ -85,6 +88,8 @@ class TTPLA_Dataset(torch.utils.data.Dataset):
             self.std = np.array([25.631, 25.461, 25.943], dtype=np.float32)
         else:
             self.std = np.ones(1, dtype=np.float32)
+        if self.is_photo_distor:
+            self.photo_distor = PhotoMetricDistortion()
 
     def __len__(self):
         return len(self.file_list)
@@ -116,17 +121,33 @@ class TTPLA_Dataset(torch.utils.data.Dataset):
         # img=rrisize(img)
 
         # self.mean = np.zeros(1,dtype=np.float32)
+        if self.is_photo_distor:
+            res = {}
+            res['img'] = img
+            img = self.photo_distor(res)['img']
         if self.dataflag == 'color':
-            img = mmcv.imnormalize(img, self.mean, self.std)
+            if self.norm:
+                if self.norm_mode == 1:
+                    img = mmcv.imnormalize(img, self.mean, self.std)
+                if self.norm_mode == 2:
+                    img = img/np.array([255.0])
+            else:
+                img = img-self.mean
             # img = (img - self.mean)
             # img=mmcv.rgb2gray(img)
             # img=mmcv.gray2rgb(img)
             img = img.transpose((2, 0, 1))
         if self.dataflag == 'grayscale':
-            gray_weight = np.array([0.299, 0.587, 0.114], dtype=np.float32)
-            img = mmcv.imnormalize(img, (self.mean*gray_weight).sum(), (self.std*gray_weight).sum())
+            if self.norm:
+                if self.norm_mode == 1:
+                    gray_weight = np.array([0.299, 0.587, 0.114], dtype=np.float32)
+                    img = mmcv.imnormalize(img, (self.mean*gray_weight).sum(), (self.std*gray_weight).sum())
+                if self.norm_mode == 2:
+                    img = img/np.array([255.0])
+            else:
+                img = img-self.mean.mean()
             img = img[np.newaxis, :, :]
-        # img = np.array(img, dtype=np.float32)
+        img = np.array(img, dtype=np.float32)
         if self.split in ['train', 'eval']:
             return img, label
         else:

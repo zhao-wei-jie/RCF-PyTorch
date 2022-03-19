@@ -10,17 +10,13 @@ import torchvision
 from dataset import BSDS_Dataset, TTPLA_Dataset
 from other_models.unet_model import UNet
 from other_models.hr_models.seg_hrnet_ocr import HighResolutionNet
-from utils import Logger, Averagvalue, Cross_entropy_loss, EvalMax, select_model, argsF
+from utils import Logger, Averagvalue, Cross_entropy_loss, EvalMax, select_model, argsF, data_scale,tensor2numpy
 from test import single_scale_test
 import random
 # from apex import amp
 import torch.nn.functional as F
 import sys
 import mmcv
-
-
-def tensor2numpy(img):
-    return img.cpu().numpy().transpose((1, 2, 0))
 
 
 def get_lr(optimizer):
@@ -38,48 +34,6 @@ def mosaic(img):
         # print(cat_img.shape)
         mosaic_img[int(i//2), 0, :, :] = torch.from_numpy(cat_img)[:, :]
     return mosaic_img
-
-
-def data_scale(img, lab, r, LRLP=False):
-    if r == 100:
-        return img, lab
-    N, C, H, W = img.shape
-    scaled_imgs = []
-
-    # print(H,W)
-    if LRLP:
-        scaled_labs = lab
-    else:
-        scaled_labs = []
-    # print(r/100)
-    for i, l in zip(img, lab):
-        scaled_img = mmcv.imrescale(tensor2numpy(
-            i), r/100, interpolation='bilinear')
-        if C == 1:
-            scaled_img = scaled_img[np.newaxis, :, :]
-        if C == 3:
-            scaled_img = scaled_img.transpose((2, 0, 1))
-        scaled_imgs.append(scaled_img)
-        if not LRLP:
-            scaled_lab = mmcv.imrescale(l.cpu().numpy().transpose(
-                (1, 2, 0)), r/100, interpolation='nearest')
-            scaled_labs.append(scaled_lab[np.newaxis, :, :])
-    scaled_imgs = np.array(scaled_imgs)
-    if LRLP:
-        if r < 50:  # 如果下采样比例过小，则分两次下采样
-            scaled_labs = F.fractional_max_pool2d(
-                scaled_labs, output_ratio=0.5, kernel_size=2)
-        scaled_labs = F.fractional_max_pool2d(
-            scaled_labs, output_size=(scaled_imgs.shape[-2:]), kernel_size=2)
-    # print(scaled_imgs.shape)
-
-    # print(scaled_labs.shape)
-    # scaled_labs=np.array(scaled_labs)
-    # print(torch.tensor(scaled_imgs).shape)
-    if not isinstance(scaled_labs, torch.Tensor):
-        scaled_labs = np.array(scaled_labs)
-        scaled_labs = torch.tensor(scaled_labs)
-    return torch.tensor(scaled_imgs), scaled_labs
 
 
 def data_flip(img):
@@ -133,11 +87,12 @@ def train(args, model, train_loader, optimizer, epoch, logger, scaler, use_amp):
                     label_=  F.fractional_max_pool2d(
                                                     label_, output_size=(outputs[0].shape[-2:]), kernel_size=2)
                     loss += Cross_entropy_loss(outputs[0], label_)
-                if hasattr(model, 'short_cat') and model.short_cat == 2:
+                if hasattr(model, 'short_cat'):
+                    if model.short_cat == 2:
                         loss += Cross_entropy_loss(outputs[-1], label_)
-                else:
-                    for o in outputs:
-                        loss = loss + Cross_entropy_loss(o, label_)
+                    else:
+                        for o in outputs:
+                            loss = loss + Cross_entropy_loss(o, label_)
                 counter += 1
                 loss = loss / args.iter_size
             scaler.scale(loss).backward()
@@ -234,8 +189,10 @@ if __name__ == '__main__':
     # train_dataset = BSDS_Dataset(root=args.dataset, split='train')
     # test_dataset  = BSDS_Dataset(root=osp.join(args.dataset, 'HED-BSDS'), split='test')
 
-    train_dataset = TTPLA_Dataset(split='train', dataflag=args.dataflag)
-    test_dataset = TTPLA_Dataset(split='eval', dataflag=args.dataflag)
+    train_dataset = TTPLA_Dataset(
+        split='train', args=args)
+    test_dataset = TTPLA_Dataset(
+        split='eval', args=args)
     train_loader = DataLoader(
         train_dataset, batch_size=args.batch_size, num_workers=8, drop_last=True, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=args.batch_size,
@@ -277,7 +234,7 @@ if __name__ == '__main__':
     if args.resume is not None:
         load_w(args.resume, 'resume')
     if args.pretrain:
-        load_w(args.resume, 'pretrain')
+        load_w(args.pretrain, 'pretrain')
     # else:
     #     model.load_state_dict(torch.load('bsds500_pascal_model.pth'))
     logger.info('Called with args:')
@@ -291,7 +248,8 @@ if __name__ == '__main__':
         # save_dir = osp.join(args.save_dir, 'epoch%d-test' % (epoch + 1))
         logger.info('testing...')
         ret = single_scale_test(
-            model, test_loader, test_list, None, test_dataset.evaluate, False, use_amp)
+            model, test_loader, test_list, None, args,
+            test_dataset.evaluate, False, use_amp)
         logger.info(ret)
         logger.info(max_eval(ret, epoch+1))
         # multi_scale_test(model, test_loader, test_list, save_dir)

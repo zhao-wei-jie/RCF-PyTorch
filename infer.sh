@@ -1,4 +1,4 @@
-CUDA_VISIBLE_DEVICES=2 python test.py --checkpoint results/UNET20220307_2141-bs-4-lr-0.0002-dataflag-grayscale-aug-False/checkpoint_epoch351.pth \
+CUDA_VISIBLE_DEVICES=0 python test.py --checkpoint results/UNET20220317_1618-bs-4-lr-0.0001-dataflag-color-aug-False/checkpoint_epoch377.pth \
 --dataset=/home/zhaowj/python/powerLine/test_set_200/cam0/*/*
 # --model=unet \
 # --dataflag=grayscale \

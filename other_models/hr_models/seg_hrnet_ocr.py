@@ -579,6 +579,7 @@ class HighResolutionNet(nn.Module):
             num_inchannels = modules[-1].get_num_inchannels()
 
         return nn.Sequential(*modules), num_inchannels
+
     @torch.autocast('cuda')
     def forward(self, x):
         x = self.conv1(x)
