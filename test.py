@@ -21,6 +21,8 @@ from torch.utils.data import Dataset
 from torchvision import transforms
 import sys
 from utils import EvalMax, select_model, argsF,data_scale
+from other_models.hr_models.seg_hrnet_ocr import HighResolutionNet
+import torch.nn.functional as F
 
 
 class inferImage(Dataset):

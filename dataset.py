@@ -136,7 +136,7 @@ class TTPLA_Dataset(torch.utils.data.Dataset):
             # img = (img - self.mean)
             # img=mmcv.rgb2gray(img)
             # img=mmcv.gray2rgb(img)
-            img = img.transpose((2, 0, 1))
+            img = img.transpose((2, 0, 1)).astype(np.float32)
         if self.dataflag == 'grayscale':
             if self.norm:
                 if self.norm_mode == 1:

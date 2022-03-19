@@ -84,15 +84,15 @@ def train(args, model, train_loader, optimizer, epoch, logger, scaler, use_amp):
                 if isinstance(model, UNet):
                     loss += Cross_entropy_loss(outputs, label_)
                 if isinstance(model, HighResolutionNet):
-                    label_=  F.fractional_max_pool2d(
-                                                    label_, output_size=(outputs[0].shape[-2:]), kernel_size=2)
-                    loss += Cross_entropy_loss(outputs[0], label_)
-                if hasattr(model, 'short_cat'):
-                    if model.short_cat == 2:
+                    # label_=  F.fractional_max_pool2d(
+                    #                                 label_, output_size=(outputs[0].shape[-2:]), kernel_size=2)
+                    for o in outputs:
+                        loss = loss + Cross_entropy_loss(o, label_)
+                if hasattr(model, 'short_cat') and model.short_cat == 2:
                         loss += Cross_entropy_loss(outputs[-1], label_)
-                    else:
-                        for o in outputs:
-                            loss = loss + Cross_entropy_loss(o, label_)
+                else:
+                    for o in outputs:
+                        loss = loss + Cross_entropy_loss(o, label_)
                 counter += 1
                 loss = loss / args.iter_size
             scaler.scale(loss).backward()

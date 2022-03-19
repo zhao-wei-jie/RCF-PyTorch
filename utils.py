@@ -202,6 +202,3 @@ def Cross_entropy_loss(prediction, label):
                                               # ,reduction='sum'
                                               )
     return torch.sum(cost)
-
-
-
