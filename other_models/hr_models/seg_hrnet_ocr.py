@@ -643,13 +643,10 @@ class HighResolutionNet(nn.Module):
         feats = self.ocr_distri_head(feats, context)
 
         out = self.cls_head(feats)
-
-        out_aux_seg.append(
-            F.interpolate(input=out_aux, size=(
-                o_h, o_w), mode='bilinear', align_corners=ALIGN_CORNERS))
-        out_aux_seg.append(
-            F.interpolate(input=out, size=(
-                o_h, o_w), mode='bilinear', align_corners=ALIGN_CORNERS))
+        out_aux = F.interpolate(input=out_aux, size=(o_h, o_w), mode='bilinear', align_corners=ALIGN_CORNERS)
+        out_aux_seg.append(out_aux)
+        out = F.interpolate(input=out, size=(o_h, o_w), mode='bilinear', align_corners=ALIGN_CORNERS)
+        out_aux_seg.append(out)
 
         return out_aux_seg
 

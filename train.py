@@ -10,7 +10,8 @@ import torchvision
 from dataset import BSDS_Dataset, TTPLA_Dataset
 from other_models.unet_model import UNet
 from other_models.hr_models.seg_hrnet_ocr import HighResolutionNet
-from utils import Logger, Averagvalue, Cross_entropy_loss, EvalMax, select_model, argsF, data_scale,tensor2numpy
+from other_models.semseg.models import Lawin
+from utils import Logger, Averagvalue, Cross_entropy_loss, EvalMax, select_model, argsF, data_scale,data_rotate,data_flip
 from test import single_scale_test
 import random
 # from apex import amp
@@ -34,15 +35,6 @@ def mosaic(img):
         # print(cat_img.shape)
         mosaic_img[int(i//2), 0, :, :] = torch.from_numpy(cat_img)[:, :]
     return mosaic_img
-
-
-def data_flip(img):
-    imgs = []
-    for i in img:
-        imgs.append(mmcv.imflip(tensor2numpy(i)))
-        # print(imgs[0].shape)
-    imgs = np.array(imgs).transpose((0, 3, 1, 2))
-    return torch.tensor(imgs)
 
 
 def data_aug(img, label, augs=['mosaic']):
@@ -81,18 +73,19 @@ def train(args, model, train_loader, optimizer, epoch, logger, scaler, use_amp):
                 outputs = model(image_)
                 loss = torch.zeros(1).cuda()
 
-                if isinstance(model, UNet):
+                if isinstance(model, (UNet, Lawin)):
                     loss += Cross_entropy_loss(outputs, label_)
-                if isinstance(model, HighResolutionNet):
+                elif isinstance(model, HighResolutionNet):
                     # label_=  F.fractional_max_pool2d(
-                    #                                 label_, output_size=(outputs[0].shape[-2:]), kernel_size=2)
+                    # label_, output_size=(outputs[0].shape[-2:]), kernel_size=2)
                     for o in outputs:
                         loss = loss + Cross_entropy_loss(o, label_)
-                if hasattr(model, 'short_cat') and model.short_cat == 2:
+                elif hasattr(model, 'short_cat') :
+                    if model.short_cat == 2:
                         loss += Cross_entropy_loss(outputs[-1], label_)
-                else:
-                    for o in outputs:
-                        loss = loss + Cross_entropy_loss(o, label_)
+                    else:
+                        for o in outputs:
+                            loss = loss + Cross_entropy_loss(o, label_)
                 counter += 1
                 loss = loss / args.iter_size
             scaler.scale(loss).backward()
@@ -127,6 +120,11 @@ def train(args, model, train_loader, optimizer, epoch, logger, scaler, use_amp):
                     image__ = data_flip(image_).cuda()
                     label__ = data_flip(label_).cuda()
                     training(image__, label__, end, counter)
+                if aug == 'rotate':
+                    for angle in [90,180,270]:
+                        image__ = data_rotate(image_, angle).cuda()
+                        label__ = data_rotate(label_, angle).cuda()
+                        training(image__, label__, end, counter)
 
     logger.info('Epoch: [{0}/{1}][{2}/{3}] '.format(epoch + 1, args.max_epoch, i, len(train_loader)) +
                 'Time {batch_time.val:.3f} (avg: {batch_time.avg:.3f}) '.format(batch_time=batch_time) +

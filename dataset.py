@@ -13,7 +13,7 @@ import torchvision
 from random import randint
 import torch.nn.functional as F
 import sys
-from transforms import PhotoMetricDistortion
+from transforms import PhotoMetricDistortion,RandomCrop
 
 from mmseg.core import eval_metrics, intersect_and_union, pre_eval_to_metrics
 
@@ -91,6 +91,8 @@ class TTPLA_Dataset(torch.utils.data.Dataset):
         if self.is_photo_distor:
             self.photo_distor = PhotoMetricDistortion()
 
+        self.crop = RandomCrop((512,512),0.99)
+
     def __len__(self):
         return len(self.file_list)
 
@@ -109,7 +111,7 @@ class TTPLA_Dataset(torch.utils.data.Dataset):
             label = self.transf(label, r)  # 缩放至最大训练尺寸
 
             # print(2,label.shape)
-            label = label[np.newaxis, :, :].astype(np.float32)
+            label = label[ :, :, np.newaxis].astype(np.float32)
             # label = torch.from_numpy(label)
             # label = F.fractional_max_pool2d(label,output_size=(img.shape[:2]),kernel_size=2)
 
@@ -136,7 +138,7 @@ class TTPLA_Dataset(torch.utils.data.Dataset):
             # img = (img - self.mean)
             # img=mmcv.rgb2gray(img)
             # img=mmcv.gray2rgb(img)
-            img = img.transpose((2, 0, 1)).astype(np.float32)
+            
         if self.dataflag == 'grayscale':
             if self.norm:
                 if self.norm_mode == 1:
@@ -146,8 +148,16 @@ class TTPLA_Dataset(torch.utils.data.Dataset):
                     img = img/np.array([255.0])
             else:
                 img = img-self.mean.mean()
-            img = img[np.newaxis, :, :]
-        img = np.array(img, dtype=np.float32)
+            img = img[ :, : ,np.newaxis]
+        if self.crop:
+            res={}
+            res['img'] = img
+            res['seg_fields'] = label
+            res = self.crop(res)
+            img = res['img']
+            label = res['seg_fields']
+        img = img.transpose((2, 0, 1)).astype(np.float32)
+        label = label.transpose((2, 0, 1)).astype(np.float32)
         if self.split in ['train', 'eval']:
             return img, label
         else:
@@ -159,7 +169,6 @@ class TTPLA_Dataset(torch.utils.data.Dataset):
         scale = h/H
         # print(w//scale)
         img = mmcv.imresize(img, (int(w//scale), H))  # 保持比例将高度控制在540
-
         # W,H=img.size#获取尺寸信息
         # # print(1,label.size)
         # img=rrisize(img)#随机缩放

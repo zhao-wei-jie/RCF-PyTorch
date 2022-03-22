@@ -6,6 +6,7 @@ import numpy as np
 import os.path as osp
 import cv2
 import argparse
+from other_models.semseg.models.lawin import Lawin
 import torch
 from torch.utils.data import DataLoader
 import torchvision
@@ -92,10 +93,12 @@ def single_scale_test(model, test_loader, test_list, save_dir, args, eval=None, 
         for idx, data in enumerate(test_loader):
             if eval:
                 image, label = data
+                # print('lab',label.shape)
                 image, label = data_scale(image, label, scale ,True)
                 label = label.cuda()
                 label = label.squeeze()
                 label = label.cpu().numpy()
+                
                 eval_label.append(label)
                 name = ['ttpla']
             else:
@@ -107,7 +110,7 @@ def single_scale_test(model, test_loader, test_list, save_dir, args, eval=None, 
                 timer.since_last_check()
                 results = model(image)
 
-            if isinstance(model, UNet):
+            if isinstance(model, (UNet,Lawin)):
                 results = torch.sigmoid(results)
                 fuse_res = torch.squeeze(results.detach())
             else:
@@ -147,6 +150,7 @@ def single_scale_test(model, test_loader, test_list, save_dir, args, eval=None, 
             # print(temp_res.shape,label.shape)
 
             eval_res.append(temp_res.cpu().numpy())
+            # print('res',temp_res.shape)
             # print(np.sum(eval_res==1),np.sum(eval_res==0),np.sum(label==1),np.sum(label==0))
             # sys.exit()
             #print('\rRunning single-scale test [%d/%d]' % (idx + 1, len(test_loader)), end='')

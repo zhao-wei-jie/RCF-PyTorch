@@ -9,6 +9,7 @@ from other_models.unet_model import UNet
 import argparse
 from other_models.config import config,update_config
 import other_models.hr_models
+from other_models.semseg.models import Lawin
 import mmcv
 
 def argsF():
@@ -106,6 +107,25 @@ def data_scale(img, lab, r, LRLP=False):
         scaled_labs = torch.tensor(scaled_labs)
     return torch.tensor(scaled_imgs), scaled_labs
 
+
+def data_rotate(img,angle):
+    imgs = []
+    for i in img:
+        imgs.append(mmcv.imrotate((tensor2numpy(i),angle)))
+        # print(imgs[0].shape)
+    imgs = np.array(imgs).transpose((0, 3, 1, 2))
+    return torch.tensor(imgs)
+
+
+def data_flip(img):
+    imgs = []
+    for i in img:
+        imgs.append(mmcv.imflip(tensor2numpy(i)))
+        # print(imgs[0].shape)
+    imgs = np.array(imgs).transpose((0, 3, 1, 2))
+    return torch.tensor(imgs)
+
+
 def select_model(args):
     if args.model == 'rcf':
         # print(fuse)
@@ -125,7 +145,9 @@ def select_model(args):
         model = eval('other_models.hr_models.'+config.MODEL.NAME +
                      '.get_seg_model')(config)
         # model = FullModel(model, criterion)
-
+    elif args.model == 'lawin':
+        model = Lawin(backbone = 'MiT-B5', num_classes=1)
+        model.init_pretrained('pretrained_models/mit_b5.pth')
         return model.cuda()
 
 
