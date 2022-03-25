@@ -1,6 +1,6 @@
 from tabulate import tabulate
 from other_models.semseg import models
-from other_models.semseg import datasets
+# from other_models.semseg import datasets
 from other_models.semseg.models import backbones, heads
 
 

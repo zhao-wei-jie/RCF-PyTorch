@@ -4,6 +4,7 @@ import numpy as np
 import os.path as osp
 import PIL.Image as Image
 from torch import serialization
+from glob import glob
 import mmcv
 from mmcv.utils import print_log
 from prettytable import PrettyTable
@@ -279,3 +280,21 @@ class TTPLA_Dataset(torch.utils.data.Dataset):
             })
 
         return eval_results
+
+class Odometry_Dataset(TTPLA_Dataset):
+    def __init__(self, args, root='../odometry_0027/', split='test',):
+        super(Odometry_Dataset, self).__init__(args)
+        self.img_list = glob(root+'img/*')
+        print(len(self.img_list))
+    def __len__(self):
+        return len(self.img_list)
+
+    def __getitem__(self, index):
+        img = mmcv.imread(self.img_list[index])
+        path = self.img_list[index].replace('img', 'gt').replace('png', 'jpg')
+        print(path)
+        lab = mmcv.imread(path, 'grayscale')
+        lab = lab[:, :, np.newaxis]
+        img = img.transpose((2, 0, 1)).astype(np.float32)
+        lab = lab.transpose((2, 0, 1)).astype(np.float32)
+        return img,lab

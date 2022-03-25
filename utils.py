@@ -111,9 +111,13 @@ def data_scale(img, lab, r, LRLP=False):
 def data_rotate(img,angle):
     imgs = []
     for i in img:
-        imgs.append(mmcv.imrotate((tensor2numpy(i),angle)))
+        imgs.append(mmcv.imrotate(tensor2numpy(i), angle=angle))
         # print(imgs[0].shape)
-    imgs = np.array(imgs).transpose((0, 3, 1, 2))
+    imgs = np.array(imgs)
+    if img.shape[1] == 1:
+        imgs = imgs[:, :, :, np.newaxis]
+    # print(imgs.shape)
+    imgs = imgs.transpose((0, 3, 1, 2))
     return torch.tensor(imgs)
 
 

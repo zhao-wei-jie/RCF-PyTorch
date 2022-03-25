@@ -1,6 +1,6 @@
 import torch
 import os.path as osp
-pth='results/RCF20220225_0949-bs-4-lr-0.002-iter_size-1-opt-adamw/checkpoint_epoch642.pth'
+pth='results/LAWIN20220321_2044-bs-2-lr-0.0001-dataflag-color-aug-False/checkpoint_epoch232.pth'
 basedir=osp.dirname(pth)
 ckpoint=torch.load(pth)
 torch.save(ckpoint['state_dict'],basedir+'/'+osp.basename(pth).replace('checkpoint_epoch','model'))

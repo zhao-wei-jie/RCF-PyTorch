@@ -121,7 +121,8 @@ def train(args, model, train_loader, optimizer, epoch, logger, scaler, use_amp):
                     label__ = data_flip(label_).cuda()
                     training(image__, label__, end, counter)
                 if aug == 'rotate':
-                    for angle in [90,180,270]:
+                    for angle in [90, 180, 270]:
+                        # print(angle)
                         image__ = data_rotate(image_, angle).cuda()
                         label__ = data_rotate(label_, angle).cuda()
                         training(image__, label__, end, counter)
