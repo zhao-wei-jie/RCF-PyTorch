@@ -15,7 +15,7 @@ from random import randint
 import torch.nn.functional as F
 import sys
 from transforms import PhotoMetricDistortion,RandomCrop
-
+import Object
 from mmseg.core import eval_metrics, intersect_and_union, pre_eval_to_metrics
 
 
@@ -62,19 +62,19 @@ class BSDS_Dataset(torch.utils.data.Dataset):
 
 
 class TTPLA_Dataset(torch.utils.data.Dataset):
-    def __init__(self, args, root='../ttpla/', split='test',):
+    def __init__(self, args=Object(), root='../ttpla/', split='test',):
         super(TTPLA_Dataset, self).__init__()
         self.root = root
         self.split = split
-        self.dataflag = args.dataflag
-        self.norm = args.norm if hasattr(args,'norm') else False
-        self.norm_mode = args.norm_mode
-        self.is_photo_distor = args.is_photo_distor if hasattr(args,'is_photo_distor') else False
+        self.dataflag = getattr(args,'dataflag','color')
+        self.norm = getattr(args,'norm',True)
+        self.norm_mode = getattr(args,'norm_mode',2)
+        self.is_photo_distor = getattr(args, 'is_photo_distor', False)
         self.transform = torchvision.transforms.Compose([
             torchvision.transforms.Resize(384)
         ])
         self.CLASSES = ['bg', 'pl']
-        if self.split == 'train':
+        if self.split in ['train','self']:
             self.file_list = osp.join(self.root, 'ttpla_train.txt')
         elif self.split in ['test', 'eval']:
             self.file_list = osp.join(self.root, 'ttpla_val.txt')
@@ -104,7 +104,7 @@ class TTPLA_Dataset(torch.utils.data.Dataset):
             osp.join(self.root, img_file.strip('\n')+'.jpg'), self.dataflag)
         img = self.transf(img, r)
 
-        if self.split in ['train', 'eval']:
+        if self.split in ['train', 'eval', 'self']:
 
             label = mmcv.imread(osp.join(self.root, 'annpng_powerline', img_file.strip(
                 '\n')+'.png'), backend='pillow', flag='unchanged')
@@ -161,6 +161,8 @@ class TTPLA_Dataset(torch.utils.data.Dataset):
         label = label.transpose((2, 0, 1)).astype(np.float32)
         if self.split in ['train', 'eval']:
             return img, label
+        elif self.split == 'self':
+            return img, img
         else:
             return img
 
