@@ -14,8 +14,9 @@ import torchvision
 from random import randint
 import torch.nn.functional as F
 import sys
+sys.path.append('../RCF-PyTorch/')
 from transforms import PhotoMetricDistortion,RandomCrop
-import Object
+# import Object
 from mmseg.core import eval_metrics, intersect_and_union, pre_eval_to_metrics
 
 
@@ -62,7 +63,7 @@ class BSDS_Dataset(torch.utils.data.Dataset):
 
 
 class TTPLA_Dataset(torch.utils.data.Dataset):
-    def __init__(self, args=Object(), root='../ttpla/', split='test',):
+    def __init__(self, args=object(), root='../ttpla/', split='test',):
         super(TTPLA_Dataset, self).__init__()
         self.root = root
         self.split = split
@@ -91,8 +92,11 @@ class TTPLA_Dataset(torch.utils.data.Dataset):
             self.std = np.ones(1, dtype=np.float32)
         if self.is_photo_distor:
             self.photo_distor = PhotoMetricDistortion()
-
-        self.crop = RandomCrop((512,512),0.99)
+        if split == 'self':
+            crop_size = (224, 224)
+        else:
+            crop_size = (512, 512)
+        self.crop = RandomCrop(crop_size, 0.99)
 
     def __len__(self):
         return len(self.file_list)
