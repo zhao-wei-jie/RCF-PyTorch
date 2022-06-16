@@ -63,7 +63,7 @@ class BSDS_Dataset(torch.utils.data.Dataset):
 
 
 class TTPLA_Dataset(torch.utils.data.Dataset):
-    def __init__(self, args=object(), root='../ttpla/', split='test',):
+    def __init__(self, args=object(), root='../ttpla/', split='test', transform = None):
         super(TTPLA_Dataset, self).__init__()
         self.root = root
         self.split = split
@@ -71,13 +71,11 @@ class TTPLA_Dataset(torch.utils.data.Dataset):
         self.norm = getattr(args,'norm',True)
         self.norm_mode = getattr(args,'norm_mode',2)
         self.is_photo_distor = getattr(args, 'is_photo_distor', False)
-        self.transform = torchvision.transforms.Compose([
-            torchvision.transforms.Resize(384)
-        ])
+        self.transform = transform
         self.CLASSES = ['bg', 'pl']
-        if self.split in ['train','self']:
+        if self.split in ['train','self', 'self_finetune']:
             self.file_list = osp.join(self.root, 'ttpla_train.txt')
-        elif self.split in ['test', 'eval']:
+        elif self.split in ['test', 'eval', 'self_finetune_eval']:
             self.file_list = osp.join(self.root, 'ttpla_val.txt')
 
         else:
@@ -102,8 +100,20 @@ class TTPLA_Dataset(torch.utils.data.Dataset):
         return len(self.file_list)
 
     def __getitem__(self, index):
-        r = randint(96, 384)
         img_file = self.file_list[index]
+        if self.split == 'self':
+            img = Image.open(osp.join(self.root, img_file.strip('\n')+'.jpg'))
+            img = self.transform(img)
+            return img, img
+        if self.split in ['self_finetune', 'self_finetune_eval']:
+            img = Image.open(osp.join(self.root, img_file.strip('\n')+'.jpg'))
+            lab = Image.open(osp.join(self.root, 'annpng_powerline', img_file.strip('\n')+'.png'))
+            img = self.transform(img)
+            lab = mmcv.imread(osp.join(self.root, 'annpng_powerline', img_file.strip(
+                '\n')+'.png'), backend='pillow', flag='unchanged')
+            lab = lab[None,:,:].astype(np.float32)
+            lab = self.transform.transforms[0](torch.tensor(lab))
+            return img, lab
         img = mmcv.imread(
             osp.join(self.root, img_file.strip('\n')+'.jpg'), self.dataflag)
         img = self.transf(img, r)
@@ -165,8 +175,6 @@ class TTPLA_Dataset(torch.utils.data.Dataset):
         label = label.transpose((2, 0, 1)).astype(np.float32)
         if self.split in ['train', 'eval']:
             return img, label
-        elif self.split == 'self':
-            return img, img
         else:
             return img
 
